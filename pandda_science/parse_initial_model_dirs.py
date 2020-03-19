@@ -5,10 +5,6 @@ from pathlib import Path
 
 import pandas as pd
 
-from biopandas.pdb import PandasPdb
-
-from pandda_types.data import PanDDA, Event
-
 
 def get_args():
     parser = argparse.ArgumentParser()
