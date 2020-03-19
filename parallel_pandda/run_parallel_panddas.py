@@ -80,7 +80,7 @@ def setup_output_directory(path: Path, overwrite: bool = False):
 
 def get_model_dirs(path: Path):
     model_dirs_df = pd.read_csv(str(path))
-    model_dirs_series = model_dirs_df[model_dirs_df["num_models"]  != 0]["model_dir"]
+    model_dirs_series = model_dirs_df[model_dirs_df["num_models"] != 0]["model_dir"]
     model_dirs = [Path(path) for path in model_dirs_series]
     return model_dirs
 
@@ -170,6 +170,7 @@ def process_dask(funcs,
                          memory="{}GB".format(h_vmem),
                          walltime=h_rt,
                          resource_spec="m_mem_free={}G,h_vmem={}G,h_rt={}".format(m_mem_free, h_vmem, h_rt),
+                         job_extra=['-pe smp {}'.format(cores)],
                          )
     cluster.scale(jobs=jobs)
     client = Client(cluster)
@@ -321,7 +322,7 @@ if __name__ == "__main__":
     if output.parallel_pandda_table_path.is_file():
         parallel_pandda_table: pd.DataFrame = pd.read_csv(str(output.parallel_pandda_table_path))
     else:
-        columns = ["model_dir", "type" ]
+        columns = ["model_dir", "type"]
         parallel_pandda_table: pd.DataFrame = pd.DataFrame(columns=columns)
 
     print("Making tasks...")
@@ -352,10 +353,11 @@ if __name__ == "__main__":
 
         except Exception as e:
             print(e)
-            status_df = get_status_df(tasks)
-            parallel_pandda_table = update_parallel_pandda_table(parallel_pandda_table,
-                                                                 status_df,
-                                                                 )
-            tasks = get_pandda_tasks(model_dirs,
-                                     parallel_pandda_table,
-                                     )
+
+        status_df = get_status_df(tasks)
+        parallel_pandda_table = update_parallel_pandda_table(parallel_pandda_table,
+                                                             status_df,
+                                                             )
+        tasks = get_pandda_tasks(model_dirs,
+                                 parallel_pandda_table,
+                                 )
