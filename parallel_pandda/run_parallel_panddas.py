@@ -79,7 +79,10 @@ def setup_output_directory(path: Path, overwrite: bool = False):
 
 
 def get_model_dirs(path: Path):
-    return pd.read_csv(str(path))
+    model_dirs_df = pd.read_csv(str(path))
+    model_dirs_series = model_dirs_df[model_dirs_df["num_models" != 0]]["model_dir"]
+    model_dirs = [Path(path) for path in model_dirs_series]
+    return model_dirs
 
 
 class DispatchOriginalPanDDA:
@@ -205,14 +208,14 @@ def get_pandda_tasks(model_dirs,
     tasks = []
     for model_dir in model_dirs:
         # Original PanDDA
-        original_pandda_output = model_dir.parent / "test_pandda_original"
+        original_pandda_output = Path(model_dir).parent / "test_pandda_original"
         if pandda_fail(parallel_pandda_table,
                        model_dir,
                        "original"):
             pass
         else:
             try_remove(original_pandda_output)
-            original_pandda_tasks = DispatchOriginalPanDDA(model_dir=model_dir,
+            original_pandda_tasks = DispatchOriginalPanDDA(model_dir=Path(model_dir),
                                                            output_dir=original_pandda_output,
                                                            )
             tasks.append(original_pandda_tasks)
@@ -307,7 +310,7 @@ if __name__ == "__main__":
 
     output: Output = setup_output_directory(config.out_dir_path)
 
-    model_dirs: pd.DataFrame = get_model_dirs(config.model_dirs_table_path)
+    model_dirs = get_model_dirs(config.model_dirs_table_path)
 
     if output.parallel_pandda_table_path.is_file():
         parallel_pandda_table: pd.DataFrame = pd.read_csv(str(output.parallel_pandda_table_path))
