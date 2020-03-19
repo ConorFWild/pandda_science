@@ -310,6 +310,7 @@ def update_parallel_pandda_table(parallel_pandda_table,
                       "output_dir": row["output_dir"],
                       "suceeded": row["suceeded"],
                       "failed": row["failed"],
+                      "type": row["type"],
                       }
             parallel_pandda_table = parallel_pandda_table.append(pd.DataFrame([record]),
                                                                  ignore_index=True)
@@ -320,6 +321,7 @@ def update_parallel_pandda_table(parallel_pandda_table,
                       "output_dir": row["output_dir"],
                       "suceeded": row["suceeded"],
                       "failed": row["failed"],
+                      "type": row["type"],
                       }
             record.update(parse_pandda(row["output_dir"]))
             parallel_pandda_table = parallel_pandda_table.append(pd.DataFrame([record]),
@@ -346,7 +348,7 @@ if __name__ == "__main__":
     if output.parallel_pandda_table_path.is_file():
         parallel_pandda_table: pd.DataFrame = pd.read_csv(str(output.parallel_pandda_table_path))
     else:
-        columns = ["model_dir", "type"]
+        columns = ["model_dir", "type", "suceeded", "failed", "event_table_path", "num_events", "mean_event_size"]
         parallel_pandda_table: pd.DataFrame = pd.DataFrame(columns=columns)
 
     print("Making tasks...")
