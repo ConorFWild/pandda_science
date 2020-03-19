@@ -190,7 +190,7 @@ def pandda_fail(parallel_pandda_table,
         parallel_pandda_table_model_dir["type"] == type]
     if len(parallel_pandda_table_model_dir_type) == 1:
         print(parallel_pandda_table_model_dir_type)
-        if parallel_pandda_table_model_dir_type["failed"] == 1:
+        if len(parallel_pandda_table_model_dir_type["failed"]) == 1:
             return True
 
     return False
@@ -204,7 +204,7 @@ def pandda_succeed(parallel_pandda_table,
         parallel_pandda_table_model_dir["type"] == type]
     if len(parallel_pandda_table_model_dir_type) == 1:
         print(parallel_pandda_table_model_dir_type)
-        if parallel_pandda_table_model_dir_type["suceeded"] == 1:
+        if len(parallel_pandda_table_model_dir_type["suceeded"]) == 1:
             return True
 
     return False
