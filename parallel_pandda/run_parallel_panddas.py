@@ -80,7 +80,7 @@ def setup_output_directory(path: Path, overwrite: bool = False):
 
 def get_model_dirs(path: Path):
     model_dirs_df = pd.read_csv(str(path))
-    model_dirs_series = model_dirs_df[model_dirs_df["num_models" != 0]]["model_dir"]
+    model_dirs_series = model_dirs_df[model_dirs_df["num_models"]  != 0]["model_dir"]
     model_dirs = [Path(path) for path in model_dirs_series]
     return model_dirs
 
