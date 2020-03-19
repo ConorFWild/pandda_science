@@ -381,6 +381,10 @@ if __name__ == "__main__":
             print(e)
 
         status_df = get_status_df(tasks)
+        print(status_df[status_df["failed"] == 1])
+        print(status_df[status_df["suceeded"] == 1])
+        print(status_df[status_df["ran"] == 1])
+
         parallel_pandda_table = update_parallel_pandda_table(parallel_pandda_table,
                                                              status_df,
                                                              )
