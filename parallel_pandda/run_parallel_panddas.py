@@ -208,7 +208,7 @@ def get_pandda_tasks(model_dirs,
     tasks = []
     for model_dir in model_dirs:
         # Original PanDDA
-        original_pandda_output = Path(model_dir).parent / "test_pandda_original"
+        original_pandda_output = model_dir.parent / "test_pandda_original"
         if pandda_fail(parallel_pandda_table,
                        model_dir,
                        "original"):
