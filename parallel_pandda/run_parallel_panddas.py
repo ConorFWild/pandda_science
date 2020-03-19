@@ -188,6 +188,7 @@ def pandda_fail(parallel_pandda_table,
     parallel_pandda_table_model_dir_type = parallel_pandda_table_model_dir[
         parallel_pandda_table_model_dir["type"] == type]
     if len(parallel_pandda_table_model_dir_type) == 1:
+        print(parallel_pandda_table_model_dir_type)
         if parallel_pandda_table_model_dir_type["failed"] == 1:
             return True
 
@@ -304,20 +305,26 @@ def update_parallel_pandda_table(parallel_pandda_table,
 
 
 if __name__ == "__main__":
+    print("Parsing args")
     args = parse_args()
 
+    print("Geting Config...")
     config = get_config(args)
 
+    print("Setiting up output...")
     output: Output = setup_output_directory(config.out_dir_path)
 
+    print("Getting model dirs...")
     model_dirs = get_model_dirs(config.model_dirs_table_path)
 
+    print("Checking for old parallel pandda table...")
     if output.parallel_pandda_table_path.is_file():
         parallel_pandda_table: pd.DataFrame = pd.read_csv(str(output.parallel_pandda_table_path))
     else:
-        columns = ["model_dir", "type", ]
+        columns = ["model_dir", "type" ]
         parallel_pandda_table: pd.DataFrame = pd.DataFrame(columns=columns)
 
+    print("Making tasks...")
     tasks = get_pandda_tasks(model_dirs,
                              parallel_pandda_table,
                              )
@@ -331,6 +338,7 @@ if __name__ == "__main__":
     #       regeneate tasks
     #       update and output parallel_pandda_table
 
+    print("Running tasks...")
     while len(parallel_pandda_table) < 2 * len(model_dirs):
         try:
             results = process_dask(tasks,
