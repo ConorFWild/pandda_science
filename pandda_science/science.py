@@ -6,7 +6,10 @@ from pathlib import Path
 
 import pandas as pd
 from pandda_science.dataset import get_events_df
-from pandda_science.parallel_pandda import get_parallel_pandda_df
+from pandda_science.parallel_pandda import (get_parallel_pandda_df,
+                                            get_parallel_pandda_statistics_df,
+                                            parallel_pandda_speed_scatter,
+                                            )
 from pandda_science.dataset_clustering import get_global_cluster_distribution_df
 from pandda_science.autobuilding import get_autobuilding_results_df
 from pandda_science.build_score import (get_build_score_train_df,
