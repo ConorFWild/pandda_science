@@ -196,6 +196,20 @@ def pandda_fail(parallel_pandda_table,
     return False
 
 
+def pandda_succeed(parallel_pandda_table,
+                   model_dir,
+                   type):
+    parallel_pandda_table_model_dir = parallel_pandda_table[parallel_pandda_table["model_dir"] == model_dir]
+    parallel_pandda_table_model_dir_type = parallel_pandda_table_model_dir[
+        parallel_pandda_table_model_dir["type"] == type]
+    if len(parallel_pandda_table_model_dir_type) == 1:
+        print(parallel_pandda_table_model_dir_type)
+        if parallel_pandda_table_model_dir_type["suceeded"] == 1:
+            return True
+
+    return False
+
+
 def try_remove(path):
     try:
         shutil.rmtree(path,
@@ -215,6 +229,11 @@ def get_pandda_tasks(model_dirs,
                        model_dir,
                        "original"):
             pass
+        elif pandda_succeed(parallel_pandda_table,
+                            model_dir,
+                            "original",
+                            ):
+            pass
         else:
             try_remove(original_pandda_output)
             original_pandda_tasks = DispatchOriginalPanDDA(model_dir=Path(model_dir),
@@ -227,6 +246,11 @@ def get_pandda_tasks(model_dirs,
         if pandda_fail(parallel_pandda_table,
                        model_dir,
                        "parallel"):
+            pass
+        elif pandda_succeed(parallel_pandda_table,
+                            model_dir,
+                            "parallel",
+                            ):
             pass
         else:
             try_remove(original_pandda_output)
