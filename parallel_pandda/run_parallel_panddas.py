@@ -270,20 +270,25 @@ def get_status_df(tasks):
         record["type"] = task.type
         record["output_dir"] = task.output_dir
 
-        # CHeck if ran
-        if (task.output_dir / "analyses").is_dir():
-            record["ran"] = 1
+        if task.output_dir.is_dir():
+            # CHeck if ran
+            if (task.output_dir / "analyses").is_dir():
+                record["ran"] = 1
+            else:
+                record["ran"] = 0
+            # Check if failed
+            if (task.output_dir / "pandda.errored").is_file():
+                record["failed"] = 1
+            else:
+                record["failed"] = 0
+            # Check if suceeded
+            if (task.output_dir / "analyses" / "pandda_analyse_events.csv").is_file():
+                record["suceeded"] = 1
+            else:
+                record["suceeded"] = 0
         else:
             record["ran"] = 0
-        # Check if failed
-        if (task.output_dir / "pandda.errored").is_file():
-            record["failed"] = 1
-        else:
             record["failed"] = 0
-        # Check if suceeded
-        if (task.output_dir / "analyses" / "pandda_analyse_events.csv").is_file():
-            record["suceeded"] = 1
-        else:
             record["suceeded"] = 0
 
         records.append(record)
