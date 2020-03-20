@@ -198,7 +198,7 @@ def analyse_build_result(true_model, result):
 
         candidate_model_results.append(candidate_model_record)
 
-    return candidate_model_results
+    return candidate_model_results, distances_to_events
 
 
 def get_autobuild_record(build_name,
@@ -242,6 +242,7 @@ def analyse_autobuilding_results(true_model_path,
                                  event,
                                  results,
                                  ):
+    print("analysing")
     true_model = BioPandasModel(true_model_path)
 
     method_results = []
@@ -292,7 +293,8 @@ def make_results_dataframe(all_results,
                                                                                                 task[2],
                                                                                                 )
                                                    for task
-                                                   in autobuilding_df_tasks)
+                                                   in autobuilding_df_tasks
+                                                   )
 
     df = pd.concat(autobuilding_dfs)
 
