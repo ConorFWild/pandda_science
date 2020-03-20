@@ -331,7 +331,10 @@ if __name__ == "__main__":
         phenix_event_json_path: Path = event_output_dir_path / "phenix_event.json"
         phenix_event_result = try_get_json(phenix_event_json_path)
 
-        if phenix_event_result or phenix_control_result is None:
+        if phenix_control_result is None:
+            print("\tMissing a json, skipping!")
+            continue
+        if phenix_event_result is None:
             print("\tMissing a json, skipping!")
             continue
 
