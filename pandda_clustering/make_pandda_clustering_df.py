@@ -199,6 +199,7 @@ if __name__ == "__main__":
     tasks = get_dataset_clustering_tasks(model_dirs,
                                          output.out_dir_path,
                                          )
+    print("\tTasks to process are: {}".format(tasks))
 
     print("Processing...")
     results = process_dask(tasks,
