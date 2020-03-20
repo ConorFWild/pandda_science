@@ -49,7 +49,7 @@ class Config(NamedTuple):
 
 
 def get_config(args):
-    config = Config(out_dir_path=Path(args.out_dir_path),
+    config = Config(out_dir_path=Path(args.out_dir),
                     events_df_path=Path(args.events_df_path),
                     autobuilding_dir_path=Path(args.autobuilding_dir_path)
                     )
