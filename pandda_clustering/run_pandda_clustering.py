@@ -139,7 +139,7 @@ class DatsetClusteringTask:
 def get_dataset_clustering_tasks(model_dirs, output_dir):
     tasks = []
     for model_dir_path in model_dirs:
-        out_dir = model_dir_path.parent / "pandda_dataset_clustering"
+        out_dir = output_dir / model_dir_path.parent.parent.parent.name
         print("\tSetting up from {} to output in {}".format(model_dir_path, out_dir))
         task = DatsetClusteringTask(model_dir_path,
                                     out_dir,
@@ -213,7 +213,7 @@ if __name__ == "__main__":
                            jobs=8,
                            cores=10,
                            processes=1,
-                           h_vmem=120,
-                           m_mem_free=6,
+                           h_vmem=140,
+                           m_mem_free=10,
                            h_rt=3600 * 40,
                            )
