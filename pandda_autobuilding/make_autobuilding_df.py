@@ -286,8 +286,6 @@ def make_results_dataframe(all_results,
 
     # autobuilding_dfs.append(autobuilding_df)
     print("MULTIPROCESSING")
-    print(autobuilding_df_tasks)
-    print(autobuilding_df_tasks[-1])
     autobuilding_dfs = joblib.Parallel(n_jobs=20,
                                        verbose=50)(joblib.delayed(analyse_autobuilding_results)(task[0],
                                                                                                 task[1],
