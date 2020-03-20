@@ -102,6 +102,11 @@ class DatsetClusteringTask:
                 return None
 
         try:
+            shutil.rmtree(str(self.output_dir))
+        except Exception as e:
+            pass
+
+        try:
             os.mkdir(self.output_dir)
         except Exception as e:
             pass
