@@ -333,6 +333,7 @@ if __name__ == "__main__":
 
         if phenix_event_result or phenix_control_result is None:
             print("\tMissing a json, skipping!")
+            continue
 
         results[(event.dtag, event.event_idx)] = {}
         results[(event.dtag, event.event_idx)]["phenix_control"] = phenix_control_result
