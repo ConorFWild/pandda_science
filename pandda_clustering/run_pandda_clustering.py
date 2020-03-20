@@ -139,7 +139,7 @@ class DatsetClusteringTask:
 def get_dataset_clustering_tasks(model_dirs, output_dir):
     tasks = []
     for model_dir_path in model_dirs:
-        out_dir = model_dir_path / "pandda_dataset_clustering"
+        out_dir = model_dir_path.parent / "pandda_dataset_clustering"
         print("\tSetting up from {} to output in {}".format(model_dir_path, out_dir))
         task = DatsetClusteringTask(model_dir_path,
                                     out_dir,
