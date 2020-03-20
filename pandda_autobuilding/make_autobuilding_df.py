@@ -290,7 +290,7 @@ def make_results_dataframe(all_results,
     print(autobuilding_df_tasks)
     print(autobuilding_df_tasks[-1])
     autobuilding_dfs = joblib.Parallel(n_jobs=20,
-                                       verbose=50)(task
+                                       verbose=50)(joblib.delayed(task)()
                                                    for task
                                                    in autobuilding_df_tasks)
 
