@@ -14,13 +14,13 @@ from dask_jobqueue import SGECluster
 def parse_args():
     parser = argparse.ArgumentParser()
     # IO
-    parser.add_argument("-i", "--input_training_table",
+    parser.add_argument("-m", "--model_dirs_table_path",
                         type=str,
                         help="The directory OF THE ROOT OF THE XCHEM DATABASE",
                         required=True
                         )
 
-    parser.add_argument("-o", "--out_dir",
+    parser.add_argument("-o", "--out_dir_path",
                         type=str,
                         help="The directory for output and intermediate files to be saved to",
                         required=True
@@ -33,12 +33,12 @@ def parse_args():
 
 class Config(NamedTuple):
     our_dir_path: Path
-    events_df_path: Path
+    model_dirs_table_path: Path
 
 
 def get_config(args):
     config = Config(our_dir_path=Path(args.out_dir_path),
-                    events_df_path=Path(args.events_df_path),
+                    model_dirs_table_path=Path(args.model_dirs_table_path),
                     )
 
     return config
