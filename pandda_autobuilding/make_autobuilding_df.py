@@ -278,19 +278,21 @@ def make_results_dataframe(all_results,
         event = events_dict[event_id]
         results = all_results[event_id]
 
-        autobuilding_df_task = partial(analyse_autobuilding_results,
-                                       true_model_path,
-                                       event,
-                                       results,
-                                       )
-        autobuilding_df_tasks.append(autobuilding_df_task)
+        autobuilding_df_task_args = [true_model_path,
+                                     event,
+                                     results,
+                                     ]
+        autobuilding_df_tasks.append(autobuilding_df_task_args)
 
     # autobuilding_dfs.append(autobuilding_df)
     print("MULTIPROCESSING")
     print(autobuilding_df_tasks)
     print(autobuilding_df_tasks[-1])
     autobuilding_dfs = joblib.Parallel(n_jobs=20,
-                                       verbose=50)(joblib.delayed(task)()
+                                       verbose=50)(joblib.delayed(analyse_autobuilding_results)(task[0],
+                                                                                                task[1],
+                                                                                                task[2],
+                                                                                                )
                                                    for task
                                                    in autobuilding_df_tasks)
 
