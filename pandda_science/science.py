@@ -69,6 +69,13 @@ class Output:
         self.autobuilding_out_dir_path = out_dir_path / "autobuilding"
         self.build_score_out_dir_path = out_dir_path / "build_score"
 
+        # parallel pandda
+        self.parallel_pandda_statistics_table_path = self.parallel_pandda_out_dir_path / "statistics.csv"
+        self.parallel_pandda_speed_graph_path = self.parallel_pandda_out_dir_path / "speed.png"
+
+        # Dataset Clustering
+        self.dataset_clustering_num_clusters_distribution_histogram_path = self.dataset_clustering_out_dir_path / "distribution_histogram.png"
+
     def attempt_mkdir(self, path: Path):
         try:
             os.mkdir(str(path))
@@ -114,17 +121,17 @@ if __name__ == "__main__":
     events_df: pd.DataFrame = get_events_df(config.events_df_path)
 
     # Parallel PanDDA
-    parallel_pandda_df: pd.DataFrame = get_parallel_pandda_df()
-    parallel_pandda_statistics_df: pd.DataFrame = get_parallel_pandda_statistics_df()
-    parallel_pandda_speed_scatter()
+    parallel_pandda_df: pd.DataFrame = get_parallel_pandda_df(config.parallel_pandda_df_path)
+    parallel_pandda_statistics_df: pd.DataFrame = get_parallel_pandda_statistics_df(parallel_pandda_df)
+    parallel_pandda_speed_scatter(parallel_pandda_df)
 
     # Dataset Clustering
     global_cluster_distribution_df: pd.DataFrame = get_global_cluster_distribution_df()
+    num_clusters_distribution_histogram()
 
     # Autobuilding
     autobuilding_results_df: pd.DataFrame = get_autobuilding_results_df()
     relative_median_rmsd_by_system_df = get_relative_median_rmsd_by_system_df()
-
     get_autobuilding_rmsd_distribution_graph(autobuilding_results_df)
     get_autobuilding_rscc_distribution_graph(autobuilding_results_df)
     get_relative_median_rmsd_by_system_graph(relative_median_rmsd_by_system_df)
