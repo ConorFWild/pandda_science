@@ -198,7 +198,12 @@ def analyse_build_result(true_model, result):
 
         candidate_model_results.append(candidate_model_record)
 
-    return candidate_model_results, distances_to_events
+    if len(distances_to_events) == 0:
+        distance_to_event = 0
+    else:
+        distance_to_event = min(distances_to_events)
+
+    return candidate_model_results, distance_to_event
 
 
 def get_autobuild_record(build_name,
