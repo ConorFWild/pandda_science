@@ -139,7 +139,7 @@ def get_dataset_clustering_tasks(model_dirs, output_dir):
                                     )
         tasks.append(task)
 
-    return task
+    return tasks
 
 
 def call(func):
