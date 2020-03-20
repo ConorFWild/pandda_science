@@ -278,12 +278,12 @@ def make_results_dataframe(all_results,
         event = events_dict[event_id]
         results = all_results[event_id]
 
-        autobuilding_df_tasks = partial(analyse_autobuilding_results,
+        autobuilding_df_task = partial(analyse_autobuilding_results,
                                         true_model_path,
                                         event,
                                         results,
                                         )
-        autobuilding_df_tasks.append(autobuilding_df_tasks)
+        autobuilding_df_tasks.append(autobuilding_df_task)
 
     # autobuilding_dfs.append(autobuilding_df)
     autobuilding_dfs = joblib.Parallel(n_jobs=20,
