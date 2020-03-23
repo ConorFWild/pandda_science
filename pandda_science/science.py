@@ -45,6 +45,11 @@ def parse_args():
                         help="The directory for output and intermediate files to be saved to",
                         required=True
                         )
+    parser.add_argument("-c", "--dataset_clustering_df_path",
+                        type=str,
+                        help="The directory for output and intermediate files to be saved to",
+                        required=True
+                        )
     parser.add_argument("-a", "--autobuilding_df_path",
                         type=str,
                         help="The directory for output and intermediate files to be saved to",
