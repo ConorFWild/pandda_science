@@ -209,7 +209,9 @@ def analyse_build_result(true_model, result):
 def get_autobuild_record(build_name,
                          candidate_model_results,
                          distance_to_event,
-                         result):
+                         result,
+                         event,
+                         ):
     record = {}
     record["dtag"] = event.dtag
     record["event_idx"] = event.event_idx
@@ -229,7 +231,9 @@ def get_autobuild_record(build_name,
     return record
 
 
-def get_null_autobuild_record(build_name):
+def get_null_autobuild_record(build_name,
+                              event,
+                              ):
     record = {}
     record["dtag"] = event.dtag
     record["event_idx"] = event.event_idx
@@ -259,13 +263,16 @@ def analyse_autobuilding_results(true_model_path,
                                                                           )
 
         if len(candidate_model_results) == 0:
-            record = get_null_autobuild_record(build_name)
+            record = get_null_autobuild_record(build_name,
+                                               event,
+                                               )
 
         else:
             record = get_autobuild_record(build_name,
                                           candidate_model_results,
                                           distance_to_event,
                                           result,
+                                          event,
                                           )
 
         method_results.append(record)
