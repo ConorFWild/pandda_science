@@ -158,7 +158,6 @@ def analyse_build_result(true_model, result):
         result_model: BioPandasModel = BioPandasModel(candidate_model_path)
 
         # Loop over potential chain
-
         rmsds = []
         for chain_id in true_model.model.df["HETATM"]["chain_id"].unique():
             # if not is_comparable(true_model, result_model):
@@ -247,6 +246,36 @@ def get_null_autobuild_record(build_name,
     return record
 
 
+def get_model_distance_to_event(true_model,
+                                event,
+                                ):
+    hetatms_df = true_model.model.df["HETATM"]
+
+    distances_to_event = []
+    for chain_id in true_model.model.df["HETATM"]["chain_id"].unique():
+        chain_df = hetatms_df[hetatms_df["chain_id"] == chain_id]
+        chain_lig_df = chain_df[chain_df["residue_name"] == "LIG"]
+        chain_lig_coords_df = chain_lig_df[["x_coord", "y_coord", "z_coord"]]
+
+        if len(chain_lig_coords_df) == 0:
+            continue
+
+        true_model_mean_coords = np.mean(np.array(chain_lig_coords_df),
+                                         axis=0,
+                                         )
+        event_mean_coords = np.array([event.x,
+                                      event.y,
+                                      event.z,
+                                      ])
+        distance_from_event_to_model = np.linalg.norm(true_model_mean_coords - event_mean_coords)
+        distances_to_event.append(distance_from_event_to_model)
+
+    if len(distances_to_event) == 0:
+        return 0
+    else:
+        return min(distances_to_event)
+
+
 def analyse_autobuilding_results(true_model_path,
                                  event,
                                  results,
@@ -256,11 +285,15 @@ def analyse_autobuilding_results(true_model_path,
 
     method_results = []
 
+    model_distance_to_event = get_model_distance_to_event(true_model,
+                                                          event,
+                                                          )
+
     for build_name, result in results.items():
 
-        candidate_model_results, distance_to_event = analyse_build_result(true_model,
-                                                                          result,
-                                                                          )
+        candidate_model_results = analyse_build_result(true_model,
+                                                       result,
+                                                       )
 
         if len(candidate_model_results) == 0:
             record = get_null_autobuild_record(build_name,
@@ -270,7 +303,7 @@ def analyse_autobuilding_results(true_model_path,
         else:
             record = get_autobuild_record(build_name,
                                           candidate_model_results,
-                                          distance_to_event,
+                                          model_distance_to_event,
                                           result,
                                           event,
                                           )
