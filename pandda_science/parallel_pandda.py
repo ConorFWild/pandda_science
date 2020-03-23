@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from pandda_science.graphs import scatter
+from pandda_science.graphs import scatter_plot
 
 
 def get_parallel_pandda_df(path: Path):

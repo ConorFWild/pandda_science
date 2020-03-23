@@ -5,8 +5,10 @@ import seaborn as sns
 sns.set()
 
 
-def scatter_plot(x, y,
-            output_path: Path, ):
+def scatter_plot(x,
+                 y,
+                 output_path: Path,
+                 ):
     ax = sns.scatterplot(x,
                          y,
                          )
