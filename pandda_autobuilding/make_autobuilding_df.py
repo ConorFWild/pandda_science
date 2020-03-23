@@ -202,7 +202,7 @@ def analyse_build_result(true_model, result):
     else:
         distance_to_event = min(distances_to_events)
 
-    return candidate_model_results, distance_to_event
+    return candidate_model_results
 
 
 def get_autobuild_record(build_name,
@@ -252,7 +252,7 @@ def get_model_distance_to_event(true_model,
     hetatms_df = true_model.model.df["HETATM"]
 
     distances_to_event = []
-    for chain_id in true_model.model.df["HETATM"]["chain_id"].unique():
+    for chain_id in hetatms_df["chain_id"].unique():
         chain_df = hetatms_df[hetatms_df["chain_id"] == chain_id]
         chain_lig_df = chain_df[chain_df["residue_name"] == "LIG"]
         chain_lig_coords_df = chain_lig_df[["x_coord", "y_coord", "z_coord"]]
