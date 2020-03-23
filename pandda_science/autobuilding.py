@@ -52,6 +52,7 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                                              cutoffs: List,
                                              ):
     for cutoff in cutoffs:
+        print(autobuilding_rmsd_df.head())
         cutoff_df = autobuilding_rmsd_df[autobuilding_rmsd_df["event_distance_to_model"] < cutoff]
 
         # Phenix Control
