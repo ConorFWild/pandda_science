@@ -3,7 +3,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from pandda_science.graphs import distribution_plot
+from pandda_science.graphs import (distribution_plot,
+                                   scatter_plot,
+                                   )
 
 
 def get_autobuilding_results_df(path: Path):
@@ -69,6 +71,12 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
         distribution_plot(cutoff_df["phenix_event_rmsd"],
                           output_path / "phenix_event_rmsds_{}.png".format(cutoff),
                           )
+
+        # Scatter
+        scatter_plot(cutoff_df["phenix_event_rmsd"],
+                     cutoff_df["phenix_control_rmsd"],
+                     output_path / "phenix_rmsds_scatter_{}.png".format(cutoff),
+                     )
 
 
 def get_autobuilding_rscc_distribution_graph():
