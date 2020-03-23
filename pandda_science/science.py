@@ -82,7 +82,7 @@ class Config(NamedTuple):
 
 
 def get_config(args):
-    config = Config(our_dir_path=Path(args.out_dir_path),
+    config = Config(out_dir_path=Path(args.out_dir_path),
                     events_df_path=Path(args.events_df_path),
                     parallel_pandda_df_path=Path(args.parallel_pandda_df_path),
                     dataset_clustering_df_path=Path(args.dataset_clustering_df_path),
