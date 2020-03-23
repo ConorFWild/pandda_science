@@ -94,7 +94,7 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
         print("\t\tMean event rmsd: {}".format(np.mean(cutoff_df["phenix_event_rmsd"])))
         print("\t\tMedian event rmsd: {}".format(np.median(cutoff_df["phenix_event_rmsd"])))
 
-        print("\t\tMean event rmsd: {}".format(np.mean(cutoff_df["phenix_control_rmsd"])))
+        print("\t\tMean control rmsd: {}".format(np.mean(cutoff_df["phenix_control_rmsd"])))
         print("\t\tMedian control rmsd: {}".format(np.median(cutoff_df["phenix_control_rmsd"])))
 
 
