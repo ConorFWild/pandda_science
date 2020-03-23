@@ -10,10 +10,20 @@ from pandda_science.parallel_pandda import (get_parallel_pandda_df,
                                             get_parallel_pandda_statistics_df,
                                             parallel_pandda_speed_scatter,
                                             )
-from pandda_science.dataset_clustering import get_global_cluster_distribution_df
-from pandda_science.autobuilding import get_autobuilding_results_df
+from pandda_science.dataset_clustering import (get_global_cluster_distribution_df,
+                                               num_clusters_distribution_histogram,
+                                               )
+from pandda_science.autobuilding import (get_autobuilding_results_df,
+                                         get_relative_median_rmsd_by_system_df,
+                                         get_autobuilding_rmsd_distribution_graph,
+                                         get_autobuilding_rscc_distribution_graph,
+                                         get_relative_median_rmsd_by_system_graph,
+                                         )
 from pandda_science.build_score import (get_build_score_train_df,
                                         get_build_score_test_df,
+                                        get_event_size_ranking_df,
+                                        get_rscc_ranking_df,
+                                        get_build_score_ranking_df,
                                         )
 
 
@@ -113,7 +123,7 @@ def setup_output_directory(path: Path, overwrite: bool = False):
 if __name__ == "__main__":
     args = parse_args()
 
-    config = get_config(args)
+    config: Config = get_config(args)
 
     output: Output = setup_output_directory(config.our_dir_path)
 
@@ -121,25 +131,30 @@ if __name__ == "__main__":
     events_df: pd.DataFrame = get_events_df(config.events_df_path)
 
     # Parallel PanDDA
-    parallel_pandda_df: pd.DataFrame = get_parallel_pandda_df(config.parallel_pandda_df_path)
-    parallel_pandda_statistics_df: pd.DataFrame = get_parallel_pandda_statistics_df(parallel_pandda_df)
-    parallel_pandda_speed_scatter(parallel_pandda_df)
+    if config.parallel_pandda_df_path.is_file():
+        parallel_pandda_df: pd.DataFrame = get_parallel_pandda_df(config.parallel_pandda_df_path)
+        parallel_pandda_statistics_df: pd.DataFrame = get_parallel_pandda_statistics_df(parallel_pandda_df)
+        parallel_pandda_speed_scatter(parallel_pandda_df)
 
     # Dataset Clustering
-    global_cluster_distribution_df: pd.DataFrame = get_global_cluster_distribution_df()
-    num_clusters_distribution_histogram()
+    if config.dataset_clustering_df_path.is_file():
+        global_cluster_distribution_df: pd.DataFrame = get_global_cluster_distribution_df(
+            config.dataset_clustering_df_path)
+        num_clusters_distribution_histogram()
 
     # Autobuilding
-    autobuilding_results_df: pd.DataFrame = get_autobuilding_results_df()
-    relative_median_rmsd_by_system_df = get_relative_median_rmsd_by_system_df()
-    get_autobuilding_rmsd_distribution_graph(autobuilding_results_df)
-    get_autobuilding_rscc_distribution_graph(autobuilding_results_df)
-    get_relative_median_rmsd_by_system_graph(relative_median_rmsd_by_system_df)
+    if config.autobuilding_df_path.is_file():
+        autobuilding_results_df: pd.DataFrame = get_autobuilding_results_df(config.autobuilding_df_path)
+        relative_median_rmsd_by_system_df = get_relative_median_rmsd_by_system_df()
+        get_autobuilding_rmsd_distribution_graph(autobuilding_results_df)
+        get_autobuilding_rscc_distribution_graph(autobuilding_results_df)
+        get_relative_median_rmsd_by_system_graph(relative_median_rmsd_by_system_df)
 
     # Build Quality classification
-    build_score_train_df: pd.DataFrame = get_build_score_train_df()
-    build_score_test_df: pd.DataFrame = get_build_score_test_df()
+    if config.build_score_train_df_path.is_file() and config.build_score_test_df_path.is_file():
+        build_score_train_df: pd.DataFrame = get_build_score_train_df()
+        build_score_test_df: pd.DataFrame = get_build_score_test_df()
 
-    event_size_ranking_df: pd.DataFrame = get_event_size_ranking_df()
-    autobuilding_rscc_ranking_df: pd.DataFrame = get_rscc_ranking_df()
-    build_score_ranking_df: pd.DataFrame = get_build_score_ranking_df()
+        event_size_ranking_df: pd.DataFrame = get_event_size_ranking_df()
+        autobuilding_rscc_ranking_df: pd.DataFrame = get_rscc_ranking_df()
+        build_score_ranking_df: pd.DataFrame = get_build_score_ranking_df()
