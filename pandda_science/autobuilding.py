@@ -61,7 +61,7 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                                                                                             len(cutoff_df),
                                                                                             )
               )
-        print(autobuilding_rmsd_df.head())
+        print(cutoff_df.head())
 
         # Phenix Control
         distribution_plot(cutoff_df["phenix_control_rmsd"],
@@ -80,16 +80,17 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                      )
 
         # Log scatter
-        scatter_plot(np.log(cutoff_df["phenix_event_rmsd"]+1),
-                     np.log(cutoff_df["phenix_control_rmsd"]+1),
+        scatter_plot(np.log(cutoff_df["phenix_event_rmsd"] + 1),
+                     np.log(cutoff_df["phenix_control_rmsd"] + 1),
                      output_path / "phenix_rmsds_log_scatter_{}.png".format(cutoff),
                      )
 
         rmsd_difference = cutoff_df["phenix_event_rmsd"] - cutoff_df["phenix_control_rmsd"]
-        print("\t\tNumber of builds with lower control rscc: {}".format(len(rmsd_difference[rmsd_difference > 0])))
-        print("\t\tNumber of builds with lower event rscc: {}".format(len(rmsd_difference[rmsd_difference < 0])))
-        print("\t\tMean rscc difference: {}".format(np.mean(rmsd_difference)))
-        print("\t\tMedian rscc difference: {}".format(np.median(rmsd_difference)))
+        print("\t\tNumber of builds with lower control rmsd: {}".format(len(rmsd_difference[rmsd_difference > 0])))
+        print("\t\tNumber of builds with lower event rmsd: {}".format(len(rmsd_difference[rmsd_difference < 0])))
+        print("\t\tMean rmsd difference: {}".format(np.mean(rmsd_difference)))
+        print("\t\tMedian rmsd difference: {}".format(np.median(rmsd_difference)))
+
 
 def get_autobuilding_rscc_distribution_graph():
     raise NotImplementedError()
