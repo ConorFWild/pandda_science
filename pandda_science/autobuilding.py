@@ -50,6 +50,42 @@ def get_relative_median_rmsd_by_system_df(autobuilding_results_df: pd.DataFrame)
     return pd.DataFrame(records)
 
 
+def get_autobuilding_rmsd_distribution_stats_table(autobuilding_rmsd_df: pd.DataFrame,
+                                                   output_path: Path,
+                                                   cutoffs: List,
+                                                   ):
+    records = []
+    for cutoff in cutoffs:
+        cutoff_df = autobuilding_rmsd_df[autobuilding_rmsd_df["event_distance_to_model"] < cutoff]
+
+        rmsd_difference = cutoff_df["phenix_event_rmsd"] - cutoff_df["phenix_control_rmsd"]
+        print("\t\tNumber of builds with lower control rmsd: {}".format(len(rmsd_difference[rmsd_difference > 0])))
+        print("\t\tNumber of builds with lower event rmsd: {}".format(len(rmsd_difference[rmsd_difference < 0])))
+        print("\t\tMean rmsd difference: {}".format(np.mean(rmsd_difference)))
+        print("\t\tMedian rmsd difference: {}".format(np.median(rmsd_difference)))
+
+        print("\t\tMean event rmsd: {}".format(np.mean(cutoff_df["phenix_event_rmsd"])))
+        print("\t\tMedian event rmsd: {}".format(np.median(cutoff_df["phenix_event_rmsd"])))
+
+        print("\t\tMean control rmsd: {}".format(np.mean(cutoff_df["phenix_control_rmsd"])))
+        print("\t\tMedian control rmsd: {}".format(np.median(cutoff_df["phenix_control_rmsd"])))
+        record = {"event_to_model_distance_cutoff": cutoff,
+                  "num_control_lower_rmsd_builds": len(rmsd_difference[rmsd_difference > 0]),
+                  "num_event_lower_rmsd_builds": len(rmsd_difference[rmsd_difference < 0]),
+                  "mean_difference_in_rmsd": np.mean(rmsd_difference),
+                  "median_difference_in_rmsd": np.median(rmsd_difference),
+                  "phenix_event_mean_rmsd": np.mean(cutoff_df["phenix_event_rmsd"]),
+                  "phenix_event_median_rmsd": np.median(cutoff_df["phenix_event_rmsd"]),
+                  "phenix_control_mean_rmsd": np.mean(cutoff_df["phenix_control_rmsd"]),
+                  "phenix_control_median_rmsd": np.median(cutoff_df["phenix_control_rmsd"])
+                  }
+
+        records.append(record)
+
+    df = pd.DataFrame(records)
+    df.to_csv(str(output_path))
+
+
 def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                                              output_path: Path,
                                              cutoffs: List,
@@ -84,18 +120,6 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                      np.log(cutoff_df["phenix_control_rmsd"] + 1),
                      output_path / "phenix_rmsds_log_scatter_{}.png".format(cutoff),
                      )
-
-        rmsd_difference = cutoff_df["phenix_event_rmsd"] - cutoff_df["phenix_control_rmsd"]
-        print("\t\tNumber of builds with lower control rmsd: {}".format(len(rmsd_difference[rmsd_difference > 0])))
-        print("\t\tNumber of builds with lower event rmsd: {}".format(len(rmsd_difference[rmsd_difference < 0])))
-        print("\t\tMean rmsd difference: {}".format(np.mean(rmsd_difference)))
-        print("\t\tMedian rmsd difference: {}".format(np.median(rmsd_difference)))
-
-        print("\t\tMean event rmsd: {}".format(np.mean(cutoff_df["phenix_event_rmsd"])))
-        print("\t\tMedian event rmsd: {}".format(np.median(cutoff_df["phenix_event_rmsd"])))
-
-        print("\t\tMean control rmsd: {}".format(np.mean(cutoff_df["phenix_control_rmsd"])))
-        print("\t\tMedian control rmsd: {}".format(np.median(cutoff_df["phenix_control_rmsd"])))
 
 
 def get_autobuilding_rscc_distribution_graph():
