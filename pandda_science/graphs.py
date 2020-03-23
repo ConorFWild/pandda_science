@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from matplotlib import pyplot as plt
 import seaborn as sns
 
 sns.set()
@@ -14,7 +15,7 @@ def scatter_plot(x,
                          )
     fig = ax.get_figure()
     fig.savefig(str(output_path))
-    fig.close()
+    plt.close(fig)
 
 
 def distribution_plot(data_series,
@@ -23,4 +24,4 @@ def distribution_plot(data_series,
     ax = sns.distplot(data_series)
     fig = ax.get_figure()
     fig.savefig(str(output_path))
-    fig.close()
+    plt.close(fig)
