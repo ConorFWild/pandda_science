@@ -171,7 +171,9 @@ if __name__ == "__main__":
         autobuilding_results_df: pd.DataFrame = get_autobuilding_results_df(config.autobuilding_df_path)
         relative_median_rmsd_by_system_df = get_relative_median_rmsd_by_system_df(autobuilding_results_df)
         get_autobuilding_rmsd_distribution_graph(autobuilding_results_df,
-                                                 config.out_dir_path)
+                                                 config.out_dir_path,
+                                                 cutoffs=[5.0, 7.0, 10.0],
+                                                 )
         get_autobuilding_rscc_distribution_graph(autobuilding_results_df)
         get_relative_median_rmsd_by_system_graph(relative_median_rmsd_by_system_df)
 
