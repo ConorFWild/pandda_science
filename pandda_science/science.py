@@ -30,13 +30,32 @@ from pandda_science.build_score import (get_build_score_train_df,
 def parse_args():
     parser = argparse.ArgumentParser()
     # IO
-    parser.add_argument("-i", "--input_training_table",
+    parser.add_argument("-o", "--out_dir_path",
                         type=str,
-                        help="The directory OF THE ROOT OF THE XCHEM DATABASE",
+                        help="The directory for output and intermediate files to be saved to",
                         required=True
                         )
-
-    parser.add_argument("-o", "--out_dir",
+    parser.add_argument("-e", "--events_df_path",
+                        type=str,
+                        help="The directory for output and intermediate files to be saved to",
+                        required=True
+                        )
+    parser.add_argument("-p", "--parallel_pandda_df_path",
+                        type=str,
+                        help="The directory for output and intermediate files to be saved to",
+                        required=True
+                        )
+    parser.add_argument("-a", "--autobuilding_df_path",
+                        type=str,
+                        help="The directory for output and intermediate files to be saved to",
+                        required=True
+                        )
+    parser.add_argument("-tr", "--build_score_train_df_path",
+                        type=str,
+                        help="The directory for output and intermediate files to be saved to",
+                        required=True
+                        )
+    parser.add_argument("-ts", "--build_score_test_df_path",
                         type=str,
                         help="The directory for output and intermediate files to be saved to",
                         required=True
