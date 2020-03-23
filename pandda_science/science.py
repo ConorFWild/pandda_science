@@ -67,7 +67,7 @@ def parse_args():
 
 
 class Config(NamedTuple):
-    our_dir_path: Path
+    out_dir_path: Path
     events_df_path: Path
     parallel_pandda_df_path: Path
     dataset_clustering_df_path: Path
@@ -144,7 +144,7 @@ if __name__ == "__main__":
 
     config: Config = get_config(args)
 
-    output: Output = setup_output_directory(config.our_dir_path)
+    output: Output = setup_output_directory(config.out_dir_path)
 
     # Dataset
     events_df: pd.DataFrame = get_events_df(config.events_df_path)
@@ -164,8 +164,9 @@ if __name__ == "__main__":
     # Autobuilding
     if config.autobuilding_df_path.is_file():
         autobuilding_results_df: pd.DataFrame = get_autobuilding_results_df(config.autobuilding_df_path)
-        relative_median_rmsd_by_system_df = get_relative_median_rmsd_by_system_df()
-        get_autobuilding_rmsd_distribution_graph(autobuilding_results_df)
+        relative_median_rmsd_by_system_df = get_relative_median_rmsd_by_system_df(autobuilding_results_df)
+        get_autobuilding_rmsd_distribution_graph(autobuilding_results_df,
+                                                 config.out_dir_path)
         get_autobuilding_rscc_distribution_graph(autobuilding_results_df)
         get_relative_median_rmsd_by_system_graph(relative_median_rmsd_by_system_df)
 
