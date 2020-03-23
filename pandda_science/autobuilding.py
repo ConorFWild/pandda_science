@@ -1,6 +1,7 @@
 from typing import List
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from pandda_science.graphs import (distribution_plot,
@@ -78,6 +79,11 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                      output_path / "phenix_rmsds_scatter_{}.png".format(cutoff),
                      )
 
+        # Log scatter
+        scatter_plot(np.log(cutoff_df["phenix_event_rmsd"]+1),
+                     np.log(cutoff_df["phenix_control_rmsd"]+1),
+                     output_path / "phenix_rmsds_log_scatter_{}.png".format(cutoff),
+                     )
 
 def get_autobuilding_rscc_distribution_graph():
     raise NotImplementedError()

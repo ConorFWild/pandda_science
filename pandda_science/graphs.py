@@ -17,6 +17,17 @@ def scatter_plot(x,
     fig.savefig(str(output_path))
     plt.close(fig)
 
+# def log_scatter_plot(x,
+#                  y,
+#                  output_path: Path,
+#                  ):
+#     ax = sns.scatterplot(x,
+#                          y,
+#                          )
+#     fig = ax.get_figure()
+#     fig.savefig(str(output_path))
+#     plt.close(fig)
+
 
 def distribution_plot(data_series,
                       output_path: Path,
