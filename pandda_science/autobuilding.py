@@ -51,9 +51,14 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                                              output_path: Path,
                                              cutoffs: List,
                                              ):
+    print("\tWith no cutoff there are: {} autobuilt events...".format(len(autobuilding_rmsd_df)))
     for cutoff in cutoffs:
-        print(autobuilding_rmsd_df.head())
         cutoff_df = autobuilding_rmsd_df[autobuilding_rmsd_df["event_distance_to_model"] < cutoff]
+        print("\t\tAfter cutting off all those events beyond {} A, {} events remain".format(cutoff,
+                                                                                            len(cutoff_df),
+                                                                                            )
+              )
+        print(autobuilding_rmsd_df.head())
 
         # Phenix Control
         distribution_plot(cutoff_df["phenix_control_rmsd"],
