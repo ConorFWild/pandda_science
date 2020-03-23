@@ -27,13 +27,13 @@ def get_relative_median_rmsd_by_system_df(autobuilding_results_df: pd.DataFrame)
 
             # Phenxi control
             phenix_control_df = dataset_events_df[dataset_events_df["method"] == "phenix_control"]
-            phenix_control_rmsd = phenix_control_df["min_rmsd"]
+            phenix_control_rmsd = phenix_control_df["min_rmsd"].iloc[0]
             if phenix_control_rmsd == 0:
                 continue
 
             # Phenix event
             phenix_event_df = dataset_events_df[dataset_events_df["method"] == "phenix_event"]
-            phenix_event_rmsd = phenix_event_df["min_rmsd"]
+            phenix_event_rmsd = phenix_event_df["min_rmsd"].iloc[0]
             if phenix_event_rmsd == 0:
                 continue
 
