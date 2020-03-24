@@ -227,6 +227,15 @@ def get_autobuild_record(build_name,
 
     record["time"] = result.time
     record["distance_to_event"] = distance_to_event
+
+    result_model_paths = result.result_model_paths
+    ligand_model_path = 0
+    for result_model_path in result_model_paths:
+        if result_model_path.parent.name == "LigandFit_run_1_":
+            if result_model_path.name == "ligand_fit_1.pdb":
+                ligand_model_path = result_model_path
+    record["autobuild_path"] = ligand_model_path
+    record["stripped_receptor_path"] = ligand_model_path.parent.parent.parent / "stripped_receptor.pdb"
     return record
 
 
@@ -243,6 +252,9 @@ def get_null_autobuild_record(build_name,
 
     record["time"] = 0
     record["distance_to_event"] = 0
+    record["autobuild_path"] = 0
+    record["stripped_receptor_path"] = 0
+
     return record
 
 
