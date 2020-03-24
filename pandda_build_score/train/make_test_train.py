@@ -115,6 +115,8 @@ def get_system_labels_autobuilt(model_table,
 
         regex = "([a-z0-9]+)-x[0-9]+"
 
+        print(model_paths[0])
+
         m = re.search(regex,
                       model_paths[0],
                       )
