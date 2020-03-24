@@ -97,11 +97,14 @@ def get_system_labels_true(model_table):
 
         print(model_paths[0])
 
+        for path in model_paths:
+            m = re.search(regex,
+                          model_paths[0],
+                          )
+            print(m)
+            if m:
+                break
 
-        m = re.search(regex,
-                      model_paths[0],
-                      )
-        print(m)
         systems.append(m.group(0))
 
     return pd.Series(systems)
