@@ -21,12 +21,16 @@ from pandda_build_score.train.training import train
 def parse_args():
     parser = argparse.ArgumentParser()
     # IO
-    parser.add_argument("-i", "--input_training_table",
+    parser.add_argument("-e", "--event_table_path",
                         type=str,
                         help="The directory OF THE ROOT OF THE XCHEM DATABASE",
                         required=True
                         )
-
+    parser.add_argument("-a", "--autobuild_table_path",
+                        type=str,
+                        help="The directory OF THE ROOT OF THE XCHEM DATABASE",
+                        required=True
+                        )
     parser.add_argument("-o", "--out_dir_path",
                         type=str,
                         help="The directory for output and intermediate files to be saved to",
@@ -39,11 +43,12 @@ def parse_args():
 
 
 class Config(NamedTuple):
-    input_training_table_path: Path
+    event_table_path: Path
+    autobuild_table_path: Path
     out_dir_path: Path
 
 
-def get_training_config(args):
+def get_config(args):
     config = Config(input_training_table_path=Path(args.input_training_table),
                     out_dir_path=Path(args.out_dir),
                     )
@@ -58,8 +63,8 @@ def output_trained_network(network: nn.Module, out_path: Path):
 class Output:
     def __init__(self, path: Path):
         self.output_dir = path
-        self.output_build_score_training_df_path = path / "output_build_score_training_df.csv"
-        self.output_build_score_training_df_path = path / "output_build_score_test_df.csv"
+        self.train_table_path = path / "train_table.csv"
+        self.test_table_path = path / "test_table.csv"
 
     def attempt_mkdir(self, path: Path):
         try:
@@ -93,27 +98,30 @@ def setup_output(path: Path, overwrite: bool = False):
 if __name__ == "__main__":
     args = parse_args()
 
-    config: Config = get_training_config(args)
+    config: Config = get_config(args)
 
     output: Output = setup_output(config.out_dir_path)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    true_model_df = get_true_models_df(config.event_table_path)
 
-    train_dataloader: DataLoader = get_train_dataloader(config.input_training_table_path)
-    test_dataloader: DataLoader = get_test_dataloader(config.input_training_table_path)
+    autobuilt_models_df = get_autobuilt_models_df(config.autobuild_table_path)
 
-    network: nn.Module = get_network()
+    train_systems, test_systems = partition_by_system(true_model_df,
+                                                      autobuilt_models_df,
+                                                      )
 
-    trained_network, build_score_training_df = train(network,
-                                                     train_dataloader,
-                                                     )
+    train_table = make_table(true_model_df,
+                             autobuilt_models_df,
+                             train_systems,
+                             )
+    test_table = make_table(true_model_df,
+                            autobuilt_models_df,
+                            test_systems,
+                            )
 
-    build_score_test_df = test(network,
-                               test_dataloader,
-                               )
-
-    output_build_score_training_df(build_score_training_df)
-    output_build_score_test_df(build_score_test_df)
-    output_trained_network(trained_network,
-                           config.out_dir_path / "trained_network.pt",
-                           )
+    output_table(train_table,
+                 output.train_table_path,
+                 )
+    output_table(test_table,
+                 output.test_table_path,
+                 )

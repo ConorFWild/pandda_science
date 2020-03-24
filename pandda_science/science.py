@@ -172,7 +172,7 @@ if __name__ == "__main__":
         relative_median_rmsd_by_system_df = get_relative_median_rmsd_by_system_df(autobuilding_results_df)
         get_autobuilding_rmsd_distribution_graph(relative_median_rmsd_by_system_df,
                                                  config.out_dir_path,
-                                                 cutoffs=[2.0, 3.0, 4.0, 5.0, 7.0, 10.0, 20, 30, 50],
+                                                 cutoffs=[2.0, 3.0, 4.0, 5.0, 7.0, 10.0, 20.0, 30.0, 50.0],
                                                  )
         get_autobuilding_rscc_distribution_graph(autobuilding_results_df)
         get_relative_median_rmsd_by_system_graph(relative_median_rmsd_by_system_df)

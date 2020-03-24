@@ -1,7 +1,9 @@
 from typing import NamedTuple
 import os
+import time
 import subprocess
 import shutil
+import re
 import argparse
 from pathlib import Path
 
@@ -9,6 +11,8 @@ import pandas as pd
 
 from dask.distributed import Client
 from dask_jobqueue import SGECluster
+
+import luigi
 
 
 def parse_args():
@@ -83,6 +87,54 @@ def get_model_dirs(path: Path):
     model_dirs_series = model_dirs_df[model_dirs_df["num_models"] != 0]["model_dir"]
     model_dirs = [Path(path) for path in model_dirs_series]
     return model_dirs
+
+
+def original_pandda_command(data_dirs,
+                            out_dir,
+                            pdb_style="dimple.pdb",
+                            mtz_style="dimple.mtz",
+                            cpus=12,
+                            ):
+    env = "module load ccp4"
+    command = "{env}; pandda.analyse data_dirs='{dds}/*' pdb_style={pst} mtz_style={mst} cpus={cpus} out_dir={odr}"
+    formatted_command = command.format(env=env,
+                                       dds=data_dirs,
+                                       pst=pdb_style,
+                                       mst=mtz_style,
+                                       cpus=cpus,
+                                       odr=out_dir,
+                                       )
+    return formatted_command
+
+
+def parallel_pandda_command(data_dirs,
+                            out_dir,
+                            pdb_style="dimple.pdb",
+                            mtz_style="dimple.mtz",
+                            cpus=12,
+                            h_vmem=200,
+                            m_mem_free=8,
+                            ):
+    env = "module load ccp4"
+    python = "/dls/science/groups/i04-1/conor_dev/ccp4/build/bin/cctbx.python"
+    script = "/dls/science/groups/i04-1/conor_dev/pandda_2/program/run_pandda_2.py"
+    pandda_args = "data_dirs='{dds}/*' pdb_style={pst} mtz_style={mst} cpus={cpus} out_dir={odr}".format(dds=data_dirs,
+                                                                                                         pst=pdb_style,
+                                                                                                         mst=mtz_style,
+                                                                                                         cpus=cpus,
+                                                                                                         odr=out_dir,
+                                                                                                         )
+    qsub_args = "h_vmem={hvm} m_mem_free={mmf} process_dict_n_cpus={cpus}".format(hvm=h_vmem,
+                                                                                  mmf=m_mem_free,
+                                                                                  cpus=cpus,
+                                                                                  )
+    command = "{env}; {pyt} {scrp} {pandda_args} {qsub_args}".format(env=env,
+                                                                     pyt=python,
+                                                                     scrp=script,
+                                                                     pandda_args=pandda_args,
+                                                                     qsub_args=qsub_args,
+                                                                     )
+    return command
 
 
 class DispatchOriginalPanDDA:
@@ -182,6 +234,175 @@ def process_dask(funcs,
     return results
 
 
+class PanDDAStatus:
+    def __init__(self, pandda_out_dir: Path):
+        self.pandda_out_dir = pandda_out_dir
+        is_finished = self.is_finished(self.pandda_out_dir)
+        self.finished: bool = is_finished
+
+    def is_finished(self, pandda_out_dir):
+        if pandda_out_dir.is_dir():
+            if (pandda_out_dir / "analyses").is_dir():
+                if (pandda_out_dir / "analyses" / "pandda_analyse_events.csv"):
+                    return True
+
+        return False
+
+
+def mark_finished(path: Path, status: PanDDAStatus):
+    with open(str(path), "w") as f:
+        if status.finished:
+            f.write("done")
+        else:
+            f.write("failed")
+
+
+class QSub:
+    def __init__(self,
+                 command,
+                 submit_script_path,
+                 queue="low.q",
+                 cores=12,
+                 m_mem_free=5,
+                 h_vmem=120,
+                 ):
+        self.command = command
+        self.submit_script_path = submit_script_path
+        self.queue = queue
+        self.cores = cores
+        self.m_mem_free = m_mem_free
+        self.h_vmem = h_vmem
+
+        with open(str(submit_script_path), "w") as f:
+            f.write(command)
+
+        chmod_proc = subprocess.Popen("chmod 777 {}".format(submit_script_path),
+                                      shell=True,
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE,
+                                      )
+        chmod_proc.communicate()
+
+        qsub_command = "qsub -q {queue} -pe smp {cores} -l m_mem_free={m_mem_free}G,h_vmem={h_vmem}G {submit_scipt_path}"
+        self.qsub_command = qsub_command.format(queue=self.queue,
+                                                cores=self.cores,
+                                                m_mem_free=self.m_mem_free,
+                                                h_vmem=self.h_vmem,
+                                                submit_script_path=self.submit_script_path,
+                                                )
+
+    def __call__(self):
+        print("\tCommand is: {}".format(self.command))
+        print("\tQsub command is: {}".format(self.qsub_command))
+        submit_proc = subprocess.Popen(self.qsub_command,
+                                       shell=True,
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE,
+                                       )
+        stdout, stderr = submit_proc.communicate()
+
+        proc_number = self.parse_process_number(stdout)
+
+        time.sleep(10)
+
+        while not self.is_finished(proc_number):
+            time.sleep(10)
+
+    def parse_process_number(self, string):
+        regex = "[0-9]+"
+        m = re.search(regex,
+                      string,
+                      )
+        return m.group(0)
+
+    def is_finished(self, proc_number):
+        stat_proc = subprocess.Popen("qstat",
+                                     shell=True,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE,
+                                     )
+        stdout, stderr = stat_proc.communicate()
+
+        if re.search(proc_number, stdout):
+            return False
+        else:
+            return True
+
+
+class OriginalPanDDATask(luigi.Task):
+    submit_script_path = luigi.Parameter()
+    model_dir = luigi.Parameter()
+    output_dir = luigi.Parameter()
+
+    def run(self):
+        submit_script_path = Path(self.submit_script_path)
+        model_dir = Path(self.model_dir)
+        output_dir = Path(self.output_dir)
+        target_path = output_dir / "luigi.finished"
+
+        command = original_pandda_command(data_dirs=model_dir,
+                                          out_dir=output_dir,
+                                          )
+
+        QSub(command,
+             submit_script_path,
+             )()
+
+        status = PanDDAStatus(output_dir)
+
+        mark_finished(target_path,
+                      status,
+                      )
+
+    def output(self):
+        pandda_done_path = self.output_dir / "luigi.finished"
+        return luigi.LocalTarget(str(pandda_done_path))
+
+
+class ParallelPanDDATask(luigi.Task):
+    submit_script_path = luigi.Parameter()
+    model_dir = luigi.Parameter()
+    output_dir = luigi.Parameter()
+
+    def run(self):
+        submit_script_path = Path(self.submit_script_path)
+        model_dir = Path(self.model_dir)
+        output_dir = Path(self.output_dir)
+        target_path = output_dir / "luigi.finished"
+
+        command = parallel_pandda_command(data_dirs=model_dir,
+                                          out_dir=output_dir,
+                                          )
+
+        QSub(command,
+             submit_script_path,
+             )()
+
+        status = PanDDAStatus(output_dir)
+
+        mark_finished(target_path,
+                      status,
+                      )
+
+    def output(self):
+        pandda_done_path = self.output_dir / "luigi.finished"
+        return luigi.LocalTarget(str(pandda_done_path))
+
+
+def process_luigi(tasks,
+                  jobs=10,
+                  cores=3,
+                  processes=3,
+                  h_vmem=20,
+                  m_mem_free=5,
+                  h_rt=3000,
+                  ):
+    luigi.build(tasks,
+                workers=5,
+                local_scheduler=True,
+                )
+
+
 def pandda_fail(parallel_pandda_table,
                 model_dir,
                 type):
@@ -258,6 +479,39 @@ def get_pandda_tasks(model_dirs,
                                                            output_dir=parallel_pandda_output,
                                                            )
             tasks.append(parallel_pandda_tasks)
+
+    return tasks
+
+
+def try_make(path):
+    try:
+        os.mkdir(str(path))
+    except Exception as e:
+        print(e)
+
+
+def get_pandda_tasks_luigi(model_dirs):
+    tasks = []
+    for model_dir in model_dirs:
+        # Original PanDDA
+        original_pandda_output = model_dir.parent / "test_pandda_original"
+        try_remove(original_pandda_output)
+        try_make(original_pandda_output)
+        original_pandda_tasks = OriginalPanDDATask(submit_script_path=original_pandda_output / "sumbit.sh",
+                                                   model_dir=Path(model_dir),
+                                                   output_dir=original_pandda_output,
+                                                   )
+        tasks.append(original_pandda_tasks)
+
+        # Parallel PanDDA
+        parallel_pandda_output = model_dir.parent / "test_pandda_parallel"
+        try_remove(parallel_pandda_output)
+        try_make(parallel_pandda_output)
+        parallel_pandda_tasks = ParallelPanDDATask(submit_script_path=parallel_pandda_output / "submit.sh",
+                                                   model_dir=model_dir,
+                                                   output_dir=parallel_pandda_output,
+                                                   )
+        tasks.append(parallel_pandda_tasks)
 
     return tasks
 
@@ -357,9 +611,19 @@ if __name__ == "__main__":
         parallel_pandda_table: pd.DataFrame = pd.DataFrame(columns=columns)
 
     print("Making tasks...")
-    tasks = get_pandda_tasks(model_dirs,
-                             parallel_pandda_table,
-                             )
+    tasks = get_pandda_tasks_luigi(model_dirs)
+    process_luigi(tasks,
+                  jobs=8,
+                  cores=12,
+                  processes=1,
+                  h_vmem=120,
+                  m_mem_free=6,
+                  h_rt=3600 * 40,
+                  )
+
+    # tasks = get_pandda_tasks(model_dirs,
+    #                          parallel_pandda_table,
+    #                          )
 
     # Algorithm:
     # until all the model dirs have been done,
@@ -370,29 +634,29 @@ if __name__ == "__main__":
     #       regeneate tasks
     #       update and output parallel_pandda_table
 
-    print("Running tasks...")
-    while len(parallel_pandda_table) < 2 * len(model_dirs):
-        try:
-            results = process_dask(tasks,
-                                   jobs=8,
-                                   cores=12,
-                                   processes=1,
-                                   h_vmem=120,
-                                   m_mem_free=6,
-                                   h_rt=3600 * 40,
-                                   )
-
-        except Exception as e:
-            print(e)
-
-        status_df = get_status_df(tasks)
-        print(status_df[status_df["failed"] == 1])
-        print(status_df[status_df["suceeded"] == 1])
-        print(status_df[status_df["ran"] == 1])
-
-        parallel_pandda_table = update_parallel_pandda_table(parallel_pandda_table,
-                                                             status_df,
-                                                             )
-        tasks = get_pandda_tasks(model_dirs,
-                                 parallel_pandda_table,
-                                 )
+    # print("Running tasks...")
+    # while len(parallel_pandda_table) < 2 * len(model_dirs):
+    #     try:
+    #         results = process_dask(tasks,
+    #                                jobs=8,
+    #                                cores=12,
+    #                                processes=1,
+    #                                h_vmem=120,
+    #                                m_mem_free=6,
+    #                                h_rt=3600 * 40,
+    #                                )
+    #
+    #     except Exception as e:
+    #         print(e)
+    #
+    #     status_df = get_status_df(tasks)
+    #     print(status_df[status_df["failed"] == 1])
+    #     print(status_df[status_df["suceeded"] == 1])
+    #     print(status_df[status_df["ran"] == 1])
+    #
+    #     parallel_pandda_table = update_parallel_pandda_table(parallel_pandda_table,
+    #                                                          status_df,
+    #                                                          )
+    #     tasks = get_pandda_tasks(model_dirs,
+    #                              parallel_pandda_table,
+    #                              )
