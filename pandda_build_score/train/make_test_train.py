@@ -128,7 +128,7 @@ def get_true_models_df(path: Path):
     true_model_table.set_index(["dtag", "event_idx"], inplace=True)
     print(true_model_table.head())
 
-    true_model_table["system"] = get_system_labels(true_model_table)
+    true_model_table["system"] = get_system_labels_true(true_model_table)
 
     return true_model_table
 
@@ -140,7 +140,7 @@ def get_autobuilt_models_df(path: Path,
     true_model_table.set_index(["dtag", "event_idx"], inplace=True)
     print(true_model_table.head())
 
-    true_model_table["system"] = get_system_labels(true_model_table)
+    true_model_table["system"] = get_system_labels_autobuilt(true_model_table)
 
     return true_model_table
 
