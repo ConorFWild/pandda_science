@@ -83,12 +83,34 @@ def setup_output(path: Path, overwrite: bool = False):
     return output
 
 
-def get_system_labels(model_table):
+def get_system_labels_true(model_table):
     systems = []
     for idx, row in model_table.iterrows():
-        path = Path(row["initial_models_path"])
-        model_paths = [path.name
-                       for path
+        path = Path(row["pandda"]) / "processed_datasets"
+        model_paths = [p.name
+                       for p
+                       in path.glob("*")]
+
+        regex = "([a-z0-9]+)-x[0-9]+"
+
+        m = re.search(regex,
+                      model_paths[0],
+                      )
+        print(m)
+        systems.append(m.group(0))
+
+    return pd.Series(systems)
+
+
+def get_system_labels_autobuilt(model_table,
+                                event_table,
+                                ):
+    systems = []
+    for idx, row in model_table.iterrows():
+        event_table_row = event_table.loc[(row["dtag"], row["event_idx"])]
+        path = Path(event_table_row["pandda"]) / "processed_datasets"
+        model_paths = [p.name
+                       for p
                        in path.glob("*")]
 
         regex = "([a-z0-9]+)-x[0-9]+"
@@ -111,7 +133,9 @@ def get_true_models_df(path: Path):
     return true_model_table
 
 
-def get_autobuilt_models_df(path: Path):
+def get_autobuilt_models_df(path: Path,
+                            event_table,
+                            ):
     true_model_table = pd.read_csv(str(path))
     true_model_table.set_index(["dtag", "event_idx"], inplace=True)
     print(true_model_table.head())
