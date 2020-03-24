@@ -283,7 +283,7 @@ class QSub:
                                       )
         chmod_proc.communicate()
 
-        qsub_command = "qsub -q {queue} -pe smp {cores} -l m_mem_free={m_mem_free}G,h_vmem={h_vmem}G {submit_scipt_path}"
+        qsub_command = "qsub -q {queue} -pe smp {cores} -l m_mem_free={m_mem_free}G,h_vmem={h_vmem}G {submit_script_path}"
         self.qsub_command = qsub_command.format(queue=self.queue,
                                                 cores=self.cores,
                                                 m_mem_free=self.m_mem_free,
@@ -603,12 +603,12 @@ if __name__ == "__main__":
     print("Getting model dirs...")
     model_dirs = get_model_dirs(config.model_dirs_table_path)
 
-    print("Checking for old parallel pandda table...")
-    if output.parallel_pandda_table_path.is_file():
-        parallel_pandda_table: pd.DataFrame = pd.read_csv(str(output.parallel_pandda_table_path))
-    else:
-        columns = ["model_dir", "type", "suceeded", "failed", "event_table_path", "num_events", "mean_event_size"]
-        parallel_pandda_table: pd.DataFrame = pd.DataFrame(columns=columns)
+    # print("Checking for old parallel pandda table...")
+    # if output.parallel_pandda_table_path.is_file():
+    #     parallel_pandda_table: pd.DataFrame = pd.read_csv(str(output.parallel_pandda_table_path))
+    # else:
+    #     columns = ["model_dir", "type", "suceeded", "failed", "event_table_path", "num_events", "mean_event_size"]
+    #     parallel_pandda_table: pd.DataFrame = pd.DataFrame(columns=columns)
 
     print("Making tasks...")
     tasks = get_pandda_tasks_luigi(model_dirs)
