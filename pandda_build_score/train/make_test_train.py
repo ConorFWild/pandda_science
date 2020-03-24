@@ -87,11 +87,16 @@ def get_system_labels_true(model_table):
     systems = []
     for idx, row in model_table.iterrows():
         path = Path(row["pandda"]) / "processed_datasets"
+        print("\t{}".format(path))
+
         model_paths = [p.name
                        for p
                        in path.glob("*")]
 
         regex = "([a-z0-9]+)-x[0-9]+"
+
+        print(model_paths[0])
+
 
         m = re.search(regex,
                       model_paths[0],
@@ -109,7 +114,7 @@ def get_system_labels_autobuilt(model_table,
     for idx, row in model_table.iterrows():
         event_table_row = event_table.loc[(row["dtag"], row["event_idx"])]
         path = Path(event_table_row["pandda"]) / "processed_datasets"
-        print("\t{}".format(path ))
+        print("\t{}".format(path))
         model_paths = [p.name
                        for p
                        in path.glob("*")]
