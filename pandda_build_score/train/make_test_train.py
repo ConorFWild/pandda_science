@@ -101,10 +101,10 @@ def get_system_labels_true(model_table):
             m = re.search(regex,
                           model_paths[0],
                           )
-            print(m)
+            # print(m)
             if m:
                 break
-
+        print(m.group(0))
         systems.append(m.group(0))
 
     return pd.Series(systems)
