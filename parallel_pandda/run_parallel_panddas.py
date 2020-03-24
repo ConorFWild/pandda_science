@@ -301,7 +301,7 @@ class QSub:
                                        )
         stdout, stderr = submit_proc.communicate()
 
-        proc_number = self.parse_process_number(stdout)
+        proc_number = self.parse_process_number(str(stdout))
 
         time.sleep(10)
 
@@ -323,7 +323,7 @@ class QSub:
                                      )
         stdout, stderr = stat_proc.communicate()
 
-        if re.search(proc_number, stdout):
+        if re.search(proc_number, str(stdout)):
             return False
         else:
             return True
