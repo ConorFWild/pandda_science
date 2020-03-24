@@ -249,12 +249,14 @@ class PanDDAStatus:
         return False
 
 
-def mark_finished(path: Path, status: PanDDAStatus):
+def mark_finished(path: Path, status: PanDDAStatus, duration):
     with open(str(path), "w") as f:
         if status.finished:
-            f.write("done")
+            f.write("done\n")
+            f.write("Duration: {}".format(duration))
         else:
             f.write("failed")
+            f.write("Duration: {}".format(duration))
 
 
 class QSub:
@@ -344,14 +346,19 @@ class OriginalPanDDATask(luigi.Task):
                                           out_dir=output_dir,
                                           )
 
+        start_time = time.time()
+
         QSub(command,
              submit_script_path,
              )()
+
+        finish_time = time.time()
 
         status = PanDDAStatus(output_dir)
 
         mark_finished(target_path,
                       status,
+                      finish_time - start_time
                       )
 
     def output(self):
