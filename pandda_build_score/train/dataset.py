@@ -302,11 +302,15 @@ class BuildScoreDataset(Dataset):
                           ligand_model,
                           )
 
-        return {"data": data, "label": label}
+        return {"id": {"dtag": build.dtag, "event_idx": build.event_idx}, "data": data, "label": label}
 
 
-def get_dataloader(csv_path: Path):
-    dataset: Dataset = BuildScoreDataset(csv_path)
+def get_dataloader(csv_path: Path,
+                   shape,
+                   ):
+    dataset: Dataset = BuildScoreDataset(csv_path,
+                                         shape=shape,
+                                         )
 
     dataloader: DataLoader = DataLoader(dataset,
                                         batch_size=4,

@@ -5,6 +5,7 @@ import shutil
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 import torch
@@ -41,11 +42,13 @@ def parse_args():
 class Config(NamedTuple):
     input_training_table_path: Path
     out_dir_path: Path
+    shape: np.ndarray
 
 
 def get_training_config(args):
     config = Config(input_training_table_path=Path(args.input_training_table),
                     out_dir_path=Path(args.out_dir),
+                    shape=np.array([16, 16, 16]),
                     )
 
     return config
@@ -99,10 +102,14 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    train_dataloader: DataLoader = get_train_dataloader(config.input_training_table_path)
-    test_dataloader: DataLoader = get_test_dataloader(config.input_training_table_path)
+    train_dataloader: DataLoader = get_dataloader(config.input_training_table_path,
+                                                  config.shape,
+                                                  )
+    test_dataloader: DataLoader = get_dataloader(config.input_training_table_path,
+                                                 config.shape,
+                                                 )
 
-    network: nn.Module = get_network()
+    network: nn.Module = get_network(config.shape)
 
     trained_network, build_score_training_df = train(network,
                                                      train_dataloader,

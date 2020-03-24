@@ -4,6 +4,7 @@ import torch.nn.functional as F
 
 class Network(nn.Module):
     def __init__(self,
+                 shape,
                  ):
         super(Network, self).__init__()
         self.conv1 = nn.Conv3d(3,
@@ -36,9 +37,9 @@ class Network(nn.Module):
 
 
 
-def get_network():
+def get_network(shape):
 
-    network = Network().to(device)
+    network = Network(shape=shape)
 
     return network
 

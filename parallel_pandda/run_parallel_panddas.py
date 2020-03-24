@@ -95,7 +95,7 @@ def original_pandda_command(data_dirs,
                             mtz_style="dimple.mtz",
                             cpus=12,
                             ):
-    env = "module load ccp4"
+    env = "module load ccp4; module load pymol"
     command = "{env}; pandda.analyse data_dirs='{dds}/*' pdb_style={pst} mtz_style={mst} cpus={cpus} out_dir={odr}"
     formatted_command = command.format(env=env,
                                        dds=data_dirs,
