@@ -35,7 +35,7 @@ class Config(NamedTuple):
 
 def get_config(args):
     config = Config(out_dir_path=Path(args.out_dir_path),
-                    dataset_clustering_table_path=Path(args.model_dirs_table_path),
+                    dataset_clustering_table_path=Path(args.dataset_clustering_table_path),
                     )
 
     return config
