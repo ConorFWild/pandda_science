@@ -93,7 +93,7 @@ def get_system_labels_true(model_table):
                        for p
                        in path.glob("*")]
 
-        regex = "([a-z0-9]+)-x[0-9]+"
+        regex = "([a-z0-9]+)-[xX][0-9]+"
 
         print(model_paths[0])
 
