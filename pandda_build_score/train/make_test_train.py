@@ -102,7 +102,8 @@ def get_system_labels(model_table):
 
 
 def get_true_models_df(path: Path):
-    true_model_table = pd.read_csv(str(path)).set_index(["dtag", "event_idx"], inplace=True)
+    true_model_table = pd.read_csv(str(path))
+    true_model_table.set_index(["dtag", "event_idx"], inplace=True)
     print(true_model_table.head())
 
     true_model_table["system"] = get_system_labels(true_model_table)
@@ -111,7 +112,8 @@ def get_true_models_df(path: Path):
 
 
 def get_autobuilt_models_df(path: Path):
-    true_model_table = pd.read_csv(str(path)).set_index(["dtag", "event_idx"], inplace=True)
+    true_model_table = pd.read_csv(str(path))
+    true_model_table.set_index(["dtag", "event_idx"], inplace=True)
     print(true_model_table.head())
 
     true_model_table["system"] = get_system_labels(true_model_table)
