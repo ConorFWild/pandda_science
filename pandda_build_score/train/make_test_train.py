@@ -104,6 +104,7 @@ def get_system_labels_true(model_table):
             # print(m)
             if m:
                 break
+        print(m)
         print(m.group(0))
         systems.append(m.group(0))
 
