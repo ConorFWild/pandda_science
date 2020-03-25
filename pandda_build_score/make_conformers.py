@@ -117,10 +117,15 @@ def make_conformers(smiles_path,
                          output_dir / "{}.pdb".format(i),
                          )
 
+    return len(cids), output_dir
 
-def process(funcs):
-    for func in funcs:
-        func()
+
+def process(funcs: Dict):
+    results = {}
+    for key, func in funcs.items():
+        results[key] = func()
+
+    return results
 
 
 def trymake(conformer_output_dir):
@@ -133,18 +138,42 @@ def trymake(conformer_output_dir):
 def make_conformer_tasks(event_table,
                          output_dir,
                          ):
-    tasks = []
+    tasks = {}
     for idx, row in event_table:
-        conformer_output_dir = output_dir / "{}_{}_{}".format(row["pandda_name"],
-                                                              row["dtag"],
-                                                              row["event_idx"],
+        pandda_name = row["pandda_name"]
+        dtag = row["dtag"]
+        event_idx = row["event_idx"]
+        conformer_output_dir = output_dir / "{}_{}_{}".format(pandda_name,
+                                                              dtag,
+                                                              event_idx,
                                                               )
         trymake(conformer_output_dir)
         task = partial(make_conformers,
+                       row["ligand_smiles_path"],
+                       conformer_output_dir,
                        )
-        tasks.append(task)
+        tasks[(pandda_name, dtag, event_idx)] = task
 
     return tasks
+
+
+def make_table(results):
+    records = []
+    for key, result in results.items():
+        record = {}
+        record["pandda_name"] = key[0]
+        record["dtag"] = key[1]
+        record["event_idx"] = key[2]
+        record["num_confs"] = result[0]
+        record["output_dir"] = result[1]
+        records.append(record)
+
+    return pd.DataFrame(records)
+
+
+def output_table(results_table,
+                 output_dir):
+    results_table.to_csv(str(output_dir))
 
 
 if __name__ == "__main__":
@@ -160,4 +189,7 @@ if __name__ == "__main__":
                                            output.output_dir,
                                            )
 
-    process(conformer_tasks)
+    results = process(conformer_tasks)
+
+    results_table = make_table(results)
+    output_table(results_table)
