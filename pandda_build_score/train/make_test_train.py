@@ -279,7 +279,7 @@ if __name__ == "__main__":
 
 
     autobuilt_models_df = get_autobuilt_models_df(config.autobuild_table_path,
-                                                  event_table,
+                                                  true_model_df,
                                                   )
 
 
