@@ -20,6 +20,7 @@ class Event(NamedTuple):
     actually_built: bool
     model_dir: Path
     pandda_dir: Path
+    ligand_smiles_path: Path
     x: float
     y: float
     z: float
