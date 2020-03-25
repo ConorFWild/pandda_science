@@ -208,6 +208,8 @@ if __name__ == "__main__":
                                            output.output_dir,
                                            )
 
+    print("Processing {} tasks...".format(len(conformer_tasks)))
+
     results = process(conformer_tasks)
 
     results_table = make_table(results)
