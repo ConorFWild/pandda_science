@@ -124,6 +124,7 @@ def get_system_labels_autobuilt(model_table,
                                 ):
     systems = []
     for idx, row in model_table.iterrows():
+        print(row)
         event_table_row = event_table.loc[(row["dtag"], row["event_idx"])]
         path = Path(event_table_row["pandda"]) / "processed_datasets"
         print("\t{}".format(path))
@@ -131,14 +132,25 @@ def get_system_labels_autobuilt(model_table,
                        for p
                        in path.glob("*")]
 
-        regex = "([a-z0-9]+)-x[0-9]+"
+        regex = "([a-zA-Z0-9]+)-[xX][0-9]+"
 
-        print(model_paths[0])
+        if len(model_paths) == 0:
+            print("\tCOULD NOT FIND SYSTEM NAME ON {}".format(path))
+            systems.append("None")
+            continue
 
-        m = re.search(regex,
-                      model_paths[0],
-                      )
-        systems.append(m.group(0))
+        for path in model_paths:
+            m = re.search(regex,
+                          path,
+                          )
+
+        if m is None:
+            print("\tCOULD NOT FIND SYSTEM NAME ON {}".format(path))
+            systems.append("None")
+        else:
+            print(m)
+            print(m.group(1))
+            systems.append(m.group(1))
 
     return pd.Series(systems)
 
