@@ -381,14 +381,19 @@ class ParallelPanDDATask(luigi.Task):
                                           out_dir=output_dir,
                                           )
 
+        start_time = time.time()
+
         QSub(command,
              submit_script_path,
              )()
+
+        finish_time = time.time()
 
         status = PanDDAStatus(output_dir)
 
         mark_finished(target_path,
                       status,
+                      finish_time-start_time,
                       )
 
     def output(self):
@@ -496,29 +501,39 @@ def try_make(path):
     except Exception as e:
         print(e)
 
+def is_done(original_pandda_output):
+    if original_pandda_output.is_dir():
+        if (original_pandda_output / "luigi.finished").is_file():
+            return True
+
+    return False
+
 
 def get_pandda_tasks_luigi(model_dirs):
     tasks = []
     for model_dir in model_dirs:
         # Original PanDDA
         original_pandda_output = model_dir.parent / "test_pandda_original"
-        try_remove(original_pandda_output)
-        try_make(original_pandda_output)
-        original_pandda_tasks = OriginalPanDDATask(submit_script_path=original_pandda_output / "sumbit.sh",
-                                                   model_dir=Path(model_dir),
-                                                   output_dir=original_pandda_output,
-                                                   )
-        tasks.append(original_pandda_tasks)
+        if not is_done(original_pandda_output):
+            try_remove(original_pandda_output)
+            try_make(original_pandda_output)
+            original_pandda_tasks = OriginalPanDDATask(submit_script_path=original_pandda_output / "sumbit.sh",
+                                                       model_dir=Path(model_dir),
+                                                       output_dir=original_pandda_output,
+                                                       )
+            tasks.append(original_pandda_tasks)
 
         # Parallel PanDDA
         parallel_pandda_output = model_dir.parent / "test_pandda_parallel"
-        try_remove(parallel_pandda_output)
-        try_make(parallel_pandda_output)
-        parallel_pandda_tasks = ParallelPanDDATask(submit_script_path=parallel_pandda_output / "submit.sh",
-                                                   model_dir=model_dir,
-                                                   output_dir=parallel_pandda_output,
-                                                   )
-        tasks.append(parallel_pandda_tasks)
+        if not is_done(parallel_pandda_output):
+
+            try_remove(parallel_pandda_output)
+            try_make(parallel_pandda_output)
+            parallel_pandda_tasks = ParallelPanDDATask(submit_script_path=parallel_pandda_output / "submit.sh",
+                                                       model_dir=model_dir,
+                                                       output_dir=parallel_pandda_output,
+                                                       )
+            tasks.append(parallel_pandda_tasks)
 
     return tasks
 
