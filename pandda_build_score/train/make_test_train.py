@@ -127,6 +127,8 @@ def get_system_labels_autobuilt(model_table,
     for idx, row in model_table.iterrows():
         print(row)
         event_table_row = event_table.loc[(idx[0], idx[1])]
+        # event_row = event_table.loc[(idx[0])]
+        print(event_table_row)
         path = Path(event_table_row.loc["pandda"]) / "processed_datasets"
         print("\t{}".format(path))
         model_paths = [p.name
