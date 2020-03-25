@@ -57,6 +57,7 @@ def get_panddas(root_dir: Path):
         pandda = PanDDA(dir=pandda_dir,
                         events=None,
                         event_table_path=inspect_path,
+                        model_dir=None
                         )
 
         panddas[inspect_path] = pandda
