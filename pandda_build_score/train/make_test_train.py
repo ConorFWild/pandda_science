@@ -193,17 +193,23 @@ def partition_by_system(true_model_df,
                         autobuilt_models_df,
                         test=0.2):
     systems = list(true_model_df["system"].unique())
+    print(systems)
 
     proportion = 0
     current_systems = []
     num_true_models = len(true_model_df)
 
     while proportion < 0.2:
+        print(proportion)
+        print(systems)
+        print(current_systems)
         current_systems.append(systems.pop())
         num_datasets = sum([len(true_model_df[true_model_df["system"] == current_system])
                             for current_system
                             in current_systems
                             ])
+        print(num_datasets)
+        print(num_true_models)
 
         proportion = num_datasets / num_true_models
 
