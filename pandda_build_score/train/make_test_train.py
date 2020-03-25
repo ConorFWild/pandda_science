@@ -105,8 +105,8 @@ def get_system_labels_true(model_table):
             if m:
                 break
         print(m)
-        print(m.group(0))
-        systems.append(m.group(0))
+        print(m.group(1))
+        systems.append(m.group(1))
 
     return pd.Series(systems)
 
