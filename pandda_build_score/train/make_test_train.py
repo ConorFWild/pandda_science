@@ -104,9 +104,14 @@ def get_system_labels_true(model_table):
             # print(m)
             if m is not None:
                 break
-        print(m)
-        print(m.group(1))
-        systems.append(m.group(1))
+
+        if m is None:
+            print("\tCOULD NOT FIND SYSTEM NAME ON {}".format(path))
+            systems.append("None")
+        else:
+            print(m)
+            print(m.group(1))
+            systems.append(m.group(1))
 
     return pd.Series(systems)
 
