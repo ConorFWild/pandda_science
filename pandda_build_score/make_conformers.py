@@ -148,6 +148,8 @@ def make_conformer_tasks(event_table,
                                                               event_idx,
                                                               )
         trymake(conformer_output_dir)
+        if row["ligand_smiles_path"] == "None":
+            continue
         task = partial(make_conformers,
                        row["ligand_smiles_path"],
                        conformer_output_dir,
