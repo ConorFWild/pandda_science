@@ -21,6 +21,7 @@ class Event(NamedTuple):
     model_dir: Path
     pandda_dir: Path
     ligand_smiles_path: Path
+    pandda_name: str
     x: float
     y: float
     z: float

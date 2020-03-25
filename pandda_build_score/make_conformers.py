@@ -86,6 +86,28 @@ def setup_output(path: Path, overwrite: bool = False):
     output.make(overwrite=overwrite)
     return output
 
+def get_event_table(path: Path):
+    return pd.read_csv(str(path))
+
+def make_conformers(smiles_path,
+                    output_dir,
+                    num_confs=20):
+    smiles_string = smiles_from_path(smiles_path)
+    m = Chem.MolFromSmiles(smiles_string)
+    m2 = Chem.AddHs(m)
+    cids = AllChem.EmbedMultipleConfs(m2,
+                                      numConfs=num_confs,
+                                      )
+    for i, conformer in enumerate(cids):
+        output_conformer()
+
+
+def make_conformer_tasks(event_table,
+                         output_dir,
+                         ):
+
+    for idx, row in event_table:
+        make_conformers()
 
 if __name__ == "__main__":
     args = parse_args()
@@ -96,3 +118,8 @@ if __name__ == "__main__":
 
     event_table = get_event_table(config.event_table_path)
 
+    conformer_tasks = make_conformer_tasks(event_table,
+                                           output.output_dir,
+                                           )
+
+    process(conformer_tasks)
