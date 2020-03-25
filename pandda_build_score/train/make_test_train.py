@@ -119,7 +119,7 @@ def get_system_labels_true(model_table):
 
     print(systems)
 
-    return pd.Series(systems)
+    return systems
 
 
 def get_system_labels_autobuilt(model_table,
@@ -159,7 +159,7 @@ def get_system_labels_autobuilt(model_table,
 
     print(systems)
 
-    return pd.Series(systems)
+    return systems
 
 
 def get_true_models_df(path: Path):
