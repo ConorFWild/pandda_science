@@ -32,7 +32,7 @@ def num_modelable_distribution_histogram(global_cluster_distribution_df,
                                return_counts=True,
                                )
 
-    distribution_plot(values,
+    bar_plot(values,
                       counts,
                       output_path / "num_modelable_clusters.png",
                       )
