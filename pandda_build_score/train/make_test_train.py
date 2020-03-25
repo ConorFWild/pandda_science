@@ -86,6 +86,7 @@ def setup_output(path: Path, overwrite: bool = False):
 def get_system_labels_true(model_table):
     systems = []
     for idx, row in model_table.iterrows():
+        print(row)
         path = Path(row.loc["pandda"]) / "processed_datasets"
         print("\t{}".format(path))
 
