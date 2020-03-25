@@ -36,3 +36,9 @@ def distribution_plot(data_series,
     fig = ax.get_figure()
     fig.savefig(str(output_path))
     plt.close(fig)
+
+def bar_plot(x, y, output_path):
+    ax = sns.barplot(x, y)
+    fig = ax.get_figure()
+    fig.savefig(str(output_path))
+    plt.close(fig)

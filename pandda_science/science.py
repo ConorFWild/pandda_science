@@ -12,6 +12,7 @@ from pandda_science.parallel_pandda import (get_parallel_pandda_df,
                                             )
 from pandda_science.dataset_clustering import (get_global_cluster_distribution_df,
                                                num_clusters_distribution_histogram,
+                                               num_modelable_distribution_histogram,
                                                )
 from pandda_science.autobuilding import (get_autobuilding_results_df,
                                          get_relative_median_rmsd_by_system_df,
@@ -164,7 +165,8 @@ if __name__ == "__main__":
     if config.dataset_clustering_df_path.is_file():
         global_cluster_distribution_df: pd.DataFrame = get_global_cluster_distribution_df(
             config.dataset_clustering_df_path)
-        num_clusters_distribution_histogram()
+        num_clusters_distribution_histogram(global_cluster_distribution_df)
+        num_modelable_distribution_histogram(global_cluster_distribution_df)
 
     # Autobuilding
     if config.autobuilding_df_path.is_file():
