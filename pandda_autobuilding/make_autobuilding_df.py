@@ -288,6 +288,18 @@ def get_model_distance_to_event(true_model,
         return min(distances_to_event)
 
 
+def parse_rscc(path, build_name):
+    autobuild_system_path = path
+    autobuild_path = autobuild_system_path / str(build_name)
+    with open(str(autobuild_path / "LigandFit_run_1_" / "LigandFit_summary.dat"), "r") as f:
+        string = f.read()
+
+    regex = "^[\s]+[1]+[\s]+[0-9\.]+[\s]+([0-9\.]+)"
+    m = re.search(regex,
+                  string)
+    return float(m.group(1))
+
+
 def analyse_autobuilding_results(true_model_path,
                                  event,
                                  results,
@@ -313,6 +325,9 @@ def analyse_autobuilding_results(true_model_path,
                                                )
 
         else:
+            rscc = parse_rscc(result["path"],
+                              build_name,
+                              )
             record = get_autobuild_record(build_name,
                                           candidate_model_results,
                                           model_distance_to_event,
@@ -399,10 +414,11 @@ if __name__ == "__main__":
             print("\tMissing a json, skipping!")
             continue
 
-        results[(event.dtag, event.event_idx)] = {}
-        results[(event.dtag, event.event_idx)]["phenix_control"] = phenix_control_result
-        results[(event.dtag, event.event_idx)]["phenix_event"] = phenix_event_result
-        final_model_paths[(event.dtag, event.event_idx)] = event.final_model_path
+        results[(event.pandda_name, event.dtag, event.event_idx)] = {}
+        results[(event.pandda_name, event.dtag, event.event_idx)]["phenix_control"] = phenix_control_result
+        results[(event.pandda_name, event.dtag, event.event_idx)]["phenix_event"] = phenix_event_result
+        results[(event.pandda_name, event.dtag, event.event_idx)]["path"] = event_output_dir_path
+        final_model_paths[(event.pandda_name, event.dtag, event.event_idx)] = event.final_model_path
 
     print("\tFinished getting results jsons, with: {} jsons found".format(len(results)))
 

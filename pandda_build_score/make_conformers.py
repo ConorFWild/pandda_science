@@ -139,7 +139,7 @@ def make_conformer_tasks(event_table,
                          output_dir,
                          ):
     tasks = {}
-    for idx, row in event_table:
+    for idx, row in event_table.iterrows():
         pandda_name = row["pandda_name"]
         dtag = row["dtag"]
         event_idx = row["event_idx"]
@@ -193,4 +193,5 @@ if __name__ == "__main__":
 
     results_table = make_table(results)
     output_table(results_table,
-                 config.out_dir_path / "conformer_table.csv")
+                 config.out_dir_path / "conformer_table.csv",
+                 )
