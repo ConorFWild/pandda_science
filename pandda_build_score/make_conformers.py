@@ -86,11 +86,12 @@ def get_event_table(path: Path):
     return pd.read_csv(str(path))
 
 
-def output_conformer(conformer,
+def output_conformer(mol,
+                     conformer,
                      output_path,
                      ):
     writer = Chem.PDBWriter(str(output_path))
-    writer.write(conformer)
+    writer.write(mol, conformer)
 
 
 def smiles_from_path(path):
@@ -112,8 +113,10 @@ def make_conformers(smiles_path,
                                       numConfs=num_confs,
                                       pruneRmsThresh=rms_thresh,
                                       )
+    m3 = Chem.RemoveHs(m2)
     for i, conformer in enumerate(cids):
-        output_conformer(conformer,
+        output_conformer(m3,
+                         conformer,
                          output_dir / "{}.pdb".format(i),
                          )
 
