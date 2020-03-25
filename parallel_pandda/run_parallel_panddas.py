@@ -522,6 +522,8 @@ def get_pandda_tasks_luigi(model_dirs):
                                                        output_dir=original_pandda_output,
                                                        )
             tasks.append(original_pandda_tasks)
+        else:
+            print("\tAlready done {}".format(original_pandda_output))
 
         # Parallel PanDDA
         parallel_pandda_output = model_dir.parent / "test_pandda_parallel"
@@ -534,6 +536,8 @@ def get_pandda_tasks_luigi(model_dirs):
                                                        output_dir=parallel_pandda_output,
                                                        )
             tasks.append(parallel_pandda_tasks)
+        else:
+            print("\tAlready done {}".format(parallel_pandda_output))
 
     return tasks
 
