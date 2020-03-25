@@ -117,6 +117,8 @@ def get_system_labels_true(model_table):
             print(m.group(1))
             systems.append(m.group(1))
 
+    print(systems)
+
     return pd.Series(systems)
 
 
@@ -155,6 +157,8 @@ def get_system_labels_autobuilt(model_table,
             print(m.group(1))
             systems.append(m.group(1))
 
+    print(systems)
+
     return pd.Series(systems)
 
 
@@ -164,7 +168,9 @@ def get_true_models_df(path: Path):
     true_model_table = true_model_table[true_model_table["actually_built"] == True]
     print(true_model_table.head())
 
-    true_model_table["system"] = get_system_labels_true(true_model_table)
+    labels = get_system_labels_true(true_model_table)
+    print(labels)
+    true_model_table["system"] = labels
 
     true_model_table = true_model_table[true_model_table["system"] != "None"]
 
@@ -179,7 +185,8 @@ def get_autobuilt_models_df(path: Path,
     # autobuilt_model_table = autobuilt_model_table[autobuilt_model_table["actually_built"] == True]
     print(autobuilt_model_table.head())
 
-    autobuilt_model_table["system"] = get_system_labels_autobuilt(autobuilt_model_table, event_table)
+    labels = get_system_labels_autobuilt(autobuilt_model_table, event_table)
+    autobuilt_model_table["system"] = labels
     true_model_table = autobuilt_model_table[autobuilt_model_table["system"] != "None"]
 
     return true_model_table
