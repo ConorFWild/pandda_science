@@ -290,8 +290,8 @@ if __name__ == "__main__":
     autobuilt_models_df = get_autobuilt_models_df(config.autobuild_table_path,
                                                   true_model_df,
                                                   )
-
-
+    print(true_model_df.head())
+    print(autobuilt_models_df.head())
     train_systems, test_systems = partition_by_system(true_model_df,
                                                       autobuilt_models_df,
                                                       )
