@@ -102,7 +102,7 @@ def get_system_labels_true(model_table):
                           model_paths[0],
                           )
             # print(m)
-            if m:
+            if m is not None:
                 break
         print(m)
         print(m.group(1))
