@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import joblib
 
 from functools import partial
 
@@ -179,6 +180,19 @@ def make_table(results):
 def output_table(results_table,
                  output_dir):
     results_table.to_csv(str(output_dir))
+
+
+def process(tasks):
+    keys = list(tasks.keys())
+    funcs = list(tasks.values())
+    results = joblib.Parallel(n_jobs=20,
+                              verbose=20)(joblib.delayed(func)()
+                                          for func
+                                          in funcs
+                                          )
+    results = {key: result for key, result in zip(keys, results)}
+
+    return results
 
 
 if __name__ == "__main__":
