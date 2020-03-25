@@ -18,6 +18,8 @@ class Event(NamedTuple):
     final_model_path: Path
     event_map_path: Path
     actually_built: bool
+    model_dir: Path
+    pandda_dir: Path
     x: float
     y: float
     z: float
@@ -27,3 +29,5 @@ class PanDDA(NamedTuple):
     dir: Path
     events: Union[Dict[Tuple[str, int], Event], None]
     event_table_path: Path
+    model_dir: Path
+

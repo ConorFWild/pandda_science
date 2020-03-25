@@ -77,6 +77,15 @@ def is_actually_built(final_model_path: Path):
         return False
 
 
+def get_ligand_smiles(dataset_path):
+    ligand_files_path = dataset_path / "ligand_files"
+    smiles_paths = list(ligand_files_path.glob("*.smiles"))
+    if len(smiles_paths) == 0:
+        return "None"
+    else:
+        return smiles_paths[0]
+
+
 def get_events(pandda: PanDDA):
     events: Dict[Tuple[str, int], Event] = {}
 
@@ -95,6 +104,7 @@ def get_events(pandda: PanDDA):
                                                                                       event_record["event_idx"],
                                                                                       event_record["1-BDC"],
                                                                                       )
+        ligand_smiles = get_ligand_smiles(dataset_path)
 
         actually_built = is_actually_built(final_model_path)
 
@@ -109,9 +119,12 @@ def get_events(pandda: PanDDA):
                              viewed=event_record["Viewed"],
                              initial_model_path=initial_model_path,
                              data_path=data_path,
+                             model_dir=pandda.model_dir,
+                             pandda_dir=pandda.dir,
                              final_model_path=final_model_path,
                              event_map_path=event_map_path,
                              actually_built=actually_built,
+                             ligand_smiles=ligand_smiles,
                              x=event_record["x"],
                              y=event_record["y"],
                              z=event_record["z"],
@@ -143,6 +156,8 @@ def get_panddas_table(panddas: Dict[Path, PanDDA]):
                       "final_model_path": event.final_model_path,
                       "event_map_path": event.event_map_path,
                       "actually_built": event.actually_built,
+                      "model_dir": event.model_dir,
+                      "pandda_dir": event.pandda_dir,
                       "x": event.x,
                       "y": event.y,
                       "z": event.z,
@@ -157,6 +172,18 @@ def get_panddas_table(panddas: Dict[Path, PanDDA]):
 
 def output_table(df: pd.DataFrame, output_path: Path):
     df.to_csv(str(output_path))
+
+
+def get_pandda_model_dir(pandda_dir: Path):
+    parts = pandda_dir.parts
+
+    path_to_analyses = Path(parts[0]) / parts[1] / parts[2] / parts[3] / parts[4] / parts[5] / parts[6] / parts[7]
+    if (path_to_analyses / "initial_model").is_dir():
+        return path_to_analyses / "initial_model"
+    elif (path_to_analyses / "model_building").is_dir():
+        return path_to_analyses / "model_building"
+    else:
+        raise Exception("No model building path!")
 
 
 if __name__ == "__main__":
@@ -179,6 +206,7 @@ if __name__ == "__main__":
             "\t\tActually built: {}".format(len([event for event_id, event in events.items() if event.actually_built])))
 
         panddas_with_events[pandda_path] = PanDDA(dir=pandda.dir,
+                                                  model_dir=get_pandda_model_dir(pandda.dir),
                                                   events=events,
                                                   event_table_path=pandda.event_table_path,
                                                   )
