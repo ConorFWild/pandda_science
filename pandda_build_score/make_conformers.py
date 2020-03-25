@@ -8,15 +8,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-import torch
-from torch.utils.data import DataLoader
-import torch.nn as nn
+from functools import partial
 
-from pandda_types.data import PanDDA, Event
-
-from pandda_build_score.train.dataset import get_dataloader
-from pandda_build_score.train.network import get_network
-from pandda_build_score.train.training import train
+from rdkit import Chem
+from rdkit.Chem import AllChem
 
 
 def parse_args():
@@ -86,28 +81,71 @@ def setup_output(path: Path, overwrite: bool = False):
     output.make(overwrite=overwrite)
     return output
 
+
 def get_event_table(path: Path):
     return pd.read_csv(str(path))
 
+
+def output_conformer(conformer,
+                     output_path,
+                     ):
+    writer = Chem.PDBWriter(str(output_path))
+    writer.write(conformer)
+
+
+def smiles_from_path(path):
+    with open(str(path), "r") as f:
+        string = f.read()
+
+    return string
+
+
 def make_conformers(smiles_path,
                     output_dir,
-                    num_confs=20):
+                    num_confs=20,
+                    rms_thresh=2,
+                    ):
     smiles_string = smiles_from_path(smiles_path)
     m = Chem.MolFromSmiles(smiles_string)
     m2 = Chem.AddHs(m)
     cids = AllChem.EmbedMultipleConfs(m2,
                                       numConfs=num_confs,
+                                      pruneRmsThresh=rms_thresh,
                                       )
     for i, conformer in enumerate(cids):
-        output_conformer()
+        output_conformer(conformer,
+                         output_dir / "{}.pdb".format(i),
+                         )
+
+
+def process(funcs):
+    for func in funcs:
+        func()
+
+
+def trymake(conformer_output_dir):
+    try:
+        os.mkdir(str(conformer_output_dir))
+    except Exception as e:
+        print(e)
 
 
 def make_conformer_tasks(event_table,
                          output_dir,
                          ):
-
+    tasks = []
     for idx, row in event_table:
-        make_conformers()
+        conformer_output_dir = output_dir / "{}_{}_{}".format(row["pandda_name"],
+                                                              row["dtag"],
+                                                              row["event_idx"],
+                                                              )
+        trymake(conformer_output_dir)
+        task = partial(make_conformers,
+                       )
+        tasks.append(task)
+
+    return tasks
+
 
 if __name__ == "__main__":
     args = parse_args()
