@@ -171,6 +171,7 @@ def get_true_models_df(path: Path):
     labels = get_system_labels_true(true_model_table)
     print(labels)
     true_model_table["system"] = labels
+    print(len(labels), len(true_model_table))
 
     true_model_table = true_model_table[true_model_table["system"] != "None"]
 
@@ -186,6 +187,7 @@ def get_autobuilt_models_df(path: Path,
     print(autobuilt_model_table.head())
 
     labels = get_system_labels_autobuilt(autobuilt_model_table, event_table)
+    print(len(labels), len(autobuilt_model_table))
     autobuilt_model_table["system"] = labels
     true_model_table = autobuilt_model_table[autobuilt_model_table["system"] != "None"]
 
