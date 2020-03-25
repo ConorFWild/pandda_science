@@ -147,6 +147,8 @@ def get_true_models_df(path: Path):
 
     true_model_table["system"] = get_system_labels_true(true_model_table)
 
+    true_model_table = true_model_table[true_model_table["system"] != "None"]
+
     return true_model_table
 
 
@@ -159,6 +161,7 @@ def get_autobuilt_models_df(path: Path,
     print(true_model_table.head())
 
     true_model_table["system"] = get_system_labels_autobuilt(true_model_table, event_table)
+    true_model_table = true_model_table[true_model_table["system"] != "None"]
 
     return true_model_table
 
@@ -256,9 +259,13 @@ if __name__ == "__main__":
 
     true_model_df = get_true_models_df(config.event_table_path)
 
-    autobuilt_models_df = get_autobuilt_models_df(config.autobuild_table_path)
-
     event_table = get_event_df(config.event_table_path)
+
+
+    autobuilt_models_df = get_autobuilt_models_df(config.autobuild_table_path,
+                                                  event_table,
+                                                  )
+
 
     train_systems, test_systems = partition_by_system(true_model_df,
                                                       autobuilt_models_df,
