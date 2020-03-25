@@ -41,7 +41,7 @@ class Config(NamedTuple):
 
 def get_training_config(args):
     config = Config(event_table_path=Path(args.event_table_path),
-                    out_dir_path=Path(args.out_dir),
+                    out_dir_path=Path(args.out_dir_path),
                     )
 
     return config
