@@ -192,4 +192,5 @@ if __name__ == "__main__":
     results = process(conformer_tasks)
 
     results_table = make_table(results)
-    output_table(results_table)
+    output_table(results_table,
+                 config.out_dir_path / "conformer_table.csv")
