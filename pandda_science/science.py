@@ -165,8 +165,10 @@ if __name__ == "__main__":
     if config.dataset_clustering_df_path.is_file():
         global_cluster_distribution_df: pd.DataFrame = get_global_cluster_distribution_df(
             config.dataset_clustering_df_path)
-        num_clusters_distribution_histogram(global_cluster_distribution_df)
-        num_modelable_distribution_histogram(global_cluster_distribution_df)
+        num_clusters_distribution_histogram(global_cluster_distribution_df,
+                                            config.out_dir_path)
+        num_modelable_distribution_histogram(global_cluster_distribution_df,
+                                             config.out_dir_path)
 
     # Autobuilding
     if config.autobuilding_df_path.is_file():
