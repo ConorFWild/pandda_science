@@ -95,11 +95,14 @@ def get_system_labels_true(model_table):
 
         regex = "([a-zA-Z0-9]+)-[xX][0-9]+"
 
-        print(model_paths[0])
+        if len(model_paths) == 0:
+            print("\tCOULD NOT FIND SYSTEM NAME ON {}".format(path))
+            systems.append("None")
+            continue
 
         for path in model_paths:
             m = re.search(regex,
-                          model_paths[0],
+                          path,
                           )
             # print(m)
             if m is not None:
