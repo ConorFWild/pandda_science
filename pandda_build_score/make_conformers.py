@@ -105,7 +105,7 @@ def smiles_from_path(path):
 def make_conformers(smiles_path,
                     output_dir,
                     num_confs=500,
-                    rms_thresh=1,
+                    rms_thresh=1.5,
                     ):
     smiles_string = smiles_from_path(smiles_path)
     m = Chem.MolFromSmiles(smiles_string)
