@@ -339,23 +339,38 @@ def get_event_table(event_table_path: Path):
 
 
 def main():
+    print("Parsing args...")
     args = parse_args()
 
+    print("Configuring...")
     config = get_config(args)
 
+    print("Setting up output...")
     output: Output = setup_output_directory(config.out_dir_path)
 
+    print("Getting event table...")
     event_table = get_event_table(config.events_df_path)
+    print(event_table.head())
 
+    print("Getting old and new panddas...")
     original_panddas, new_panddas = get_panddas(event_table)
+    print("Got {} original panddas".format(len(original_panddas)))
+    print("Got {} new panddas".format(len(new_panddas)))
 
+    print("Getting pandda matches")
     pandda_matches = match_panddas(original_panddas,
                                    new_panddas,
                                    )
+    print(pandda_matches)
 
+    print("Comparing panddas")
     comparisons = []
     for original_pandda, new_pandda in pandda_matches:
+        print("\tGetting event mapping for: {} and {}".format(original_pandda.pandda_dir.name,
+                                                              new_pandda.pandda_dir.name,
+                                                              ))
         event_mapping = EventMapping(original_pandda, new_pandda)
+        print("\tComparing panddas")
         comparison = ComparisonSet(original_pandda,
                                    new_pandda,
                                    event_mapping,
@@ -363,7 +378,9 @@ def main():
 
         comparisons.append(comparison)
 
+    print("Getting comparison dataframe...")
     comparison_df = make_comparison_table(comparisons)
+    print("Outputting comparison dataframe to {}".format(output.pandda_comparison_table_path))
     output_comparison_table(comparison_df,
                             output.pandda_comparison_table_path,
                             )
