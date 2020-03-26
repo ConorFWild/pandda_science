@@ -254,13 +254,13 @@ def mark_finished(path: Path, status: PanDDAStatus, duration, stdout, stderr):
         if status.finished:
             f.write("done\n")
             f.write("Duration: {}".format(duration))
-            f.write(stdout)
-            f.write(stderr)
+            f.write(str(stdout))
+            f.write(str(stderr))
         else:
             f.write("failed")
             f.write("Duration: {}".format(duration))
-            f.write(stdout)
-            f.write(stderr)
+            f.write(str(stdout))
+            f.write(str(stderr))
 
 
 class QSub:
