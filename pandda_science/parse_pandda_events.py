@@ -3,6 +3,7 @@ from typing import Dict, Tuple, NamedTuple
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from biopandas.pdb import PandasPdb
@@ -87,6 +88,31 @@ def get_ligand_smiles(dataset_path):
         return smiles_paths[0]
 
 
+def get_distance_to_ligand_model(event_centroid,
+                                 final_model_path):
+    true_model = PandasPdb().read_pdb(str(final_model_path))
+    hetatms_df = true_model.df["HETATM"]
+
+    distances_to_event = []
+    for chain_id in hetatms_df["chain_id"].unique():
+        chain_df = hetatms_df[hetatms_df["chain_id"] == chain_id]
+        chain_lig_df = chain_df[chain_df["residue_name"] == "LIG"]
+        chain_lig_coords_df = chain_lig_df[["x_coord", "y_coord", "z_coord"]]
+
+        if len(chain_lig_coords_df) == 0:
+            continue
+
+        true_model_mean_coords = np.mean(np.array(chain_lig_coords_df),
+                                         axis=0,
+                                         )
+        distance_from_event_to_model = np.linalg.norm(true_model_mean_coords - event_centroid)
+        distances_to_event.append(distance_from_event_to_model)
+
+    if len(distances_to_event) == 0:
+        return 0
+    else:
+        return min(distances_to_event)
+
 def get_events(pandda: PanDDA):
     events: Dict[Tuple[str, int], Event] = {}
 
@@ -109,6 +135,14 @@ def get_events(pandda: PanDDA):
 
         actually_built = is_actually_built(final_model_path)
 
+        if actually_built:
+            distance_to_ligand_model = get_distance_to_ligand_model(np.array(event_record["x"],
+                                                                             event_record["y"],
+                                                                             event_record["z"]),
+                                                                    final_model_path)
+        else:
+            distance_to_ligand_model = 0
+
         event: Event = Event(dtag=str(event_record["dtag"]),
                              event_idx=int(event_record["event_idx"]),
                              occupancy=event_record["1-BDC"],
@@ -130,6 +164,7 @@ def get_events(pandda: PanDDA):
                              x=event_record["x"],
                              y=event_record["y"],
                              z=event_record["z"],
+                             distance_to_ligand_model=distance_to_ligand_model,
                              )
 
         events[(event.dtag, event.event_idx)] = event
@@ -165,6 +200,7 @@ def get_panddas_table(panddas: Dict[Path, PanDDA]):
                       "x": event.x,
                       "y": event.y,
                       "z": event.z,
+                      "distance_to_ligand_model": event.distance_to_ligand_model,
                       }
 
             records.append(record)

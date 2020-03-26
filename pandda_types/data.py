@@ -25,6 +25,7 @@ class Event(NamedTuple):
     x: float
     y: float
     z: float
+    distance_to_ligand_model: float
 
 
 class PanDDA(NamedTuple):
