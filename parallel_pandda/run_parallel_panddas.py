@@ -540,7 +540,7 @@ def get_pandda_tasks_luigi(model_dirs,
         #     print("\tAlready done {}".format(original_pandda_output))
 
         # Parallel PanDDA
-        parallel_pandda_output = model_dir.parent.parent.parent.name / "{}".format(model_dir.parent.parent.parent.name)
+        parallel_pandda_output = output_dir / "{}".format(model_dir.parent.parent.parent.name)
         # if not is_done(parallel_pandda_output):
 
         try_remove(parallel_pandda_output)
