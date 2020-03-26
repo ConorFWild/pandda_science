@@ -58,7 +58,7 @@ def get_panddas(root_dir: Path):
         pandda = PanDDA(dir=pandda_dir,
                         events=None,
                         event_table_path=inspect_path,
-                        model_dir=None
+                        model_dir=get_pandda_model_dir(pandda_dir),
                         )
 
         panddas[inspect_path] = pandda
@@ -220,10 +220,10 @@ def get_pandda_model_dir(pandda_dir: Path):
     parts = pandda_dir.parts
 
     path_to_analyses = Path(parts[0]) / parts[1] / parts[2] / parts[3] / parts[4] / parts[5] / parts[6] / parts[7]
-    if (path_to_analyses / "initial_model").is_dir():
-        return path_to_analyses / "initial_model"
-    elif (path_to_analyses / "model_building").is_dir():
+    if (path_to_analyses / "model_building").is_dir():
         return path_to_analyses / "model_building"
+    elif (path_to_analyses / "initial_model").is_dir():
+        return path_to_analyses / "initial_model"
     else:
         raise Exception("No model building path!")
 
@@ -248,7 +248,7 @@ if __name__ == "__main__":
             "\t\tActually built: {}".format(len([event for event_id, event in events.items() if event.actually_built])))
 
         panddas_with_events[pandda_path] = PanDDA(dir=pandda.dir,
-                                                  model_dir=get_pandda_model_dir(pandda.dir),
+                                                  model_dir=pandda.model_dir,
                                                   events=events,
                                                   event_table_path=pandda.event_table_path,
                                                   )

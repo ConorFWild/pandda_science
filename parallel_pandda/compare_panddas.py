@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from pandda_types.data import Event
 
@@ -147,7 +148,7 @@ def get_distance(event1, event2):
     return distance
 
 
-class Comparison:
+class ComparisonSet:
     original_pandda: PanDDA
     new_pandda: PanDDA
     event_mapping: EventMapping
@@ -161,32 +162,136 @@ class Comparison:
         self.event_mapping = event_mapping
 
 
-def get_precission(comparison):
+def get_precission(comparison: ComparisonSet,
+                   cutoff_distance_to_model: float = 8.0,
+                   cutoff_distance_to_event: float = 8.0,
+                   ):
     precission_vector = []
-
-
-
-def get_recall(comparison: Comparison,
-               cutoff: float = 5.0):
-    recall_vector = []
     for event_id, event in comparison.new_pandda.events.items():
-        comparison_event: Event = comparison.event_mapping.event_mapping_new_to_original[event_id]
+        comparison_event_id: EventID = comparison.event_mapping.event_mapping_new_to_original[event_id]
+        comparison_event = comparison.original_pandda.events[comparison_event_id]
 
         if comparison_event.actually_built:
-            distance = get_distance(event, comparison_event)
-            if distance < cutoff:
-                recall_vector.append(1)
-            else:
-                recall_vector.append(0)
+            if (comparison_event.distance_to_ligand_model > 0) and (
+                    comparison_event.distance_to_ligand_model < cutoff_distance_to_model):
+                distance = get_distance(event, comparison_event)
+                if distance < cutoff_distance_to_event:
+                    precission_vector.append(1)
+
+    precission = sum(precission_vector) / len(comparison.new_pandda)
+
+    return precission
+
+
+def get_recall(comparison: ComparisonSet,
+               cutoff_distance_to_model: float = 8.0,
+               cutoff_distance_to_event: float = 8.0,
+               ):
+    recall_vector = []
+    for event_id, event in comparison.new_pandda.events.items():
+        comparison_event_id: EventID = comparison.event_mapping.event_mapping_new_to_original[event_id]
+        comparison_event = comparison.original_pandda.events[comparison_event_id]
+
+        if comparison_event.actually_built:
+            if (comparison_event.distance_to_ligand_model > 0) and (
+                    comparison_event.distance_to_ligand_model < cutoff_distance_to_model):
+                distance = get_distance(event, comparison_event)
+                if distance < cutoff_distance_to_event:
+                    recall_vector.append(1)
+                else:
+                    recall_vector.append(0)
 
     recall = sum(recall_vector) / len(recall_vector)
 
     return recall
 
 
-def Record:
-    precission: float
-    recall: float
+def get_precission_base(pandda: PanDDA,
+                        cutoff_distance_to_model: float = 8.0):
+    num_events = len(pandda.events)
+    hits = []
+    for event_id, event in pandda.events.items():
+        if event.actually_built:
+            if event.distance_to_ligand_model < cutoff_distance_to_model:
+                hits.append(1)
+
+    precission = sum(hits) / num_events
+
+    return precission
+
+
+class ComparisonRecord:
+    original_pandda_precission: float
+    new_pandda_precission: float
+    new_pandda_recall: float
+
+    def __init__(self,
+                 original_pandda: PanDDA,
+                 new_pandda: PanDDA,
+                 original_pandda_precission,
+                 new_pandda_precission,
+                 new_pandda_recall,
+                 ):
+        self.model_dir = original_pandda.data_dir
+        self.original_pandda_dir = original_pandda.pandda_dir
+        self.new_pandda_dir = new_pandda.pandda_dir
+        self.original_pandda_num_events = len(original_pandda.events)
+        self.new_pandda_num_events = len(new_pandda.events)
+
+        self.original_pandda_precission = original_pandda_precission
+        self.new_pandda_precission = new_pandda_precission
+        self.new_pandda_recall = new_pandda_recall
+
+    def to_dict(self):
+        record = {}
+        record["model_dir"] = self.model_dir
+        record["original_pandda_dir"] = self.original_pandda_dir
+        record["new_pandda_dir"] = self.new_pandda_dir
+        record["original_pandda_num_events"] = self.original_pandda_num_events
+        record["new_pandda_num_events"] = self.new_pandda_num_events
+
+        record["original_pandda_precission"] = self.original_pandda_precission
+        record["new_pandda_precission"] = self.new_pandda_precission
+        record["new_pandda_recall"] = self.new_pandda_recall
+        return record
+
+
+def make_comparison_table(comparison_sets: List[ComparisonSet]):
+    comparison_records = []
+    for comparison_set in comparison_sets:
+        base_pandda_precission = get_precission_base(comparison_set.original_pandda)
+        new_pandda_precission = get_precission(ComparisonSet)
+        new_pandda_recall = get_recall(ComparisonSet)
+        record = ComparisonRecord(comparison_set,
+                                  base_pandda_precission,
+                                  new_pandda_precission,
+                                  new_pandda_recall,
+                                  )
+        comparison_records.append(record.to_dict())
+    return pd.DataFrame(comparison_records)
+
+
+def match_panddas(original_panddas: List[PanDDA],
+                  new_panddas: List[PanDDA],
+                  ):
+    matches = []
+
+    for original_pandda in original_panddas:
+        for new_pandda in new_panddas:
+            if new_pandda.data_dir == original_pandda.data_dir:
+                matches.append((original_pandda, new_pandda))
+                break
+
+    return matches
+
+def panddas_from_event_table(pandda_event_table):
+    initial_dirs = pandda_event_table[""]
+
+def get_panddas(event_table: pd.DataFrame):
+    new_panddas_table = event_table[event_table["pandda_name"] == "test_pandda_parallel"]
+    old_pandda_table = event_table[event_table["pandda_name"] != "test_pandda_parallel"]
+
+    new_panddas = panddas_from_event_table(new_panddas_table)
 
 
 if __name__ == "__main__":
@@ -196,9 +301,9 @@ if __name__ == "__main__":
 
     output: Output = setup_output_directory(config.out_dir_path)
 
-    pandda_table = get_pandda_table()
-
     event_table = get_event_table()
+
+    original_panddas, new_panddas = get_panddas(event_table)
 
     match_panddas(original_panddas,
                   new_panddas,
@@ -207,12 +312,12 @@ if __name__ == "__main__":
     comparisons = []
     for original_pandda, new_pandda in pandda_matches:
         event_mapping = EventMapping(original_pandda, new_pandda)
-        comparison = Comparison(original_pandda,
-                                new_pandda,
-                                event_mapping,
-                                )
+        comparison = ComparisonSet(original_pandda,
+                                   new_pandda,
+                                   event_mapping,
+                                   )
 
         comparisons.append(comparisons)
 
-    comparison_df = make_comparison_df()
+    comparison_df = make_comparison_table(comparisons)
     output_comparison_df(comparison_df)
