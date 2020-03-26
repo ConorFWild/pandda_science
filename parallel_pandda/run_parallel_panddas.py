@@ -249,14 +249,18 @@ class PanDDAStatus:
         return False
 
 
-def mark_finished(path: Path, status: PanDDAStatus, duration):
+def mark_finished(path: Path, status: PanDDAStatus, duration, stdout, stderr):
     with open(str(path), "w") as f:
         if status.finished:
             f.write("done\n")
             f.write("Duration: {}".format(duration))
+            f.write(stdout)
+            f.write(stderr)
         else:
             f.write("failed")
             f.write("Duration: {}".format(duration))
+            f.write(stdout)
+            f.write(stderr)
 
 
 class QSub:
@@ -310,6 +314,8 @@ class QSub:
         while not self.is_finished(proc_number):
             time.sleep(10)
 
+        return stdout, stderr
+
     def parse_process_number(self, string):
         regex = "[0-9]+"
         m = re.search(regex,
@@ -348,7 +354,7 @@ class OriginalPanDDATask(luigi.Task):
 
         start_time = time.time()
 
-        QSub(command,
+        stdout, stderr = QSub(command,
              submit_script_path,
              )()
 
@@ -358,7 +364,9 @@ class OriginalPanDDATask(luigi.Task):
 
         mark_finished(target_path,
                       status,
-                      finish_time - start_time
+                      finish_time - start_time,
+                      stdout,
+                      stderr,
                       )
 
     def output(self):
@@ -383,7 +391,7 @@ class ParallelPanDDATask(luigi.Task):
 
         start_time = time.time()
 
-        QSub(command,
+        stdout, stderr = QSub(command,
              submit_script_path,
              )()
 
@@ -394,6 +402,8 @@ class ParallelPanDDATask(luigi.Task):
         mark_finished(target_path,
                       status,
                       finish_time-start_time,
+                      stdout,
+                      stderr,
                       )
 
     def output(self):
