@@ -141,7 +141,7 @@ def get_events(pandda: PanDDA):
                                                                              event_record["z"]]
                                                                              ),
                                                                     final_model_path)
-            print("\t\tDistance to model is: {}".format(distance_to_ligand_model))
+            # print("\t\tDistance to model is: {}".format(distance_to_ligand_model))
         else:
             distance_to_ligand_model = 0
 
