@@ -136,9 +136,10 @@ def get_events(pandda: PanDDA):
         actually_built = is_actually_built(final_model_path)
 
         if actually_built:
-            distance_to_ligand_model = get_distance_to_ligand_model(np.array(event_record["x"],
+            distance_to_ligand_model = get_distance_to_ligand_model(np.array([event_record["x"],
                                                                              event_record["y"],
-                                                                             event_record["z"]),
+                                                                             event_record["z"]]
+                                                                             ),
                                                                     final_model_path)
             print("\t\tDistance to model is: {}".format(distance_to_ligand_model))
         else:
