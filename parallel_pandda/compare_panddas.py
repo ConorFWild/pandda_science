@@ -13,7 +13,7 @@ from pandda_types.data import Event
 def parse_args():
     parser = argparse.ArgumentParser()
     # IO
-    parser.add_argument("-i", "--panddas_table",
+    parser.add_argument("-i", "--events_df_path",
                         type=str,
                         help="The directory OF THE ROOT OF THE XCHEM DATABASE",
                         required=True
@@ -31,13 +31,13 @@ def parse_args():
 
 
 class Config(NamedTuple):
-    our_dir_path: Path
+    out_dir_path: Path
     events_df_path: Path
 
 
 def get_config(args):
     config = Config(out_dir_path=Path(args.out_dir_path),
-                    root_path=Path(args.root_path),
+                    events_df_path=Path(args.events_df_path),
                     )
 
     return config
@@ -46,11 +46,7 @@ def get_config(args):
 class Output:
     def __init__(self, out_dir_path: Path):
         self.out_dir_path: Path = out_dir_path
-        self.dataset_out_dir_path = out_dir_path / "dataset"
-        self.parallel_pandda_out_dir_path = out_dir_path / "parallel_pandda"
-        self.dataset_clustering_out_dir_path = out_dir_path / "dataset_clustering"
-        self.autobuilding_out_dir_path = out_dir_path / "autobuilding"
-        self.build_score_out_dir_path = out_dir_path / "build_score"
+        self.pandda_comparison_table_path = out_dir_path / "pandda_comparison_table.csv"
 
     def attempt_mkdir(self, path: Path):
         try:
@@ -83,7 +79,17 @@ def setup_output_directory(path: Path, overwrite: bool = False):
 
 class EventID:
     dtag: str
-    idx: int
+    event_idx: int
+
+    def __init__(self, dtag, event_idx):
+        self.dtag = dtag
+        self.event_idx = event_idx
+
+    def __hash__(self):
+        return hash((self.dtag, self.event_idx))
+
+    def __eq__(self, other):
+        return (self.dtag, self.event_idx) == (other.dtag, other.event_idx)
 
 
 class PanDDA:
@@ -178,7 +184,7 @@ def get_precission(comparison: ComparisonSet,
                 if distance < cutoff_distance_to_event:
                     precission_vector.append(1)
 
-    precission = sum(precission_vector) / len(comparison.new_pandda)
+    precission = sum(precission_vector) / len(comparison.new_pandda.events)
 
     return precission
 
@@ -226,17 +232,16 @@ class ComparisonRecord:
     new_pandda_recall: float
 
     def __init__(self,
-                 original_pandda: PanDDA,
-                 new_pandda: PanDDA,
+                 comaprison_set: ComparisonSet,
                  original_pandda_precission,
                  new_pandda_precission,
                  new_pandda_recall,
                  ):
-        self.model_dir = original_pandda.data_dir
-        self.original_pandda_dir = original_pandda.pandda_dir
-        self.new_pandda_dir = new_pandda.pandda_dir
-        self.original_pandda_num_events = len(original_pandda.events)
-        self.new_pandda_num_events = len(new_pandda.events)
+        self.model_dir = comaprison_set.original_pandda.data_dir
+        self.original_pandda_dir = comaprison_set.original_pandda.pandda_dir
+        self.new_pandda_dir = comaprison_set.new_pandda.pandda_dir
+        self.original_pandda_num_events = len(comaprison_set.original_pandda.events)
+        self.new_pandda_num_events = len(comaprison_set.new_pandda.events)
 
         self.original_pandda_precission = original_pandda_precission
         self.new_pandda_precission = new_pandda_precission
@@ -260,8 +265,8 @@ def make_comparison_table(comparison_sets: List[ComparisonSet]):
     comparison_records = []
     for comparison_set in comparison_sets:
         base_pandda_precission = get_precission_base(comparison_set.original_pandda)
-        new_pandda_precission = get_precission(ComparisonSet)
-        new_pandda_recall = get_recall(ComparisonSet)
+        new_pandda_precission = get_precission(comparison_set)
+        new_pandda_recall = get_recall(comparison_set)
         record = ComparisonRecord(comparison_set,
                                   base_pandda_precission,
                                   new_pandda_precission,
@@ -284,30 +289,69 @@ def match_panddas(original_panddas: List[PanDDA],
 
     return matches
 
+
+def get_events(events_table: pd.DataFrame):
+    events = {}
+    for idx, row in events_table.iterrows():
+        event = Event.from_record(row)
+        event_id = EventID(row["dtag"], row["event_idx"])
+        events[event_id] = event
+
+    return events
+
+
 def panddas_from_event_table(pandda_event_table):
-    initial_dirs = pandda_event_table[""]
+    initial_dirs = pandda_event_table["model_dir"].unique()
+
+    panddas = []
+
+    for initial_dir in initial_dirs:
+        initial_dir_table = pandda_event_table[pandda_event_table["model_dir"] == initial_dir]
+        pandda_names = initial_dir_table["pandda_name"].unique()
+        for pandda_name in pandda_names:
+            pandda_name_table = initial_dir_table[initial_dir_table["pandda_name"] == pandda_name]
+            events = get_events(pandda_name_table)
+            pandda = PanDDA()
+            panddas.append(pandda)
+
+    return panddas
+
 
 def get_panddas(event_table: pd.DataFrame):
     new_panddas_table = event_table[event_table["pandda_name"] == "test_pandda_parallel"]
     old_pandda_table = event_table[event_table["pandda_name"] != "test_pandda_parallel"]
 
+    original_panddas = panddas_from_event_table(old_pandda_table)
     new_panddas = panddas_from_event_table(new_panddas_table)
 
+    return original_panddas, new_panddas
 
-if __name__ == "__main__":
+
+def output_comparison_table(comparison_table,
+                            output_path,
+                            ):
+    comparison_table.to_csv(str(output_path))
+
+
+def get_event_table(event_table_path: Path):
+    event_table = pd.DataFrame(str(event_table_path))
+    return event_table
+
+
+def main():
     args = parse_args()
 
     config = get_config(args)
 
     output: Output = setup_output_directory(config.out_dir_path)
 
-    event_table = get_event_table()
+    event_table = get_event_table(config.events_df_path)
 
     original_panddas, new_panddas = get_panddas(event_table)
 
-    match_panddas(original_panddas,
-                  new_panddas,
-                  )
+    pandda_matches = match_panddas(original_panddas,
+                                   new_panddas,
+                                   )
 
     comparisons = []
     for original_pandda, new_pandda in pandda_matches:
@@ -317,7 +361,13 @@ if __name__ == "__main__":
                                    event_mapping,
                                    )
 
-        comparisons.append(comparisons)
+        comparisons.append(comparison)
 
     comparison_df = make_comparison_table(comparisons)
-    output_comparison_df(comparison_df)
+    output_comparison_table(comparison_df,
+                            output.pandda_comparison_table_path,
+                            )
+
+
+if __name__ == "__main__":
+    main()
