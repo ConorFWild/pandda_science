@@ -454,6 +454,7 @@ def pandda_succeed(parallel_pandda_table,
 
 
 def try_remove(path):
+    print("\tTrying to remove: {}".format(path))
     try:
         shutil.rmtree(path,
                       ignore_errors=True)
