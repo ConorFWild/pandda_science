@@ -334,7 +334,7 @@ def output_comparison_table(comparison_table,
 
 
 def get_event_table(event_table_path: Path):
-    event_table = pd.DataFrame(str(event_table_path))
+    event_table = pd.read_csv(str(event_table_path))
     return event_table
 
 
