@@ -521,7 +521,9 @@ def is_done(original_pandda_output):
     return False
 
 
-def get_pandda_tasks_luigi(model_dirs):
+def get_pandda_tasks_luigi(model_dirs,
+                           output_dir,
+                           ):
     tasks = []
     for model_dir in model_dirs:
         # Original PanDDA
@@ -538,7 +540,7 @@ def get_pandda_tasks_luigi(model_dirs):
         #     print("\tAlready done {}".format(original_pandda_output))
 
         # Parallel PanDDA
-        parallel_pandda_output = model_dir.parent / "test_pandda_parallel"
+        parallel_pandda_output = output_dir / "test_pandda_parallel"
         # if not is_done(parallel_pandda_output):
 
         try_remove(parallel_pandda_output)
@@ -649,7 +651,9 @@ if __name__ == "__main__":
     #     parallel_pandda_table: pd.DataFrame = pd.DataFrame(columns=columns)
 
     print("Making tasks...")
-    tasks = get_pandda_tasks_luigi(model_dirs)
+    tasks = get_pandda_tasks_luigi(model_dirs,
+                                   config.out_dir_path,
+                                   )
     process_luigi(tasks,
                   jobs=8,
                   cores=12,
