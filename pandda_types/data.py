@@ -46,7 +46,7 @@ class Event(NamedTuple):
                              final_model_path=row["final_model_path"],
                              event_map_path=row["event_map_path"],
                              actually_built=row["actually_built"],
-                             ligand_smiles_path=row["ligand_smiles"],
+                             ligand_smiles_path=row["ligand_smiles_path"],
                              x=row["x"],
                              y=row["y"],
                              z=row["z"],
