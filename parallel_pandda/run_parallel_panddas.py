@@ -309,7 +309,7 @@ class QSub:
 
         proc_number = self.parse_process_number(str(stdout))
 
-        time.sleep(10)
+        time.sleep(30)
 
         while not self.is_finished(proc_number):
             time.sleep(10)
@@ -355,8 +355,8 @@ class OriginalPanDDATask(luigi.Task):
         start_time = time.time()
 
         stdout, stderr = QSub(command,
-             submit_script_path,
-             )()
+                              submit_script_path,
+                              )()
 
         finish_time = time.time()
 
@@ -392,8 +392,8 @@ class ParallelPanDDATask(luigi.Task):
         start_time = time.time()
 
         stdout, stderr = QSub(command,
-             submit_script_path,
-             )()
+                              submit_script_path,
+                              )()
 
         finish_time = time.time()
 
@@ -401,7 +401,7 @@ class ParallelPanDDATask(luigi.Task):
 
         mark_finished(target_path,
                       status,
-                      finish_time-start_time,
+                      finish_time - start_time,
                       stdout,
                       stderr,
                       )
@@ -510,6 +510,7 @@ def try_make(path):
         os.mkdir(str(path))
     except Exception as e:
         print(e)
+
 
 def is_done(original_pandda_output):
     if original_pandda_output.is_dir():
