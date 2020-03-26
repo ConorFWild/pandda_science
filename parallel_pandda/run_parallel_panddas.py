@@ -527,17 +527,17 @@ def get_pandda_tasks_luigi(model_dirs):
 
         # Parallel PanDDA
         parallel_pandda_output = model_dir.parent / "test_pandda_parallel"
-        if not is_done(parallel_pandda_output):
+        # if not is_done(parallel_pandda_output):
 
-            try_remove(parallel_pandda_output)
-            try_make(parallel_pandda_output)
-            parallel_pandda_tasks = ParallelPanDDATask(submit_script_path=parallel_pandda_output / "submit.sh",
-                                                       model_dir=model_dir,
-                                                       output_dir=parallel_pandda_output,
-                                                       )
-            tasks.append(parallel_pandda_tasks)
-        else:
-            print("\tAlready done {}".format(parallel_pandda_output))
+        try_remove(parallel_pandda_output)
+        try_make(parallel_pandda_output)
+        parallel_pandda_tasks = ParallelPanDDATask(submit_script_path=parallel_pandda_output / "submit.sh",
+                                                   model_dir=model_dir,
+                                                   output_dir=parallel_pandda_output,
+                                                   )
+        tasks.append(parallel_pandda_tasks)
+        # else:
+        #     print("\tAlready done {}".format(parallel_pandda_output))
 
     return tasks
 
