@@ -465,9 +465,9 @@ def get_event_table(path):
     for idx, event_row in event_table.iterrows():
         if event_row["actually_built"] == "True":
             event = Event.from_record(event_row)
+            events.append(event)
         else:
             continue
-        events.append(event)
 
     return events
 
