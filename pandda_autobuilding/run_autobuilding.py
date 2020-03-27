@@ -484,6 +484,7 @@ if __name__ == "__main__":
 
     print("Getting event table...")
     events = get_event_table(config.event_table_path)
+    print("\tGot {} events!".format(len(events)))
 
     print("Making tasks...")
     tasks = get_autobuild_tasks(events,
