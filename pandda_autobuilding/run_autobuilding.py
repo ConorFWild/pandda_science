@@ -344,16 +344,18 @@ def is_done(original_pandda_output):
 
 
 def get_ligand_model_path(event: Event):
-    event_dir: Path = Path(event.initial_model_path).parent
+    ligand_smiles_path = Path(event.ligand_smiles_path)
 
-    ligands = list((event_dir / "ligand_files").glob("*.pdb"))
-    ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
-
-    ligand_pdb_path: Path = Path(min(ligand_strings,
-                                     key=len,
-                                     )
-                                 )
-    return ligand_pdb_path
+    # event_dir: Path = Path(event.initial_model_path).parent
+    #
+    # ligands = list((event_dir / "ligand_files").glob("*.pdb"))
+    # ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
+    #
+    # ligand_pdb_path: Path = Path(min(ligand_strings,
+    #                                  key=len,
+    #                                  )
+    #                              )
+    # return ligand_pdb_path
 
 
 def event_map_to_mtz(event_map_path: Path,
@@ -461,7 +463,10 @@ def get_event_table(path):
     events = []
     event_table = pd.read_csv(str(path))
     for idx, event_row in event_table.iterrows():
-        event = Event.from_record(event_row)
+        if event["actually_built"] == "True":
+            event = Event.from_record(event_row)
+        else:
+            continue
         events.append(event)
 
     return events
