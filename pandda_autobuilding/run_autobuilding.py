@@ -198,7 +198,7 @@ class AutobuildPhenixControlTask(luigi.Task):
 
     def run(self):
         submit_script_path = Path(self.submit_script_path)
-        output_dir = Path(self.output_dir)
+        output_dir = Path(self.out_dir_path)
         target_path = output_dir / "task_results.json"
 
         command = self.command(self.out_dir_path,
@@ -242,7 +242,7 @@ class AutobuildPhenixControlTask(luigi.Task):
         return command
 
     def output(self):
-        pandda_done_path = Path(self.output_dir) / "task_results.json"
+        pandda_done_path = Path(self.out_dir_path) / "task_results.json"
         return luigi.LocalTarget(str(pandda_done_path))
 
 
@@ -256,7 +256,7 @@ class AutobuildPhenixEventTask(luigi.Task):
 
     def run(self):
         submit_script_path = Path(self.submit_script_path)
-        output_dir = Path(self.output_dir)
+        output_dir = Path(self.out_dir_path)
         target_path = output_dir / "task_results.json"
 
         command = self.command(self.out_dir_path,
@@ -304,7 +304,7 @@ class AutobuildPhenixEventTask(luigi.Task):
         return command
 
     def output(self):
-        pandda_done_path = Path(self.output_dir) / "task_results.json"
+        pandda_done_path = Path(self.out_dir_path) / "task_results.json"
         return luigi.LocalTarget(str(pandda_done_path))
 
 
