@@ -112,8 +112,8 @@ def parallel_pandda_command(data_dirs,
                             pdb_style="dimple.pdb",
                             mtz_style="dimple.mtz",
                             cpus=12,
-                            h_vmem=200,
-                            m_mem_free=8,
+                            h_vmem=240,
+                            m_mem_free=12,
                             ):
     env = "module load ccp4"
     python = "/dls/science/groups/i04-1/conor_dev/ccp4/build/bin/cctbx.python"

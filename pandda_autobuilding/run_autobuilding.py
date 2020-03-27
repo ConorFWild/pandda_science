@@ -469,6 +469,7 @@ def get_autobuild_tasks(events,
                                    in events
                                    )
 
+    tasks = []
     for task_pair in task_pairs:
         if task_pair is not None:
             tasks.append(task_pair[0])
