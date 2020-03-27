@@ -1,6 +1,7 @@
 from typing import NamedTuple, List, Dict
 import os
 import shutil
+import re
 import argparse
 from pathlib import Path
 import json
@@ -96,24 +97,25 @@ def get_events(events_csv_path):
     events: List[Event] = []
 
     for idx, event_record in events_table.iterrows():
-        event: Event = Event(dtag=str(event_record["dtag"]),
-                             event_idx=int(event_record["event_idx"]),
-                             occupancy=event_record["occupancy"],
-                             analysed_resolution=event_record["analysed_resolution"],
-                             high_resolution=event_record["high_resolution"],
-                             interesting=event_record["interesting"],
-                             ligand_placed=event_record["ligand_placed"],
-                             ligand_confidence=event_record["ligand_confidence"],
-                             viewed=event_record["viewed"],
-                             initial_model_path=Path(event_record["initial_model_path"]),
-                             data_path=Path(event_record["data_path"]),
-                             final_model_path=Path(event_record["final_model_path"]),
-                             event_map_path=Path(event_record["event_map_path"]),
-                             actually_built=event_record["actually_built"],
-                             x=event_record["x"],
-                             y=event_record["y"],
-                             z=event_record["z"],
-                             )
+        # event: Event = Event(dtag=str(event_record["dtag"]),
+        #                      event_idx=int(event_record["event_idx"]),
+        #                      occupancy=event_record["occupancy"],
+        #                      analysed_resolution=event_record["analysed_resolution"],
+        #                      high_resolution=event_record["high_resolution"],
+        #                      interesting=event_record["interesting"],
+        #                      ligand_placed=event_record["ligand_placed"],
+        #                      ligand_confidence=event_record["ligand_confidence"],
+        #                      viewed=event_record["viewed"],
+        #                      initial_model_path=Path(event_record["initial_model_path"]),
+        #                      data_path=Path(event_record["data_path"]),
+        #                      final_model_path=Path(event_record["final_model_path"]),
+        #                      event_map_path=Path(event_record["event_map_path"]),
+        #                      actually_built=event_record["actually_built"],
+        #                      x=event_record["x"],
+        #                      y=event_record["y"],
+        #                      z=event_record["z"],
+        #                      )
+        event = Event.from_record(event_record)
 
         events.append(event)
 
@@ -152,6 +154,9 @@ def analyse_build_result(true_model, result):
     candidate_model_results = []
     distances_to_events = []
 
+    true_model_hetatm_table =  true_model.model.df["HETATM"]
+    true_model_ligands_table = true_model_hetatm_table[true_model_hetatm_table["residue_name"] == "LIG"]
+
     for candidate_model_path in result.result_model_paths:
         candidate_model_record = {}
 
@@ -159,35 +164,31 @@ def analyse_build_result(true_model, result):
 
         # Loop over potential chain
         rmsds = []
-        for chain_id in true_model.model.df["HETATM"]["chain_id"].unique():
-            # if not is_comparable(true_model, result_model):
-            #     print("True model and built model of different lengths! Cannot compare!")
-            #     continue
-            #
+        for chain_id in true_model_hetatm_table["chain_id"].unique():
+            true_model_ligand_table = true_model_ligands_table[true_model_ligands_table["chain_id"] == chain_id]
+            result_model_hetatm_table = result_model.model.df["HETATM"]
+            result_model_ligand_table = result_model_hetatm_table[result_model_hetatm_table["residue_name"] == "LIG"]
 
-            true_model_df = \
-                true_model.model.df["HETATM"][true_model.model.df["HETATM"]["chain_id"] == chain_id][
-                    ["x_coord", "y_coord", "z_coord"]]
-            result_model_df = \
-                result_model.model.df["HETATM"][["x_coord", "y_coord", "z_coord"]]
+            true_model_coords_df = true_model_ligand_table[["x_coord", "y_coord", "z_coord"]]
+            result_model_coords_df = result_model_ligand_table["HETATM"][["x_coord", "y_coord", "z_coord"]]
 
-            true_model_mean_coords = np.mean(np.array(true_model_df), axis=0)
-            event_mean_coords = np.array([event.x,
-                                          event.y,
-                                          event.z,
-                                          ])
-            distance_from_event_to_model = np.linalg.norm(true_model_mean_coords - event_mean_coords)
+            # true_model_mean_coords = np.mean(np.array(true_model_coords_df), axis=0)
+            # event_mean_coords = np.array([event.x,
+            #                               event.y,
+            #                               event.z,
+            #                               ])
+            # distance_from_event_to_model = np.linalg.norm(true_model_mean_coords - event_mean_coords)
 
-            if len(true_model_df) != len(result_model_df):
+            if len(true_model_coords_df) != len(result_model_coords_df):
                 continue
 
-            rmsd = get_rmsd_dfs(true_model_df,
-                                result_model_df,
+            rmsd = get_rmsd_dfs(true_model_coords_df,
+                                result_model_coords_df,
                                 )
 
             rmsds.append(rmsd)
 
-            distances_to_events.append(distance_from_event_to_model)
+            # distances_to_events.append(distance_from_event_to_model)
 
         if len(rmsds) == 0:
             print("\tCOULD NOT COMPARE TO TRUE! SKIPPING!")
@@ -197,10 +198,10 @@ def analyse_build_result(true_model, result):
 
         candidate_model_results.append(candidate_model_record)
 
-    if len(distances_to_events) == 0:
-        distance_to_event = 0
-    else:
-        distance_to_event = min(distances_to_events)
+    # if len(distances_to_events) == 0:
+    #     distance_to_event = 0
+    # else:
+    #     distance_to_event = min(distances_to_events)
 
     return candidate_model_results
 
@@ -325,9 +326,11 @@ def analyse_autobuilding_results(true_model_path,
                                                )
 
         else:
-            rscc = parse_rscc(result["path"],
-                              build_name,
-                              )
+            # rscc = parse_rscc(result["path"],
+            #                   build_name,
+            #                   )
+            print("{} {} {}".format(build_name, event.dtag, event.event_idx))
+            print([candidate_model_result["rmsd"] for candidate_model_result in candidate_model_results])
             record = get_autobuild_record(build_name,
                                           candidate_model_results,
                                           model_distance_to_event,
