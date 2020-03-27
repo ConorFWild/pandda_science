@@ -344,7 +344,7 @@ def is_done(original_pandda_output):
 
 
 def get_ligand_model_path(event: Event):
-    event_dir: Path = event.initial_model_path.parent
+    event_dir: Path = Path(event.initial_model_path).parent
 
     ligands = list((event_dir / "ligand_files").glob("*.pdb"))
     ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
