@@ -166,7 +166,7 @@ class DispatchParallelPanDDA:
         self.type = "parallel"
 
     def __call__(self):
-        command = "/dls/science/groups/i04-1/conor_dev/ccp4/build/bin/cctbx.python /dls/science/groups/i04-1/conor_dev/pandda_2/program/run_pandda_2.py data_dirs='{data_dir}/*' pdb_style='dimple.pdb' mtz_style='dimple.mtz' cpus=12 out_dir={out_dir} h_vmem=100 m_mem_free=5 process_dict_n_cpus=12"
+        command = "/dls/science/groups/i04-1/conor_dev/ccp4/build/bin/cctbx.python /dls/science/groups/i04-1/conor_dev/pandda_2/program/run_pandda_2.py data_dirs='{data_dir}/*' pdb_style='dimple.pdb' mtz_style='dimple.mtz' cpus=12 out_dir={out_dir} h_vmem=200 m_mem_free=10 process_dict_n_cpus=12"
         formatted_command = command.format(data_dir=self.model_dir,
                                            out_dir=self.output_dir,
                                            )
