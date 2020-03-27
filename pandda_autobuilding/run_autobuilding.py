@@ -92,9 +92,9 @@ class QSub:
                  command,
                  submit_script_path,
                  queue="low.q",
-                 cores=12,
-                 m_mem_free=5,
-                 h_vmem=120,
+                 cores=1,
+                 m_mem_free=10,
+                 h_vmem=20,
                  ):
         self.command = command
         self.submit_script_path = submit_script_path
