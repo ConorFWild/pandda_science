@@ -309,15 +309,9 @@ class AutobuildPhenixEventTask(luigi.Task):
 
 
 def process_luigi(tasks,
-                  jobs=10,
-                  cores=3,
-                  processes=3,
-                  h_vmem=20,
-                  m_mem_free=5,
-                  h_rt=3000,
                   ):
     luigi.build(tasks,
-                workers=5,
+                workers=100,
                 local_scheduler=True,
                 )
 
@@ -443,6 +437,7 @@ def get_autobuilding_task(event, output_dir):
 
         # Phenix autobuild
         autobuild_phenix_event_dir = autobuilding_dir / "phenix_event"
+        try_make(autobuild_phenix_event_dir)
         autobuild_phenix_event_task = AutobuildPhenixEventTask(
             submit_script_path=autobuild_phenix_event_dir / "submit_phenix_event_autobuild.sh",
             out_dir_path=autobuild_phenix_event_dir,
@@ -511,10 +506,4 @@ if __name__ == "__main__":
                                 )
     print("\tGot {} tasks!".format(len(tasks)))
     process_luigi(tasks,
-                  jobs=100,
-                  cores=1,
-                  processes=1,
-                  h_vmem=10,
-                  m_mem_free=10,
-                  h_rt=3600 * 40,
                   )
