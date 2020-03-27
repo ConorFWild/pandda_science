@@ -463,7 +463,7 @@ def get_event_table(path):
     events = []
     event_table = pd.read_csv(str(path))
     for idx, event_row in event_table.iterrows():
-        if event["actually_built"] == "True":
+        if event_row["actually_built"] == "True":
             event = Event.from_record(event_row)
         else:
             continue
