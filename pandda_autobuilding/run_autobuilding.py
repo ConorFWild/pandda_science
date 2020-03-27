@@ -1,21 +1,27 @@
-from typing import NamedTuple
+from typing import NamedTuple, List
 import os
 import time
 import subprocess
 import shutil
 import re
 import argparse
+import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 import luigi
+
+from pandda_types.data import Event
+from pandda_autobuilding.coarse import coarse_build
+from pandda_autobuilding.strip import strip_receptor_waters
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     # IO
-    parser.add_argument("-i", "--model_dirs_table_path",
+    parser.add_argument("-i", "--event_table_path",
                         type=str,
                         help="The directory OF THE ROOT OF THE XCHEM DATABASE",
                         required=True
@@ -34,12 +40,12 @@ def parse_args():
 
 class Config(NamedTuple):
     out_dir_path: Path
-    model_dirs_table_path: Path
+    event_table_path: Path
 
 
 def get_config(args):
     config = Config(out_dir_path=Path(args.out_dir_path),
-                    model_dirs_table_path=Path(args.model_dirs_table_path),
+                    event_table_path=Path(args.event_table_path),
                     )
 
     return config
@@ -77,49 +83,6 @@ def setup_output_directory(path: Path, overwrite: bool = False):
     output: Output = Output(path)
     output.make(overwrite)
     return output
-
-
-def original_pandda_command(data_dirs,
-                            out_dir,
-                            pdb_style="dimple.pdb",
-                            mtz_style="dimple.mtz",
-                            cpus=12,
-                            ):
-    env = "module load ccp4; module load pymol"
-    command = "{env}; pandda.analyse data_dirs='{dds}/*' pdb_style={pst} mtz_style={mst} cpus={cpus} out_dir={odr}"
-    formatted_command = command.format(env=env,
-                                       dds=data_dirs,
-                                       pst=pdb_style,
-                                       mst=mtz_style,
-                                       cpus=cpus,
-                                       odr=out_dir,
-                                       )
-    return formatted_command
-
-
-class PanDDAStatus:
-    def __init__(self, pandda_out_dir: Path):
-        self.pandda_out_dir = pandda_out_dir
-        is_finished = self.is_finished(self.pandda_out_dir)
-        self.finished: bool = is_finished
-
-    def is_finished(self, pandda_out_dir):
-        if pandda_out_dir.is_dir():
-            if (pandda_out_dir / "analyses").is_dir():
-                if (pandda_out_dir / "analyses" / "pandda_analyse_events.csv"):
-                    return True
-
-        return False
-
-
-def mark_finished(path: Path, status: PanDDAStatus, duration):
-    with open(str(path), "w") as f:
-        if status.finished:
-            f.write("done\n")
-            f.write("Duration: {}".format(duration))
-        else:
-            f.write("failed")
-            f.write("Duration: {}".format(duration))
 
 
 class QSub:
@@ -194,20 +157,53 @@ class QSub:
             return True
 
 
-class OriginalPanDDATask(luigi.Task):
+class AutobuildStatus:
+    time: float
+    success: bool
+    result_model_path: List[Path]
+
+    def __init__(self, output_dir, time_taken):
+        self.output_dir = output_dir
+        self.time = time_taken
+
+        ligand_fit_dir = output_dir / "LigandFit_run_1_"
+        ligand_fit_pdb_path = ligand_fit_dir / "ligand_fit_1.pdb"
+
+        if ligand_fit_pdb_path.exists():
+            self.success = True
+            self.result_model_path = [ligand_fit_pdb_path]
+        else:
+            self.success = False
+            self.result_model_path = []
+
+    def to_json(self):
+        record = {}
+        record["time"] = self.time
+        record["success"] = self.success
+        record["result_model_path"] = self.result_model_path
+
+        json_string = json.dumps(record)
+        with open(str(self.output_dir / "task_results.json"), "w") as f:
+            f.write(json_string)
+
+
+class AutobuildPhenixControlTask(luigi.Task):
     submit_script_path = luigi.Parameter()
-    model_dir = luigi.Parameter()
-    output_dir = luigi.Parameter()
+    out_dir_path = luigi.Parameter()
+    mtz = luigi.Parameter()
+    ligand = luigi.Parameter()
+    receptor = luigi.Parameter()
 
     def run(self):
         submit_script_path = Path(self.submit_script_path)
-        model_dir = Path(self.model_dir)
         output_dir = Path(self.output_dir)
-        target_path = output_dir / "luigi.finished"
+        target_path = output_dir / "task_results.json"
 
-        command = original_pandda_command(data_dirs=model_dir,
-                                          out_dir=output_dir,
-                                          )
+        command = self.command(self.out_dir_path,
+                               self.mtz,
+                               self.ligand,
+                               self.receptor,
+                               )
 
         start_time = time.time()
 
@@ -217,15 +213,96 @@ class OriginalPanDDATask(luigi.Task):
 
         finish_time = time.time()
 
-        status = PanDDAStatus(output_dir)
+        status = AutobuildStatus(output_dir,
+                                 finish_time-start_time,
+                                 )
+        status.to_json()
 
-        mark_finished(target_path,
-                      status,
-                      finish_time - start_time
-                      )
+    def command(self,
+                out_dir_path,
+                mtz,
+                ligand,
+                receptor,
+                ):
+        env = "module load phenix"
+        ligand_fit_command = "phenix.ligandfit"
+        ligand_fit_args = "data={mtz} ligand={ligand} model={receptor}"
+        ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz,
+                                                           ligand=ligand,
+                                                           receptor=receptor,
+                                                           )
+        command = "{env}; cd {out_dir_path}; {ligand_fit_command} {args}".format(env=env,
+                                                                                 out_dir_path=out_dir_path,
+                                                                                 ligand_fit_command=ligand_fit_command,
+                                                                                 args=ligand_fit_args_formatted,
+                                                                                 )
+
+        return command
 
     def output(self):
-        pandda_done_path = self.output_dir / "luigi.finished"
+        pandda_done_path = self.output_dir / "task_results.json"
+        return luigi.LocalTarget(str(pandda_done_path))
+
+
+class AutobuildPhenixEventTask(luigi.Task):
+    submit_script_path = luigi.Parameter()
+    out_dir_path = luigi.Parameter()
+    mtz = luigi.Parameter()
+    ligand = luigi.Parameter()
+    receptor = luigi.Parameter()
+    coord = luigi.Parameter()
+
+    def run(self):
+        submit_script_path = Path(self.submit_script_path)
+        output_dir = Path(self.output_dir)
+        target_path = output_dir / "task_results.json"
+
+        command = self.command(self.out_dir_path,
+                               self.mtz,
+                               self.ligand,
+                               self.receptor,
+                               self.coord,
+                               )
+
+        start_time = time.time()
+
+        QSub(command,
+             submit_script_path,
+             )()
+
+        finish_time = time.time()
+
+        status = AutobuildStatus(output_dir,
+                                 finish_time-start_time)
+        status.to_json()
+
+    def command(self,
+                out_dir_path,
+                mtz,
+                ligand,
+                receptor,
+                coord,
+                ):
+        env = "module load phenix"
+        ligand_fit_command = "phenix.ligandfit"
+        ligand_fit_args = "data={mtz} ligand={ligand} model={receptor} search_center=[{x},{y},{z}] search_dist=6"
+        ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz,
+                                                           ligand=ligand,
+                                                           receptor=receptor,
+                                                           x=coord[0],
+                                                           y=coord[1],
+                                                           z=coord[2],
+                                                           )
+        command = "{env}; cd {out_dir_path}; {ligand_fit_command} {args}".format(env=env,
+                                                                                 out_dir_path=out_dir_path,
+                                                                                 ligand_fit_command=ligand_fit_command,
+                                                                                 args=ligand_fit_args_formatted,
+                                                                                 )
+
+        return command
+
+    def output(self):
+        pandda_done_path = self.output_dir / "task_results.json"
         return luigi.LocalTarget(str(pandda_done_path))
 
 
@@ -266,37 +343,128 @@ def is_done(original_pandda_output):
     return False
 
 
-def get_autobuild_tasks(event_table):
+def get_ligand_model_path(event: Event):
+    event_dir: Path = event.initial_model_path.parent
+
+    ligands = list((event_dir / "ligand_files").glob("*.pdb"))
+    ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
+
+    ligand_pdb_path: Path = Path(min(ligand_strings,
+                                     key=len,
+                                     )
+                                 )
+    return ligand_pdb_path
+
+
+def event_map_to_mtz(event_map_path: Path,
+                     output_path,
+                     resolution,
+                     col_f="FWT",
+                     col_ph="PHWT",
+                     gemmi_path: Path = "/dls/science/groups/i04-1/conor_dev/gemmi/gemmi",
+                     ):
+    command = "module load gcc/4.9.3; source /dls/science/groups/i04-1/conor_dev/anaconda/bin/activate env_clipper_no_mkl; {gemmi_path} map2sf {event_map_path} {output_path} {col_f} {col_ph} --dmin={resolution}"
+    formatted_command = command.format(gemmi_path=gemmi_path,
+                                       event_map_path=event_map_path,
+                                       output_path=output_path,
+                                       col_f=col_f,
+                                       col_ph=col_ph,
+                                       resolution=resolution,
+                                       )
+    print(formatted_command)
+
+    p = subprocess.Popen(formatted_command,
+                         shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         )
+
+    stdout, stderr = p.communicate()
+
+    return output_path
+
+
+def get_autobuild_tasks(events,
+                        output_dir,
+                        ):
     tasks = []
-    for model_dir in model_dirs:
-        # Original PanDDA
-        original_pandda_output = model_dir.parent / "test_pandda_original"
-        if not is_done(original_pandda_output):
-            try_remove(original_pandda_output)
-            try_make(original_pandda_output)
-            original_pandda_tasks = OriginalPanDDATask(submit_script_path=original_pandda_output / "sumbit.sh",
-                                                       model_dir=Path(model_dir),
-                                                       output_dir=original_pandda_output,
-                                                       )
-            tasks.append(original_pandda_tasks)
-        else:
-            print("\tAlready done {}".format(original_pandda_output))
+    for event in events:
 
-        # Parallel PanDDA
-        parallel_pandda_output = model_dir.parent / "test_pandda_parallel"
-        if not is_done(parallel_pandda_output):
+        # Directory setup
+        autobuilding_dir = output_dir / "{}_{}_{}".format(event.pandda_name,
+                                                          event.dtag,
+                                                          event.event_idx,
+                                                          )
+        try_remove(autobuilding_dir)
+        try_make(autobuilding_dir)
 
-            try_remove(parallel_pandda_output)
-            try_make(parallel_pandda_output)
-            parallel_pandda_tasks = ParallelPanDDATask(submit_script_path=parallel_pandda_output / "submit.sh",
-                                                       model_dir=model_dir,
-                                                       output_dir=parallel_pandda_output,
-                                                       )
-            tasks.append(parallel_pandda_tasks)
-        else:
-            print("\tAlready done {}".format(parallel_pandda_output))
+        # Prerequisite files
+        protein_model_path: Path = event.initial_model_path
+        ligand_model_path: Path = get_ligand_model_path(event)
+        event_map_path: Path = event.event_map_path
+        # resolution: float = event["analysed_resolution"]
+        mtz_path = event.data_path
+        event_coord = np.array([event.x, event.y, event.z])
+
+        print("\tPlacing ligand...")
+        placed_ligand_path = autobuilding_dir / "ligand.pdb"
+        if not (autobuilding_dir / "ligand.pdb").is_file():
+            placed_ligand_path = coarse_build(ligand_model_path=ligand_model_path,
+                                              event=event,
+                                              output_path=placed_ligand_path,
+                                              )
+
+        print("\tStripping receptor waters...")
+        stripped_receptor_path = autobuilding_dir / "stripped_receptor.pdb"
+        if not stripped_receptor_path.is_file():
+            stripped_receptor_path = strip_receptor_waters(receptor_path=protein_model_path,
+                                                           placed_ligand_path=placed_ligand_path,
+                                                           output_path=stripped_receptor_path,
+                                                           )
+
+        print("\tConverting event map to mtz...")
+        event_map_mtz_path = autobuilding_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
+        if not event_map_mtz_path.is_file():
+            event_map_mtz_path: Path = event_map_to_mtz(event_map_path,
+                                                        event_map_mtz_path,
+                                                        event.analysed_resolution,
+                                                        )
+
+        # Phenix control
+        autobuild_phenix_control_dir = autobuilding_dir / "phenix_control"
+        try_make(autobuild_phenix_control_dir)
+        autobuild_phenix_control_task = AutobuildPhenixControlTask(
+            submit_script_path=autobuild_phenix_control_dir / "submit_phenix_control_autobuild.sh",
+            output_dir=autobuild_phenix_control_dir,
+            mtz=mtz_path,
+            ligand=placed_ligand_path,
+            receptor=stripped_receptor_path,
+        )
+
+        # Phenix autobuild
+        autobuild_phenix_event_dir = autobuilding_dir / "phenix_event"
+        autobuild_phenix_event_task = AutobuildPhenixEventTask(
+            submit_script_path=autobuild_phenix_event_dir / "submit_phenix_event_autobuild.sh",
+            output_dir=autobuild_phenix_event_dir,
+            mtz=event_map_mtz_path,
+            ligand=placed_ligand_path,
+            receptor=stripped_receptor_path,
+            coord=event_coord,
+        )
+        tasks.append(autobuild_phenix_control_task)
+        tasks.append(autobuild_phenix_event_task)
 
     return tasks
+
+
+def get_event_table(path):
+    events = []
+    event_table = pd.read_csv(str(path))
+    for idx, event_row in event_table.iterrows():
+        event = Event.from_record(event_row)
+        events.append(event)
+
+    return events
 
 
 if __name__ == "__main__":
@@ -310,15 +478,17 @@ if __name__ == "__main__":
     output: Output = setup_output_directory(config.out_dir_path)
 
     print("Getting event table...")
-    event_table = get_event_table()
+    events = get_event_table(config.event_table_path)
 
     print("Making tasks...")
-    tasks = get_autobuild_tasks(event_table)
+    tasks = get_autobuild_tasks(events,
+                                config.out_dir_path,
+                                )
     process_luigi(tasks,
-                  jobs=8,
-                  cores=12,
+                  jobs=100,
+                  cores=1,
                   processes=1,
-                  h_vmem=120,
-                  m_mem_free=6,
+                  h_vmem=10,
+                  m_mem_free=10,
                   h_rt=3600 * 40,
                   )
