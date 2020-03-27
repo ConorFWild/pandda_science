@@ -214,7 +214,7 @@ class AutobuildPhenixControlTask(luigi.Task):
         finish_time = time.time()
 
         status = AutobuildStatus(output_dir,
-                                 finish_time-start_time,
+                                 finish_time - start_time,
                                  )
         status.to_json()
 
@@ -273,7 +273,7 @@ class AutobuildPhenixEventTask(luigi.Task):
         finish_time = time.time()
 
         status = AutobuildStatus(output_dir,
-                                 finish_time-start_time)
+                                 finish_time - start_time)
         status.to_json()
 
     def command(self,
@@ -392,69 +392,73 @@ def get_autobuild_tasks(events,
     tasks = []
     for event in events:
 
-        # Directory setup
-        autobuilding_dir = output_dir / "{}_{}_{}".format(event.pandda_name,
-                                                          event.dtag,
-                                                          event.event_idx,
-                                                          )
-        try_remove(autobuilding_dir)
-        try_make(autobuilding_dir)
+        try:
+            # Directory setup
+            autobuilding_dir = output_dir / "{}_{}_{}".format(event.pandda_name,
+                                                              event.dtag,
+                                                              event.event_idx,
+                                                              )
+            # try_remove(autobuilding_dir)
+            try_make(autobuilding_dir)
 
-        # Prerequisite files
-        protein_model_path: Path = event.initial_model_path
-        ligand_model_path: Path = get_ligand_model_path(event)
-        event_map_path: Path = event.event_map_path
-        # resolution: float = event["analysed_resolution"]
-        mtz_path = event.data_path
-        event_coord = np.array([event.x, event.y, event.z])
+            # Prerequisite files
+            protein_model_path: Path = event.initial_model_path
+            ligand_model_path: Path = get_ligand_model_path(event)
+            event_map_path: Path = event.event_map_path
+            # resolution: float = event["analysed_resolution"]
+            mtz_path = event.data_path
+            event_coord = np.array([event.x, event.y, event.z])
 
-        print("\tPlacing ligand...")
-        placed_ligand_path = autobuilding_dir / "ligand.pdb"
-        if not (autobuilding_dir / "ligand.pdb").is_file():
-            placed_ligand_path = coarse_build(ligand_model_path=ligand_model_path,
-                                              event=event,
-                                              output_path=placed_ligand_path,
-                                              )
+            print("\tPlacing ligand...")
+            placed_ligand_path = autobuilding_dir / "ligand.pdb"
+            if not (autobuilding_dir / "ligand.pdb").is_file():
+                placed_ligand_path = coarse_build(ligand_model_path=ligand_model_path,
+                                                  event=event,
+                                                  output_path=placed_ligand_path,
+                                                  )
 
-        print("\tStripping receptor waters...")
-        stripped_receptor_path = autobuilding_dir / "stripped_receptor.pdb"
-        if not stripped_receptor_path.is_file():
-            stripped_receptor_path = strip_receptor_waters(receptor_path=protein_model_path,
-                                                           placed_ligand_path=placed_ligand_path,
-                                                           output_path=stripped_receptor_path,
-                                                           )
+            print("\tStripping receptor waters...")
+            stripped_receptor_path = autobuilding_dir / "stripped_receptor.pdb"
+            if not stripped_receptor_path.is_file():
+                stripped_receptor_path = strip_receptor_waters(receptor_path=protein_model_path,
+                                                               placed_ligand_path=placed_ligand_path,
+                                                               output_path=stripped_receptor_path,
+                                                               )
 
-        print("\tConverting event map to mtz...")
-        event_map_mtz_path = autobuilding_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
-        if not event_map_mtz_path.is_file():
-            event_map_mtz_path: Path = event_map_to_mtz(event_map_path,
-                                                        event_map_mtz_path,
-                                                        event.analysed_resolution,
-                                                        )
+            print("\tConverting event map to mtz...")
+            event_map_mtz_path = autobuilding_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
+            if not event_map_mtz_path.is_file():
+                event_map_mtz_path: Path = event_map_to_mtz(event_map_path,
+                                                            event_map_mtz_path,
+                                                            event.analysed_resolution,
+                                                            )
 
-        # Phenix control
-        autobuild_phenix_control_dir = autobuilding_dir / "phenix_control"
-        try_make(autobuild_phenix_control_dir)
-        autobuild_phenix_control_task = AutobuildPhenixControlTask(
-            submit_script_path=autobuild_phenix_control_dir / "submit_phenix_control_autobuild.sh",
-            out_dir_path=autobuild_phenix_control_dir,
-            mtz=mtz_path,
-            ligand=placed_ligand_path,
-            receptor=stripped_receptor_path,
-        )
+            # Phenix control
+            autobuild_phenix_control_dir = autobuilding_dir / "phenix_control"
+            try_make(autobuild_phenix_control_dir)
+            autobuild_phenix_control_task = AutobuildPhenixControlTask(
+                submit_script_path=autobuild_phenix_control_dir / "submit_phenix_control_autobuild.sh",
+                out_dir_path=autobuild_phenix_control_dir,
+                mtz=mtz_path,
+                ligand=placed_ligand_path,
+                receptor=stripped_receptor_path,
+            )
 
-        # Phenix autobuild
-        autobuild_phenix_event_dir = autobuilding_dir / "phenix_event"
-        autobuild_phenix_event_task = AutobuildPhenixEventTask(
-            submit_script_path=autobuild_phenix_event_dir / "submit_phenix_event_autobuild.sh",
-            out_dir_path=autobuild_phenix_event_dir,
-            mtz=event_map_mtz_path,
-            ligand=placed_ligand_path,
-            receptor=stripped_receptor_path,
-            coord=event_coord,
-        )
-        tasks.append(autobuild_phenix_control_task)
-        tasks.append(autobuild_phenix_event_task)
+            # Phenix autobuild
+            autobuild_phenix_event_dir = autobuilding_dir / "phenix_event"
+            autobuild_phenix_event_task = AutobuildPhenixEventTask(
+                submit_script_path=autobuild_phenix_event_dir / "submit_phenix_event_autobuild.sh",
+                out_dir_path=autobuild_phenix_event_dir,
+                mtz=event_map_mtz_path,
+                ligand=placed_ligand_path,
+                receptor=stripped_receptor_path,
+                coord=event_coord,
+            )
+            tasks.append(autobuild_phenix_control_task)
+            tasks.append(autobuild_phenix_event_task)
+
+        except Exception as e:
+            print(e)
 
     return tasks
 
