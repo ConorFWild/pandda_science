@@ -344,18 +344,18 @@ def is_done(original_pandda_output):
 
 
 def get_ligand_model_path(event: Event):
-    ligand_smiles_path = Path(event.ligand_smiles_path)
+    # ligand_smiles_path = Path(event.ligand_smiles_path)
 
-    # event_dir: Path = Path(event.initial_model_path).parent
-    #
-    # ligands = list((event_dir / "ligand_files").glob("*.pdb"))
-    # ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
-    #
-    # ligand_pdb_path: Path = Path(min(ligand_strings,
-    #                                  key=len,
-    #                                  )
-    #                              )
-    # return ligand_pdb_path
+    event_dir: Path = Path(event.initial_model_path).parent
+
+    ligands = list((event_dir / "ligand_files").glob("*.pdb"))
+    ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
+
+    ligand_pdb_path: Path = Path(min(ligand_strings,
+                                     key=len,
+                                     )
+                                 )
+    return ligand_pdb_path
 
 
 def event_map_to_mtz(event_map_path: Path,
