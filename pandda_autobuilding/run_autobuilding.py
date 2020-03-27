@@ -182,7 +182,7 @@ class AutobuildStatus:
         record = {}
         record["time"] = self.time
         record["success"] = self.success
-        record["result_model_path"] = self.result_model_path
+        record["result_model_path"] = [str(result_path) for result_path in self.result_model_path]
 
         json_string = json.dumps(record)
         with open(str(self.output_dir / "task_results.json"), "w") as f:
