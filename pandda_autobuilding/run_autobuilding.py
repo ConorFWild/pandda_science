@@ -462,11 +462,9 @@ def get_autobuilding_task(event, output_dir):
 def get_autobuild_tasks(events,
                         output_dir,
                         ):
-    task_pairs = joblib.Parallel(n_jobs=25)(joblib.delayed(get_autobuilding_task(event,
-                                                                                 output_dir)
-                                                           for event
-                                                           in events
-                                                           )
+    task_pairs = joblib.Parallel(n_jobs=25)(joblib.delayed(get_autobuilding_task)(event, output_dir)
+                                            for event
+                                            in events
                                             )
 
     for task_pair in task_pairs:
