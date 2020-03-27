@@ -437,7 +437,7 @@ def get_autobuild_tasks(events,
         try_make(autobuild_phenix_control_dir)
         autobuild_phenix_control_task = AutobuildPhenixControlTask(
             submit_script_path=autobuild_phenix_control_dir / "submit_phenix_control_autobuild.sh",
-            output_dir=autobuild_phenix_control_dir,
+            out_dir_path=autobuild_phenix_control_dir,
             mtz=mtz_path,
             ligand=placed_ligand_path,
             receptor=stripped_receptor_path,
@@ -447,7 +447,7 @@ def get_autobuild_tasks(events,
         autobuild_phenix_event_dir = autobuilding_dir / "phenix_event"
         autobuild_phenix_event_task = AutobuildPhenixEventTask(
             submit_script_path=autobuild_phenix_event_dir / "submit_phenix_event_autobuild.sh",
-            output_dir=autobuild_phenix_event_dir,
+            out_dir_path=autobuild_phenix_event_dir,
             mtz=event_map_mtz_path,
             ligand=placed_ligand_path,
             receptor=stripped_receptor_path,
