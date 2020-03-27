@@ -242,7 +242,7 @@ class AutobuildPhenixControlTask(luigi.Task):
         return command
 
     def output(self):
-        pandda_done_path = self.output_dir / "task_results.json"
+        pandda_done_path = Path(self.output_dir) / "task_results.json"
         return luigi.LocalTarget(str(pandda_done_path))
 
 
@@ -304,7 +304,7 @@ class AutobuildPhenixEventTask(luigi.Task):
         return command
 
     def output(self):
-        pandda_done_path = self.output_dir / "task_results.json"
+        pandda_done_path = Path(self.output_dir) / "task_results.json"
         return luigi.LocalTarget(str(pandda_done_path))
 
 
@@ -375,7 +375,7 @@ def event_map_to_mtz(event_map_path: Path,
                                        col_ph=col_ph,
                                        resolution=resolution,
                                        )
-    print(formatted_command)
+    # print(formatted_command)
 
     p = subprocess.Popen(formatted_command,
                          shell=True,
@@ -406,7 +406,7 @@ def get_autobuilding_task(event, output_dir):
         mtz_path = event.data_path
         event_coord = np.array([event.x, event.y, event.z])
 
-        print("\tPlacing ligand...")
+        # print("\tPlacing ligand...")
         placed_ligand_path = autobuilding_dir / "ligand.pdb"
         if not (autobuilding_dir / "ligand.pdb").is_file():
             placed_ligand_path = coarse_build(ligand_model_path=ligand_model_path,
@@ -414,7 +414,7 @@ def get_autobuilding_task(event, output_dir):
                                               output_path=placed_ligand_path,
                                               )
 
-        print("\tStripping receptor waters...")
+        # print("\tStripping receptor waters...")
         stripped_receptor_path = autobuilding_dir / "stripped_receptor.pdb"
         if not stripped_receptor_path.is_file():
             stripped_receptor_path = strip_receptor_waters(receptor_path=protein_model_path,
@@ -422,7 +422,7 @@ def get_autobuilding_task(event, output_dir):
                                                            output_path=stripped_receptor_path,
                                                            )
 
-        print("\tConverting event map to mtz...")
+        # print("\tConverting event map to mtz...")
         event_map_mtz_path = autobuilding_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
         if not event_map_mtz_path.is_file():
             event_map_mtz_path: Path = event_map_to_mtz(event_map_path,
@@ -463,7 +463,7 @@ def get_autobuild_tasks(events,
                         output_dir,
                         ):
     task_pairs = joblib.Parallel(n_jobs=25,
-                                 verbose=5,
+                                 verbose=15,
                                  )(joblib.delayed(get_autobuilding_task)(event, output_dir)
                                    for event
                                    in events
@@ -508,6 +508,7 @@ if __name__ == "__main__":
     tasks = get_autobuild_tasks(events,
                                 config.out_dir_path,
                                 )
+    print("\tGot {} tasks!".format(len(tasks)))
     process_luigi(tasks,
                   jobs=100,
                   cores=1,
