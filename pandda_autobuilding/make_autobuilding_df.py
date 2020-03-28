@@ -397,7 +397,8 @@ if __name__ == "__main__":
             print("\tNo Model for event at: {}! Skipping!".format(event.final_model_path))
             continue
 
-        event_output_dir_path: Path = config.autobuilding_dir_path / "{}_{}".format(event.dtag,
+        event_output_dir_path: Path = config.autobuilding_dir_path / "{}_{}_{}".format(event.pandda_name,
+                                                                                       event.dtag,
                                                                                     event.event_idx,
                                                                                     )
 
@@ -426,7 +427,7 @@ if __name__ == "__main__":
     print("\tFinished getting results jsons, with: {} jsons found".format(len(results)))
 
     print("Making results dataframe")
-    events_dict = {(event.dtag, event.event_idx): event
+    events_dict = {(event.pandda_name, event.dtag, event.event_idx): event
                    for event
                    in events}
     results_df = make_results_dataframe(results,
