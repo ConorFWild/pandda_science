@@ -139,7 +139,7 @@ def try_get_json(path):
                                            result_model_paths=[Path(p)
                                                                for p
                                                                in results_dict[
-                                                                   "result_model_paths"]
+                                                                   "result_model_path"]
                                                                ],
                                            )
         return phenix_control_result
