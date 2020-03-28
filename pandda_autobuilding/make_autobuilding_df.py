@@ -170,7 +170,7 @@ def analyse_build_result(true_model, result):
             result_model_ligand_table = result_model_hetatm_table[result_model_hetatm_table["residue_name"] == "LIG"]
 
             true_model_coords_df = true_model_ligand_table[["x_coord", "y_coord", "z_coord"]]
-            result_model_coords_df = result_model_ligand_table["HETATM"][["x_coord", "y_coord", "z_coord"]]
+            result_model_coords_df = result_model_ligand_table[["x_coord", "y_coord", "z_coord"]]
 
             # true_model_mean_coords = np.mean(np.array(true_model_coords_df), axis=0)
             # event_mean_coords = np.array([event.x,
