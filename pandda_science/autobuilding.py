@@ -11,6 +11,9 @@ from pandda_science.graphs import (distribution_plot,
 
 def get_autobuilding_results_df(path: Path):
     parallel_pandda_df: pd.DataFrame = pd.read_csv(str(path))
+    print("\t{}".format(len(parallel_pandda_df)))
+    parallel_pandda_df = parallel_pandda_df.dropna()
+    print("\t{}".format(len(parallel_pandda_df)))
 
     return parallel_pandda_df
 
