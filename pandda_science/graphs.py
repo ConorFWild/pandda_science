@@ -78,7 +78,7 @@ def comparitive_cdf_plot(distribution_dict,
                          x_ticks=np.array([0, 1, 2, 3, 4, 5, 6]),
                          y_ticks=np.array([0, 1, 2, 3, 4, 5, 6]),
                          x_scale=lambda x: np.log(x + 1),
-                         x_scale_inv=lambda x: round(np.exp(x) - 1, 2),
+                         x_scale_inv=lambda x: np.round(np.exp(x) - 1, 2),
                          ):
     fig, ax = plt.subplots(figsize=(8, 4))
     # plt.xscale("log")
