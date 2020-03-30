@@ -378,6 +378,7 @@ def make_results_dataframe(all_results,
                                        )(joblib.delayed(analyse_autobuilding_results)(task[0],
                                                                                       task[1],
                                                                                       task[2],
+                                                                                      task[3],
                                                                                       )
                                          for task
                                          in autobuilding_df_tasks
