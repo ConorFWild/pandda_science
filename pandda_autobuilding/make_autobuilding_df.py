@@ -421,7 +421,7 @@ if __name__ == "__main__":
         phenix_control_result = try_get_json(phenix_control_json_path)
 
         # Get Phenix event
-        phenix_event_json_path: Path = event_output_dir_path / "phenix_control" / "task_results.json"
+        phenix_event_json_path: Path = event_output_dir_path / "phenix_event" / "task_results.json"
         phenix_event_result = try_get_json(phenix_event_json_path)
 
         if phenix_control_result is None:
