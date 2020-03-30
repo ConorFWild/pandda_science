@@ -89,6 +89,7 @@ def comparitive_cdf_plot(distribution_dict,
     ax.set_title(title)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
+    plt.xscale("log")
 
     fig.savefig(str(output_path))
     plt.close(fig)
