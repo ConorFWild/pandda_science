@@ -75,12 +75,16 @@ def comparitive_cdf_plot(distribution_dict,
                          title="",
                          x_label="",
                          y_label="",
+                         x_ticks=np.array([0, 1, 2, 3, 4, 5, 6]),
+                         y_ticks=np.array([0, 1, 2, 3, 4, 5, 6]),
+                         x_scale=lambda x: np.log(x + 1),
+                         x_scale_inv=lambda x: round(np.exp(x) - 1, 2),
                          ):
     fig, ax = plt.subplots(figsize=(8, 4))
     # plt.xscale("log")
 
     for build_name, distribution in distribution_dict.items():
-        n, bins, patches = ax.hist(distribution,
+        n, bins, patches = ax.hist(x_scale(distribution),
                                    n_bins,
                                    density=True,
                                    histtype='step',
@@ -88,14 +92,8 @@ def comparitive_cdf_plot(distribution_dict,
                                    label=build_name,
                                    )
 
-    plt.xticks([0, 1, 2, 3, 4, 5],
-               [round(np.exp(0) - 1, 2),
-                round(np.exp(1) - 1, 2),
-                round(np.exp(2) - 1, 2),
-                round(np.exp(3) - 1, 2),
-                round(np.exp(4) - 1, 2),
-                round(np.exp(5) - 1, 2)
-                ],
+    plt.xticks(x_ticks,
+               x_scale_inv(x_ticks),
                )
 
     ax.legend(loc='right')
