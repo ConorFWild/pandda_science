@@ -447,6 +447,7 @@ if __name__ == "__main__":
                                         final_model_paths,
                                         events_dict,
                                         )
+    print(results_df.head())
     print("\tMade results dataframe")
 
     print("Outputing results dataframe to: {}".format(output.results_csv_path))
