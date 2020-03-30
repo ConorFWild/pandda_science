@@ -61,7 +61,7 @@ def get_config(args):
 class Output:
     def __init__(self, out_dir_path: Path):
         self.out_dir_path: Path = out_dir_path
-        self.results_csv_path = out_dir_path / "autobuilding_results.csv"
+        self.ranking_table_csv_path = out_dir_path / "ranking_table.csv"
 
     def attempt_mkdir(self, path: Path):
         try:
@@ -97,29 +97,12 @@ def get_events(events_csv_path):
     events: List[Event] = []
 
     for idx, event_record in events_table.iterrows():
-        # event: Event = Event(dtag=str(event_record["dtag"]),
-        #                      event_idx=int(event_record["event_idx"]),
-        #                      occupancy=event_record["occupancy"],
-        #                      analysed_resolution=event_record["analysed_resolution"],
-        #                      high_resolution=event_record["high_resolution"],
-        #                      interesting=event_record["interesting"],
-        #                      ligand_placed=event_record["ligand_placed"],
-        #                      ligand_confidence=event_record["ligand_confidence"],
-        #                      viewed=event_record["viewed"],
-        #                      initial_model_path=Path(event_record["initial_model_path"]),
-        #                      data_path=Path(event_record["data_path"]),
-        #                      final_model_path=Path(event_record["final_model_path"]),
-        #                      event_map_path=Path(event_record["event_map_path"]),
-        #                      actually_built=event_record["actually_built"],
-        #                      x=event_record["x"],
-        #                      y=event_record["y"],
-        #                      z=event_record["z"],
-        #                      )
+
         event = Event.from_record(event_record)
 
         events.append(event)
 
-    return events
+    return events, events_table
 
 
 def is_event_built(event):
@@ -289,10 +272,9 @@ def get_model_distance_to_event(true_model,
         return min(distances_to_event)
 
 
-def parse_rscc(path, build_name):
-    autobuild_system_path = path
-    autobuild_path = autobuild_system_path / str(build_name)
-    with open(str(autobuild_path / "LigandFit_run_1_" / "LigandFit_summary.dat"), "r") as f:
+def parse_rscc(path):
+    autobuild_path = path
+    with open(str(autobuild_path / "LigandFit_summary.dat"), "r") as f:
         string = f.read()
 
     regex = "^[\s]+[1]+[\s]+[0-9\.]+[\s]+([0-9\.]+)"
@@ -301,49 +283,38 @@ def parse_rscc(path, build_name):
     return float(m.group(1))
 
 
+class AutobuildRSCCResult:
+    def __init__(self,
+                 pandda_name,
+                 dtag,
+                 event_idx,
+                 rscc,
+                 ):
+        self.pandda_name = pandda_name
+        self.dtag = dtag
+        self.event_idx = event_idx
+        self.rscc = rscc
+
+
 def analyse_autobuilding_results(true_model_path,
                                  event,
                                  result,
-                                 build_name,
                                  ):
     print("analysing")
 
-
     true_model = BioPandasModel(true_model_path)
-
-    method_results = []
 
     model_distance_to_event = get_model_distance_to_event(true_model,
                                                           event,
                                                           )
 
-    # for build_name, result in results.items():
+    rscc = parse_rscc(result.result_model_paths[0].parent)
 
-    candidate_model_results = analyse_build_result(true_model,
-                                                   result,
-                                                   )
+    print("{} {} {}: {}".format(event.pandda_name, event.dtag, event.event_idx, rscc))
 
-    if len(candidate_model_results) == 0:
-        record = get_null_autobuild_record(build_name,
-                                           event,
-                                           )
+    result = AutobuildRSCCResult(event.pandda_name, event.dtag, event.event_idx, rscc)
 
-    else:
-        # rscc = parse_rscc(result["path"],
-        #                   build_name,
-        #                   )
-        print("{} {} {}".format(build_name, event.dtag, event.event_idx))
-        print([candidate_model_result["rmsd"] for candidate_model_result in candidate_model_results])
-        record = get_autobuild_record(build_name,
-                                      candidate_model_results,
-                                      model_distance_to_event,
-                                      result,
-                                      event,
-                                      )
-
-    method_results.append(record)
-
-    return pd.DataFrame(method_results)
+    return result
 
 
 def make_results_dataframe(all_results,
@@ -355,15 +326,8 @@ def make_results_dataframe(all_results,
     for event_id, true_model_path in true_model_paths.items():
         print("\tAnalysing event for: {}".format(event_id))
         event = events_dict[event_id]
-        results_phenix_control = all_results[event_id]["phenix_control"]
         results_phenix_event = all_results[event_id]["phenix_event"]
 
-        autobuilding_df_task_phenix_control_args = [true_model_path,
-                                                    event,
-                                                    results_phenix_control,
-                                                    "phenix_control",
-                                                    ]
-        autobuilding_df_tasks.append(autobuilding_df_task_phenix_control_args)
         autobuilding_df_task_phenix_event_args = [true_model_path,
                                                   event,
                                                   results_phenix_event,
@@ -373,38 +337,30 @@ def make_results_dataframe(all_results,
 
     # autobuilding_dfs.append(autobuilding_df)
     print("MULTIPROCESSING")
-    autobuilding_dfs = joblib.Parallel(n_jobs=20,
-                                       verbose=50,
-                                       )(joblib.delayed(analyse_autobuilding_results)(task[0],
-                                                                                      task[1],
-                                                                                      task[2],
-                                                                                      task[3],
-                                                                                      )
-                                         for task
-                                         in autobuilding_df_tasks
-                                         )
+    results = joblib.Parallel(n_jobs=20,
+                              verbose=50,
+                              )(joblib.delayed(analyse_autobuilding_results)(task[0],
+                                                                             task[1],
+                                                                             task[2],
+                                                                             task[3],
+                                                                             )
+                                for task
+                                in autobuilding_df_tasks
+                                )
 
-    df = pd.concat(autobuilding_dfs)
+    results_dict = {}
+    for result in results:
+        results_dict[(result.pandda_name, result.dtag, result.event_idx)] = result
 
-    return df
+    return results_dict
 
 
-if __name__ == "__main__":
-    args = parse_args()
-
-    config = get_config(args)
-
-    output: Output = setup_output_directory(config.out_dir_path)
-
-    print("Getting events from csv...")
-    events = get_events(config.events_df_path)
-    print("\tGot events csv with: {} events".format(len(events)))
-
+def get_results(events):
     results = {}
     final_model_paths = {}
 
     for event in events:
-        print("Processing event: {} {}".format(event.dtag, event.event_idx))
+        print("Processing event: {} {} {}".format(event.pandda_name, event.dtag, event.event_idx))
 
         if not is_event_built(event):
             print("\tNo Model for event at: {}! Skipping!".format(event.final_model_path))
@@ -415,27 +371,160 @@ if __name__ == "__main__":
                                                                                        event.event_idx,
                                                                                        )
 
-        # Get Phenix control
-
-        phenix_control_json_path: Path = event_output_dir_path / "phenix_control" / "task_results.json"
-        phenix_control_result = try_get_json(phenix_control_json_path)
-
         # Get Phenix event
         phenix_event_json_path: Path = event_output_dir_path / "phenix_event" / "task_results.json"
         phenix_event_result = try_get_json(phenix_event_json_path)
 
-        if phenix_control_result is None:
-            print("\tMissing a json, skipping!")
-            continue
         if phenix_event_result is None:
             print("\tMissing a json, skipping!")
             continue
 
         results[(event.pandda_name, event.dtag, event.event_idx)] = {}
-        results[(event.pandda_name, event.dtag, event.event_idx)]["phenix_control"] = phenix_control_result
         results[(event.pandda_name, event.dtag, event.event_idx)]["phenix_event"] = phenix_event_result
         results[(event.pandda_name, event.dtag, event.event_idx)]["path"] = event_output_dir_path
         final_model_paths[(event.pandda_name, event.dtag, event.event_idx)] = event.final_model_path
+
+    return results, final_model_paths
+
+
+def get_size_ranks(pandda_events_table):
+    sorted_table = pandda_events_table.sort_values("event_size",
+                                                   ascending=False,
+                                                   )
+
+    size_ranks = {}
+    for idx, row in sorted_table.iterrows():
+        size_ranks[(row["pandda_name"],
+                    row["dtag"],
+                    row["event_idx"])] = idx
+
+    return size_ranks
+
+
+def get_rscc_ranks(pandda_events_table,
+                   results,
+                   ):
+    new_series = []
+    for idx, row in pandda_events_table.iterrows():
+        rscc = results[(row["pandda_name"],
+                        row["dtag"],
+                        row["event_idx"])].rscc
+        new_series.append(rscc)
+
+    pandda_events_table["rscc"] = new_series
+    sorted_table = pandda_events_table.sort_values("rscc",
+                                                   ascending=False,
+                                                   )
+
+    rscc_ranks = {}
+    for idx, row in sorted_table.iterrows():
+        rscc_ranks[(row["pandda_name"],
+                    row["dtag"],
+                    row["event_idx"])] = idx
+
+    return rscc_ranks
+
+
+class RankedEvent:
+    def __init__(self,
+                 pandda_name,
+                 dtag,
+                 event_idx,
+                 size,
+                 size_rank,
+                 rscc,
+                 rscc_rank,
+                 event_distance_to_model,
+                 actually_built,
+                 ):
+        self.pandda_name = pandda_name
+        self.dtag = dtag
+        self.event_idx = event_idx
+        self.size = size
+        self.size_rank = size_rank
+        self.rscc = rscc
+        self.rscc_rank = rscc_rank
+        self.event_distance_to_model = event_distance_to_model
+        self.actually_built = actually_built
+
+    def to_record(self):
+        record = {}
+        record["pandda_name"] = self.pandda_name
+        record["dtag"] = self.dtag
+        record["event_idx"] = self.event_idx
+        record["size"] = self.size
+        record["size_rank"] = self.size_rank
+        record["rscc"] = self.rscc
+        record["rscc_rank"] = self.rscc_rank
+        record["event_distance_to_model"] = self.event_distance_to_model
+        record["actually_built"] = self.actually_built
+        return record
+
+
+def get_ranking_table(results_df,
+                      events_dict,
+                      events_table,
+                      ):
+    # Just the event table but with the ranks by rscc and z score and distance to event
+    ranked_events = []
+    unique_model_dirs = events_table["model_dir"].unique()
+    for model_dir in unique_model_dirs:
+        model_dir_table = events_table[events_table["model_dir"] == model_dir]
+        unique_panddas = model_dir_table["pandda_name"].unique()
+        for pandda_name in unique_panddas:
+            pandda_events_table = model_dir_table[model_dir_table["pandda_name"] == pandda_name]
+
+            if len(pandda_events_table["actually_built"] == "True"):
+                continue
+
+            size_ranks = get_size_ranks(pandda_events_table)
+            rscc_ranks = get_rscc_ranks(pandda_events_table,
+                                        results_df,
+                                        )
+
+            for idx, row in pandda_events_table.iterrows():
+                pandda_name = pandda_events_table["pandda_name"]
+                dtag = pandda_events_table["dtag"]
+                event_idx = pandda_events_table["event_idx"]
+                size = row["event_size"]
+                size_rank = size_ranks[(pandda_name, dtag, event_idx)]
+                rscc = row["rscc"]
+                rscc_rank = rscc_ranks[(pandda_name, dtag, event_idx)]
+                event_distance_to_model = events_dict[(pandda_name, dtag, event_idx)].distance_to_ligand_model
+                actually_built = events_dict[(pandda_name, dtag, event_idx)].actually_built
+                ranked_event = RankedEvent(pandda_name=pandda_name,
+                                           dtag=dtag,
+                                           event_idx=event_idx,
+                                           size=size,
+                                           size_rank=size_rank,
+                                           rscc=rscc,
+                                           rscc_rank=rscc_rank,
+                                           event_distance_to_model=event_distance_to_model,
+                                           actually_built=actually_built,
+                                           )
+                ranked_events.append(ranked_event)
+
+    ranked_event_table = pd.DataFrame([ranked_event.to_record()
+                                       for ranked_event
+                                       in ranked_events
+                                       ]
+                                      )
+
+    return ranked_event_table
+
+
+if __name__ == "__main__":
+    args = parse_args()
+
+    config = get_config(args)
+
+    output: Output = setup_output_directory(config.out_dir_path)
+
+    print("Getting events from csv...")
+    events, events_table = get_events(config.events_df_path)
+    print("\tGot events csv with: {} events".format(len(events)))
+
+    results, final_model_paths = get_results(events)
 
     print("\tFinished getting results jsons, with: {} jsons found".format(len(results)))
 
@@ -443,13 +532,17 @@ if __name__ == "__main__":
     events_dict = {(event.pandda_name, event.dtag, event.event_idx): event
                    for event
                    in events}
-    results_df = make_results_dataframe(results,
-                                        final_model_paths,
-                                        events_dict,
-                                        )
-    print(results_df.head())
+    results = make_results_dataframe(results,
+                                     final_model_paths,
+                                     events_dict,
+                                     )
     print("\tMade results dataframe")
 
-    print("Outputing results dataframe to: {}".format(output.results_csv_path))
-    results_df.to_csv(str(output.results_csv_path))
+    ranking_table = get_ranking_table(results,
+                                      events_dict,
+                                      events_table,
+                                      )
+
+    print("Outputing results dataframe to: {}".format(output.ranking_table_csv_path))
+    ranking_table.to_csv(str(output.ranking_table_csv_path))
     print("\tOutput results dataframe")

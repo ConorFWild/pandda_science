@@ -26,6 +26,7 @@ class Event(NamedTuple):
     y: float
     z: float
     distance_to_ligand_model: float
+    event_size: int
 
     @staticmethod
     def from_record(row):
@@ -51,6 +52,7 @@ class Event(NamedTuple):
                              y=row["y"],
                              z=row["z"],
                              distance_to_ligand_model=row["distance_to_ligand_model"],
+                             event_size=row["event_size"]
                              )
         return event
 
@@ -78,6 +80,7 @@ class Event(NamedTuple):
                   "y": self.y,
                   "z": self.z,
                   "distance_to_ligand_model": self.distance_to_ligand_model,
+                  "event_size": self.event_size,
                   }
         return record
 

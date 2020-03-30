@@ -167,6 +167,7 @@ def get_events(pandda: PanDDA):
                              y=event_record["y"],
                              z=event_record["z"],
                              distance_to_ligand_model=distance_to_ligand_model,
+                             event_size=event_record["cluster_size"],
                              )
 
         events[(event.dtag, event.event_idx)] = event
