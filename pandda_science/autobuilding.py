@@ -110,6 +110,9 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
         cumulative_plot(cutoff_df["phenix_control_rmsd"],
                         output_path / "phenix_control_rmsds_cumulative_{}.png".format(cutoff),
                         )
+        cumulative_plot(np.log(cutoff_df["phenix_control_rmsd"] + 1),
+                        output_path / "phenix_control_rmsds_cumulative_log_{}.png".format(cutoff),
+                        )
 
         # Phenix Event
         distribution_plot(cutoff_df["phenix_event_rmsd"],
@@ -117,6 +120,9 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                           )
         cumulative_plot(cutoff_df["phenix_event_rmsd"],
                         output_path / "phenix_event_rmsds_cumulative_{}.png".format(cutoff),
+                        )
+        cumulative_plot(np.log(cutoff_df["phenix_event_rmsd"] + 1),
+                        output_path / "phenix_event_rmsds_cumulative_log_{}.png".format(cutoff),
                         )
 
         # Scatter
