@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import numpy as np
+
 from matplotlib import pyplot as plt
 import seaborn as sns
 
@@ -85,6 +87,10 @@ def comparitive_cdf_plot(distribution_dict,
                                    cumulative=True,
                                    label=build_name,
                                    )
+
+    plt.xticks([0, 1, 2, 3, 4, 5],
+               [np.exp(0) - 1, np.exp(1) - 1, np.exp(2) - 1, np.exp(3) - 1, np.exp(4) - 1, np.exp(5) - 1],
+               )
 
     ax.legend(loc='right')
     ax.set_title(title)
