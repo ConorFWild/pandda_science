@@ -75,7 +75,7 @@ def comparitive_cdf_plot(distribution_dict,
                          y_label="",
                          ):
     fig, ax = plt.subplots(figsize=(8, 4))
-    plt.xscale("log")
+    # plt.xscale("log")
 
     for build_name, distribution in distribution_dict.items():
         n, bins, patches = ax.hist(distribution,
