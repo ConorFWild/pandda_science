@@ -7,6 +7,7 @@ import pandas as pd
 from pandda_science.graphs import (distribution_plot,
                                    scatter_plot,
                                    cumulative_plot,
+                                   comparitive_cdf_plot,
                                    )
 
 
@@ -136,6 +137,13 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                      np.log(cutoff_df["phenix_control_rmsd"] + 1),
                      output_path / "phenix_rmsds_log_scatter_{}.png".format(cutoff),
                      )
+
+        # Comparitive log
+        comparitive_cdf_plot({"phenix_control": np.log(cutoff_df["phenix_control_rmsd"] + 1),
+                              "phenix_event": np.log(cutoff_df["phenix_control_rmsd"] + 1),
+                              },
+                             output_path / "comparitive_rmsd_log_cdf_{}.png".format(cutoff),
+                             )
 
 
 def get_autobuilding_rscc_distribution_graph():

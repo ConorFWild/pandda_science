@@ -17,6 +17,7 @@ def scatter_plot(x,
     fig.savefig(str(output_path))
     plt.close(fig)
 
+
 # def log_scatter_plot(x,
 #                  y,
 #                  output_path: Path,
@@ -37,11 +38,13 @@ def distribution_plot(data_series,
     fig.savefig(str(output_path))
     plt.close(fig)
 
+
 def bar_plot(x, y, output_path):
     ax = sns.barplot(x, y)
     fig = ax.get_figure()
     fig.savefig(str(output_path))
     plt.close(fig)
+
 
 def cumulative_plot(x,
                     output_path: Path,
@@ -60,5 +63,32 @@ def cumulative_plot(x,
                                cumulative=True,
                                label='Empirical',
                                )
+    fig.savefig(str(output_path))
+    plt.close(fig)
+
+
+def comparitive_cdf_plot(distribution_dict,
+                         output_path,
+                         n_bins=100,
+                         title="",
+                         x_label="",
+                         y_label="",
+                         ):
+    fig, ax = plt.subplots(figsize=(8, 4))
+
+    for build_name, distribution in distribution_dict.items():
+        n, bins, patches = ax.hist(distribution,
+                                   n_bins,
+                                   density=True,
+                                   histtype='step',
+                                   cumulative=True,
+                                   label=build_name,
+                                   )
+
+    ax.legend(loc='right')
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+
     fig.savefig(str(output_path))
     plt.close(fig)
