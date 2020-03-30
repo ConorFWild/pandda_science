@@ -154,7 +154,7 @@ def analyse_build_result(true_model, result):
     candidate_model_results = []
     distances_to_events = []
 
-    true_model_hetatm_table =  true_model.model.df["HETATM"]
+    true_model_hetatm_table = true_model.model.df["HETATM"]
     true_model_ligands_table = true_model_hetatm_table[true_model_hetatm_table["residue_name"] == "LIG"]
 
     for candidate_model_path in result.result_model_paths:
@@ -352,24 +352,31 @@ def make_results_dataframe(all_results,
     for event_id, true_model_path in true_model_paths.items():
         print("\tAnalysing event for: {}".format(event_id))
         event = events_dict[event_id]
-        results = all_results[event_id]
+        results_phenix_control = all_results[event_id]["phenix_control"]
+        results_phenix_event = all_results[event_id]["phenix_event"]
 
-        autobuilding_df_task_args = [true_model_path,
-                                     event,
-                                     results,
-                                     ]
-        autobuilding_df_tasks.append(autobuilding_df_task_args)
+        autobuilding_df_task_phenix_control_args = [true_model_path,
+                                                    event,
+                                                    results_phenix_control,
+                                                    ]
+        autobuilding_df_tasks.append(autobuilding_df_task_phenix_control_args)
+        autobuilding_df_task_phenix_event_args = [true_model_path,
+                                                  event,
+                                                  results_phenix_event,
+                                                  ]
+        autobuilding_df_tasks.append(autobuilding_df_task_phenix_event_args)
 
     # autobuilding_dfs.append(autobuilding_df)
     print("MULTIPROCESSING")
     autobuilding_dfs = joblib.Parallel(n_jobs=20,
-                                       verbose=50)(joblib.delayed(analyse_autobuilding_results)(task[0],
-                                                                                                task[1],
-                                                                                                task[2],
-                                                                                                )
-                                                   for task
-                                                   in autobuilding_df_tasks
-                                                   )
+                                       verbose=50,
+                                       )(joblib.delayed(analyse_autobuilding_results)(task[0],
+                                                                                      task[1],
+                                                                                      task[2],
+                                                                                      )
+                                         for task
+                                         in autobuilding_df_tasks
+                                         )
 
     df = pd.concat(autobuilding_dfs)
 
@@ -399,8 +406,8 @@ if __name__ == "__main__":
 
         event_output_dir_path: Path = config.autobuilding_dir_path / "{}_{}_{}".format(event.pandda_name,
                                                                                        event.dtag,
-                                                                                    event.event_idx,
-                                                                                    )
+                                                                                       event.event_idx,
+                                                                                       )
 
         # Get Phenix control
 
