@@ -19,6 +19,7 @@ from pandda_science.autobuilding import (get_autobuilding_results_df,
                                          get_autobuilding_rmsd_distribution_graph,
                                          get_autobuilding_rscc_distribution_graph,
                                          get_relative_median_rmsd_by_system_graph,
+                                         get_autobuilding_rmsd_distribution_stats_table,
                                          )
 from pandda_science.build_score import (get_build_score_train_df,
                                         get_build_score_test_df,
@@ -174,6 +175,10 @@ if __name__ == "__main__":
     if config.autobuilding_df_path.is_file():
         autobuilding_results_df: pd.DataFrame = get_autobuilding_results_df(config.autobuilding_df_path)
         relative_median_rmsd_by_system_df = get_relative_median_rmsd_by_system_df(autobuilding_results_df)
+        get_autobuilding_rmsd_distribution_stats_table(relative_median_rmsd_by_system_df,
+                                                       config.out_dir_path / "autobuilding_stats.csv",
+                                                       cutoffs=[2.0, 3.0, 4.0, 5.0, 7.0, 10.0, 20.0, 30.0, 50.0],
+                                                       )
         get_autobuilding_rmsd_distribution_graph(relative_median_rmsd_by_system_df,
                                                  config.out_dir_path,
                                                  cutoffs=[2.0, 3.0, 4.0, 5.0, 7.0, 10.0, 20.0, 30.0, 50.0],
