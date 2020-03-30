@@ -303,9 +303,12 @@ def parse_rscc(path, build_name):
 
 def analyse_autobuilding_results(true_model_path,
                                  event,
-                                 results,
+                                 result,
+                                 build_name,
                                  ):
     print("analysing")
+
+
     true_model = BioPandasModel(true_model_path)
 
     method_results = []
@@ -314,31 +317,31 @@ def analyse_autobuilding_results(true_model_path,
                                                           event,
                                                           )
 
-    for build_name, result in results.items():
+    # for build_name, result in results.items():
 
-        candidate_model_results = analyse_build_result(true_model,
-                                                       result,
-                                                       )
+    candidate_model_results = analyse_build_result(true_model,
+                                                   result,
+                                                   )
 
-        if len(candidate_model_results) == 0:
-            record = get_null_autobuild_record(build_name,
-                                               event,
-                                               )
+    if len(candidate_model_results) == 0:
+        record = get_null_autobuild_record(build_name,
+                                           event,
+                                           )
 
-        else:
-            # rscc = parse_rscc(result["path"],
-            #                   build_name,
-            #                   )
-            print("{} {} {}".format(build_name, event.dtag, event.event_idx))
-            print([candidate_model_result["rmsd"] for candidate_model_result in candidate_model_results])
-            record = get_autobuild_record(build_name,
-                                          candidate_model_results,
-                                          model_distance_to_event,
-                                          result,
-                                          event,
-                                          )
+    else:
+        # rscc = parse_rscc(result["path"],
+        #                   build_name,
+        #                   )
+        print("{} {} {}".format(build_name, event.dtag, event.event_idx))
+        print([candidate_model_result["rmsd"] for candidate_model_result in candidate_model_results])
+        record = get_autobuild_record(build_name,
+                                      candidate_model_results,
+                                      model_distance_to_event,
+                                      result,
+                                      event,
+                                      )
 
-        method_results.append(record)
+    method_results.append(record)
 
     return pd.DataFrame(method_results)
 
@@ -358,11 +361,13 @@ def make_results_dataframe(all_results,
         autobuilding_df_task_phenix_control_args = [true_model_path,
                                                     event,
                                                     results_phenix_control,
+                                                    "phenix_control",
                                                     ]
         autobuilding_df_tasks.append(autobuilding_df_task_phenix_control_args)
         autobuilding_df_task_phenix_event_args = [true_model_path,
                                                   event,
                                                   results_phenix_event,
+                                                  "phenix_event",
                                                   ]
         autobuilding_df_tasks.append(autobuilding_df_task_phenix_event_args)
 
