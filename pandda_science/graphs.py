@@ -83,7 +83,6 @@ def comparitive_cdf_plot(distribution_dict,
                                    histtype='step',
                                    cumulative=True,
                                    label=build_name,
-                                   log=True,
                                    )
 
     ax.legend(loc='right')
