@@ -42,3 +42,13 @@ def bar_plot(x, y, output_path):
     fig = ax.get_figure()
     fig.savefig(str(output_path))
     plt.close(fig)
+
+def cumulative_plot(x,
+                    output_path: Path,
+                    ):
+    ax = sns.kdeplot(x,
+                     cumulative=True,
+                     )
+    fig = ax.get_figure()
+    fig.savefig(str(output_path))
+    plt.close(fig)

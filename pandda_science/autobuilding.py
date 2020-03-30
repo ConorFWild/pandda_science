@@ -6,6 +6,7 @@ import pandas as pd
 
 from pandda_science.graphs import (distribution_plot,
                                    scatter_plot,
+                                   cumulative_plot,
                                    )
 
 
@@ -106,11 +107,17 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
         distribution_plot(cutoff_df["phenix_control_rmsd"],
                           output_path / "phenix_control_rmsds_{}.png".format(cutoff),
                           )
+        cumulative_plot(cutoff_df["phenix_control_rmsd"],
+                        output_path / "phenix_control_rmsds_cumulative_{}.png".format(cutoff),
+                        )
 
         # Phenix Event
         distribution_plot(cutoff_df["phenix_event_rmsd"],
                           output_path / "phenix_event_rmsds_{}.png".format(cutoff),
                           )
+        cumulative_plot(cutoff_df["phenix_event_rmsd"],
+                        output_path / "phenix_event_rmsds_cumulative_{}.png".format(cutoff),
+                        )
 
         # Scatter
         scatter_plot(cutoff_df["phenix_event_rmsd"],
