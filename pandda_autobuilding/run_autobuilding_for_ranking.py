@@ -189,63 +189,6 @@ class AutobuildStatus:
             f.write(json_string)
 
 
-class AutobuildPhenixControlTask(luigi.Task):
-    submit_script_path = luigi.Parameter()
-    out_dir_path = luigi.Parameter()
-    mtz = luigi.Parameter()
-    ligand = luigi.Parameter()
-    receptor = luigi.Parameter()
-
-    def run(self):
-        submit_script_path = Path(self.submit_script_path)
-        output_dir = Path(self.out_dir_path)
-        target_path = output_dir / "task_results.json"
-
-        command = self.command(self.out_dir_path,
-                               self.mtz,
-                               self.ligand,
-                               self.receptor,
-                               )
-
-        start_time = time.time()
-
-        QSub(command,
-             submit_script_path,
-             )()
-
-        finish_time = time.time()
-
-        status = AutobuildStatus(output_dir,
-                                 finish_time - start_time,
-                                 )
-        status.to_json()
-
-    def command(self,
-                out_dir_path,
-                mtz,
-                ligand,
-                receptor,
-                ):
-        env = "module load phenix"
-        ligand_fit_command = "phenix.ligandfit"
-        ligand_fit_args = "data={mtz} ligand={ligand} model={receptor}"
-        ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz,
-                                                           ligand=ligand,
-                                                           receptor=receptor,
-                                                           )
-        command = "{env}; cd {out_dir_path}; {ligand_fit_command} {args}".format(env=env,
-                                                                                 out_dir_path=out_dir_path,
-                                                                                 ligand_fit_command=ligand_fit_command,
-                                                                                 args=ligand_fit_args_formatted,
-                                                                                 )
-
-        return command
-
-    def output(self):
-        pandda_done_path = Path(self.out_dir_path) / "task_results.json"
-        return luigi.LocalTarget(str(pandda_done_path))
-
-
 class AutobuildPhenixEventTask(luigi.Task):
     submit_script_path = luigi.Parameter()
     out_dir_path = luigi.Parameter()
@@ -424,17 +367,6 @@ def get_autobuilding_task(event, output_dir):
                                                         event.analysed_resolution,
                                                         )
 
-        # Phenix control
-        autobuild_phenix_control_dir = autobuilding_dir / "phenix_control"
-        try_make(autobuild_phenix_control_dir)
-        autobuild_phenix_control_task = AutobuildPhenixControlTask(
-            submit_script_path=autobuild_phenix_control_dir / "submit_phenix_control_autobuild.sh",
-            out_dir_path=autobuild_phenix_control_dir,
-            mtz=mtz_path,
-            ligand=placed_ligand_path,
-            receptor=stripped_receptor_path,
-        )
-
         # Phenix autobuild
         autobuild_phenix_event_dir = autobuilding_dir / "phenix_event"
         try_make(autobuild_phenix_event_dir)
@@ -446,7 +378,7 @@ def get_autobuilding_task(event, output_dir):
             receptor=stripped_receptor_path,
             coord=event_coord,
         )
-        return [autobuild_phenix_control_task, autobuild_phenix_event_task]
+        return autobuild_phenix_event_task
 
     except Exception as e:
         print(e)
@@ -457,18 +389,12 @@ def get_autobuilding_task(event, output_dir):
 def get_autobuild_tasks(events,
                         output_dir,
                         ):
-    task_pairs = joblib.Parallel(n_jobs=25,
-                                 verbose=15,
-                                 )(joblib.delayed(get_autobuilding_task)(event, output_dir)
-                                   for event
-                                   in events
-                                   )
-
-    tasks = []
-    for task_pair in task_pairs:
-        if task_pair is not None:
-            tasks.append(task_pair[0])
-            tasks.append(task_pair[1])
+    tasks = joblib.Parallel(n_jobs=25,
+                            verbose=15,
+                            )(joblib.delayed(get_autobuilding_task)(event, output_dir)
+                              for event
+                              in events
+                              )
 
     return tasks
 
