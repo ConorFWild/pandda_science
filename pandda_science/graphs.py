@@ -45,10 +45,20 @@ def bar_plot(x, y, output_path):
 
 def cumulative_plot(x,
                     output_path: Path,
+                    n_bins=100,
                     ):
-    ax = sns.kdeplot(x,
-                     cumulative=True,
-                     )
-    fig = ax.get_figure()
+    # ax = sns.kdeplot(x,
+    #                  cumulative=True,
+    #                  )
+    # fig = ax.get_figure()
+    fig, ax = plt.subplots(figsize=(8, 4))
+
+    n, bins, patches = ax.hist(x,
+                               n_bins,
+                               density=True,
+                               histtype='step',
+                               cumulative=True,
+                               label='Empirical',
+                               )
     fig.savefig(str(output_path))
     plt.close(fig)
