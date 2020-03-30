@@ -140,7 +140,7 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
 
         # Comparitive log
         comparitive_cdf_plot({"phenix_control": np.log(cutoff_df["phenix_control_rmsd"] + 1),
-                              "phenix_event": np.log(cutoff_df["phenix_control_rmsd"] + 1),
+                              "phenix_event": np.log(cutoff_df["phenix_event_rmsd"] + 1),
                               },
                              output_path / "comparitive_rmsd_log_cdf_{}.png".format(cutoff),
                              )
