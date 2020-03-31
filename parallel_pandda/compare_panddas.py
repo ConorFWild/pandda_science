@@ -2,6 +2,7 @@ from typing import NamedTuple, Dict, List
 import os
 import shutil
 import argparse
+import json
 from pathlib import Path
 
 import numpy as np
@@ -97,6 +98,46 @@ class PanDDA:
     pandda_dir: Path
     events_table_path: Path
     events: Dict[EventID, Event]
+
+    def __init__(self,
+                 data_dir,
+                 pandda_dir,
+                 events_table_path,
+                 events,
+                 ):
+        self.data_dir = data_dir
+        self.pandda_dir = pandda_dir
+        self.events_table_path = events_table_path
+        self.events = events
+
+    @staticmethod
+    def from_event_table(event_table: pd.DataFrame):
+        raise NotImplementedError()
+
+    @staticmethod
+    def from_pandda_path(path: Path):
+        pandda_dir = path
+        events_csv_path = path / "analyses" / "pandda_analyse_events.csv"
+
+        pandda_json_path = path / "pandda.json"
+
+        with open(str(pandda_json_path), "r") as f:
+            pandda_json_string = f.read()
+            pandda_json_dict = json.loads(pandda_json_string)
+
+        data_dirs = Path(pandda_json_dict["data_dirs"]).parent
+
+        event_table = pd.read_csv(str(events_csv_path))
+
+        events = Event.from_pandda_path(pandda_dir,
+                                        data_dirs,
+                                        )
+
+        pandda = PanDDA(data_dir=data_dirs,
+                        pandda_dir=pandda_dir,
+                        events_table_path=events_csv_path,
+                        events=events,
+                        )
 
 
 class EventMapping:
@@ -311,20 +352,39 @@ def panddas_from_event_table(pandda_event_table):
         for pandda_name in pandda_names:
             pandda_name_table = initial_dir_table[initial_dir_table["pandda_name"] == pandda_name]
             events = get_events(pandda_name_table)
-            pandda = PanDDA()
+            pandda_dir = Path(initial_dir_table["pandda"].iloc[0])
+            events_table_path = pandda_dir / "analyses" / "pandda_analyse_events.csv"
+
+            pandda = PanDDA(initial_dir,
+                            pandda_dir,
+                            events_table_path,
+                            events,
+                            )
             panddas.append(pandda)
 
     return panddas
 
 
-def get_panddas(event_table: pd.DataFrame):
-    new_panddas_table = event_table[event_table["pandda_name"] == "test_pandda_parallel"]
+def get_old_panddas(event_table: pd.DataFrame):
+    # new_panddas_table = event_table[event_table["pandda_name"] == "test_pandda_parallel"]
     old_pandda_table = event_table[event_table["pandda_name"] != "test_pandda_parallel"]
 
     original_panddas = panddas_from_event_table(old_pandda_table)
-    new_panddas = panddas_from_event_table(new_panddas_table)
+    # new_panddas = panddas_from_event_table(new_panddas_table)
 
-    return original_panddas, new_panddas
+    return original_panddas
+
+
+def get_new_panddas(path):
+    pandda_paths = path.glob("*")
+
+    panddas = []
+
+    for pandda_path in pandda_paths:
+        pandda = PanDDA.from_pandda_path(pandda_path)
+        panddas.append(pandda)
+
+    return panddas
 
 
 def output_comparison_table(comparison_table,
@@ -353,7 +413,8 @@ def main():
     print(event_table.head())
 
     print("Getting old and new panddas...")
-    original_panddas, new_panddas = get_panddas(event_table)
+    original_panddas = get_old_panddas(event_table)
+    new_panddas = get_new_panddas(config.new_panddas_dir)
     print("Got {} original panddas".format(len(original_panddas)))
     print("Got {} new panddas".format(len(new_panddas)))
 

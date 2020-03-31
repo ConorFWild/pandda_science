@@ -394,10 +394,9 @@ def get_autobuild_tasks(events,
                             )(joblib.delayed(get_autobuilding_task)(event, output_dir)
                               for event
                               in events
-                              if event is not None
                               )
 
-    return tasks
+    return [task for task in tasks if task is not None]
 
 
 def get_event_table(path):
