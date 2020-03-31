@@ -120,10 +120,10 @@ class Event(NamedTuple):
                                  occupancy=event_record["1-BDC"],
                                  analysed_resolution=event_record["analysed_resolution"],
                                  high_resolution=0, # TODO: Not in PandDDA2 output
-                                 interesting=event_record["Interesting"],
-                                 ligand_placed=event_record["Ligand Placed"],
-                                 ligand_confidence=event_record["Ligand Confidence"],
-                                 viewed=event_record["Viewed"],
+                                 interesting= False, # TODO: Not in PandDDA2 output
+                                 ligand_placed=False, # TODO: Not in PandDDA2 output
+                                 ligand_confidence=False, # TODO: Not in PandDDA2 output
+                                 viewed=False, # TODO: Not in PandDDA2 output
                                  initial_model_path=initial_model_path,
                                  data_path=data_path,
                                  model_dir=model_dir,
