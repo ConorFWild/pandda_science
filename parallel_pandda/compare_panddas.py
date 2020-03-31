@@ -146,6 +146,7 @@ class PanDDA:
                         events_table_path=events_csv_path,
                         events=events,
                         )
+        return pandda
 
 
 class EventMapping:
