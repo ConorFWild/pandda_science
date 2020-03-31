@@ -14,7 +14,13 @@ from pandda_types.data import Event
 def parse_args():
     parser = argparse.ArgumentParser()
     # IO
-    parser.add_argument("-i", "--events_df_path",
+    parser.add_argument("-ie", "--events_df_path",
+                        type=str,
+                        help="The directory OF THE ROOT OF THE XCHEM DATABASE",
+                        required=True
+                        )
+
+    parser.add_argument("-in", "--new_panddas_dir",
                         type=str,
                         help="The directory OF THE ROOT OF THE XCHEM DATABASE",
                         required=True
@@ -34,11 +40,13 @@ def parse_args():
 class Config(NamedTuple):
     out_dir_path: Path
     events_df_path: Path
+    new_panddas_dir: Path
 
 
 def get_config(args):
     config = Config(out_dir_path=Path(args.out_dir_path),
                     events_df_path=Path(args.events_df_path),
+                    new_panddas_dir=Path(args.new_panddas_dir),
                     )
 
     return config
