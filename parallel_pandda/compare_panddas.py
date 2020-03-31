@@ -162,11 +162,11 @@ class EventMapping:
                  mappings_dict=None, ):
         if mappings_dict is not None:
 
-            self.event_mapping_original_to_new = {EventID(key[0], key[1]): EventID(value[0], value[1])
+            self.event_mapping_original_to_new = {(key[0], key[1]): (value[0], value[1])
                                                   for key, value
                                                   in mappings_dict["event_mapping_original_to_new"]
                                                   }
-            self.event_mapping_new_to_original = {EventID(key[0], key[1]): EventID(value[0], value[1])
+            self.event_mapping_new_to_original = {(key[0], key[1]): (value[0], value[1])
                                                   for key, value
                                                   in mappings_dict["event_mapping_new_to_original"]
                                                   }
@@ -211,11 +211,11 @@ class EventMapping:
 
     def to_dict(self):
         mapping_dict = {}
-        mapping_dict["event_mapping_original_to_new"] = {key.to_tuple(): value.to_tuple()
+        mapping_dict["event_mapping_original_to_new"] = {key: value
                                                          for key, value
                                                          in self.event_mapping_original_to_new.items()
                                                          }
-        mapping_dict["event_mapping_new_to_original"] = {key.to_tuple(): value.to_tuple()
+        mapping_dict["event_mapping_new_to_original"] = {key: value
                                                          for key, value
                                                          in self.event_mapping_new_to_original.items()
                                                          }
