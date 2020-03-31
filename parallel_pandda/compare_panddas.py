@@ -274,12 +274,15 @@ def get_recall(comparison: ComparisonSet,
                cutoff_distance_to_event: float = 8.0,
                ):
     recall_vector = []
+    num_true_positives = len([e for e in comparison.original_pandda.events.values() if e.actually_built])
     for event_id, event in comparison.new_pandda.events.items():
         comparison_event_id: EventID = comparison.event_mapping.event_mapping_new_to_original[event_id]
         comparison_event = comparison.original_pandda.events[comparison_event_id]
 
         # if comparison_event.actually_built:
         #     pass
+
+
 
         # print("comparison_event.distance_to_ligand_model: {}".format(comparison_event.distance_to_ligand_model))
         if comparison_event.distance_to_ligand_model > 0:
@@ -297,7 +300,7 @@ def get_recall(comparison: ComparisonSet,
             # Comparison event could not get a distance to model
             pass
 
-    recall = sum(recall_vector) / len(recall_vector)
+    recall = sum(recall_vector) / len(num_true_positives)
 
     return recall
 
