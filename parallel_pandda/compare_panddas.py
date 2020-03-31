@@ -348,20 +348,25 @@ class ComparisonRecord:
 def make_comparison_table(comparison_sets: Dict):
     comparison_records = []
     for key, comparison_set in comparison_sets.items():
+        print("\tProcessing match: {}".format(key))
+
         if len(comparison_set.original_pandda.events) == 0:
             print("\t\tPanDDA {} has no events: cannot calculate precision: skipping!".format(comparison_set.original_pandda.pandda_dir))
             continue
         base_pandda_precission = get_precission_base(comparison_set.original_pandda)
+        print("\t\tOld pandda precission: {}".format(base_pandda_precission))
 
         if len(comparison_set.new_pandda.events) == 0:
             print("\t\tNew PanDDA {} has no events: cannot calculate precision: skipping!").format(comparison_set.new_pandda.pandda_dir)
             continue
         new_pandda_precission = get_precission(comparison_set)
+        print("\t\tNew PanDDA precision: {}".format(new_pandda_precission))
 
         if len([event for event in comparison_set.new_pandda.events if event.actually_built]) == 0:
             print("\t\tOld PanDDA {} has no built events: cannot calculate recall: skipping!").format(comparison_set.old_pandda.pandda_dir)
             continue
         new_pandda_recall = get_recall(comparison_set)
+        print("\t\tNew PanDDA recall: {}".format(new_pandda_recall))
 
         record = ComparisonRecord(comparison_set,
                                   base_pandda_precission,
