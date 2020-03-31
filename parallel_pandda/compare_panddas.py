@@ -333,7 +333,7 @@ def match_panddas(original_panddas: List[PanDDA],
 
     for original_pandda in original_panddas:
         for new_pandda in new_panddas:
-            if new_pandda.data_dir == original_pandda.data_dir:
+            if str(new_pandda.data_dir) == str(original_pandda.data_dir):
                 matches.append((original_pandda, new_pandda))
                 break
 
