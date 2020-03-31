@@ -383,6 +383,10 @@ def make_comparison_table(comparison_sets: Dict):
             print("\t\tOld PanDDA {} has no built events with a known distance to event: cannot calculate recall: skipping!".format(
                 comparison_set.original_pandda.pandda_dir))
             continue
+        if len([event for event in comparison_set.original_pandda.events.values() if event.distance_to_ligand_model <8]) ==0:
+            print("\t\tOld PanDDA {} has no built events near to an event: cannot calculate recall: skipping!".format(
+                comparison_set.original_pandda.pandda_dir))
+            continue
         new_pandda_recall = get_recall(comparison_set)
         print("\t\tNew PanDDA recall: {}".format(new_pandda_recall))
 
@@ -572,7 +576,7 @@ def main():
         #                         )
         with open(str(output.comparison_json_path), "rb") as f:
             comparisons = cloudpickle.load(f)
-            print(comparisons)
+            print("\tGot {} comparisons".format(len(comparisons)))
 
     print("Getting comparison dataframe...")
     comparison_df = make_comparison_table(comparisons)
