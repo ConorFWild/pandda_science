@@ -522,7 +522,6 @@ def main():
                                        )
 
             comparisons[(original_pandda.pandda_dir, new_pandda.pandda_dir)] = comparison
-            break
 
         print("Saving mappings...")
         # to_json(comparisons,
