@@ -528,15 +528,17 @@ def main():
         # to_json(comparisons,
         #         output_path=output.comparison_json_path,
         #         )
-        cloudpickle.dump(comparisons,
-                         str(output.comparison_json_path),
-                         )
+        with open(str(output.comparison_json_path), "wb") as f:
+            cloudpickle.dump(comparisons,
+                             f,
+                             )
 
     else:
         # comparisons = from_json(pandda_matches,
         #                         output.comparison_json_path,
         #                         )
-        comparisons = cloudpickle.load(output.comparison_json_path)
+        with open(str(output.comparison_json_path), "rb") as f:
+            comparisons = cloudpickle.load(f)
 
     print("Getting comparison dataframe...")
     comparison_df = make_comparison_table(comparisons)
