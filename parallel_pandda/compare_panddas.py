@@ -3,6 +3,7 @@ import os
 import shutil
 import argparse
 import json
+import cloudpickle
 from pathlib import Path
 
 import numpy as np
@@ -524,14 +525,18 @@ def main():
             break
 
         print("Saving mappings...")
-        to_json(comparisons,
-                output_path=output.comparison_json_path,
-                )
+        # to_json(comparisons,
+        #         output_path=output.comparison_json_path,
+        #         )
+        cloudpickle.dump(comparisons,
+                         str(output.comparison_json_path),
+                         )
 
     else:
-        comparisons = from_json(pandda_matches,
-                                output.comparison_json_path,
-                                )
+        # comparisons = from_json(pandda_matches,
+        #                         output.comparison_json_path,
+        #                         )
+        cloudpickle.load(output.comparison_json_path)
 
     print("Getting comparison dataframe...")
     comparison_df = make_comparison_table(comparisons)
