@@ -143,6 +143,8 @@ def get_autobuilding_rmsd_distribution_graph(autobuilding_rmsd_df: pd.DataFrame,
                               "phenix_event": cutoff_df["phenix_event_rmsd"],
                               },
                              output_path / "comparitive_rmsd_log_cdf_{}.png".format(cutoff),
+                             x_label="RMSD to true model",
+                             y_label="Cumulative density",
                              )
         # comparitive_cdf_plot({"phenix_control": cutoff_df["phenix_control_rmsd"] + 1),
         #                       "phenix_event": cutoff_df["phenix_event_rmsd"] ,
