@@ -389,6 +389,10 @@ def get_new_panddas(path):
     panddas = []
 
     for pandda_path in pandda_paths:
+        events_csv_path = pandda_path / "analyses" / "pandda_analyse_events.csv"
+        if not events_csv_path.exists():
+            print("\tCouldn't find an analsy events path at: {}".format(events_csv_path))
+            continue
         pandda = PanDDA.from_pandda_path(pandda_path)
         panddas.append(pandda)
 
