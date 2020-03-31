@@ -379,7 +379,7 @@ def make_comparison_table(comparison_sets: Dict):
         if len([event for event in comparison_set.original_pandda.events.values() if event.actually_built]) == 0:
             print("\t\tOld PanDDA {} has no built events: cannot calculate recall: skipping!".format(comparison_set.original_pandda.pandda_dir))
             continue
-        if len([event for event in comparison_set.original_pandda.values() if event.distance_to_ligand_model > 0]) ==0:
+        if len([event for event in comparison_set.original_pandda.events.values() if event.distance_to_ligand_model > 0]) ==0:
             print("\t\tOld PanDDA {} has no built events with a known distance to event: cannot calculate recall: skipping!".format(
                 comparison_set.original_pandda.pandda_dir))
             continue
