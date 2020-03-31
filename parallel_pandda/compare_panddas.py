@@ -300,7 +300,7 @@ def get_recall(comparison: ComparisonSet,
             # Comparison event could not get a distance to model
             pass
 
-    recall = sum(recall_vector) / len(num_true_positives)
+    recall = sum(recall_vector) / num_true_positives
 
     return recall
 
