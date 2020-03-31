@@ -204,6 +204,7 @@ def get_panddas_table(panddas: Dict[Path, PanDDA]):
                       "y": event.y,
                       "z": event.z,
                       "distance_to_ligand_model": event.distance_to_ligand_model,
+                      "event_size": event.event_size,
                       }
 
             records.append(record)
