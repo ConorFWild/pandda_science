@@ -278,8 +278,10 @@ def get_recall(comparison: ComparisonSet,
         comparison_event_id: EventID = comparison.event_mapping.event_mapping_new_to_original[event_id]
         comparison_event = comparison.original_pandda.events[comparison_event_id]
 
-        if comparison_event.actually_built:
-            pass
+        # if comparison_event.actually_built:
+        #     pass
+
+        print("comparison_event.distance_to_ligand_model: {}".format(comparison_event.distance_to_ligand_model))
         if comparison_event.distance_to_ligand_model > 0:
             if comparison_event.distance_to_ligand_model < cutoff_distance_to_model:
                 distance = get_distance(event, comparison_event)
