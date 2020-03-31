@@ -369,7 +369,7 @@ def make_comparison_table(comparison_sets: Dict):
         print("\t\tNew PanDDA precision: {}".format(new_pandda_precission))
 
         if len([event for event in comparison_set.original_pandda.events.values() if event.actually_built]) == 0:
-            print("\t\tOld PanDDA {} has no built events: cannot calculate recall: skipping!").format(comparison_set.original_pandda.pandda_dir)
+            print("\t\tOld PanDDA {} has no built events: cannot calculate recall: skipping!".format(comparison_set.original_pandda.pandda_dir))
             continue
         new_pandda_recall = get_recall(comparison_set)
         print("\t\tNew PanDDA recall: {}".format(new_pandda_recall))
