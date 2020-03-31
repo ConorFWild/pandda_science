@@ -279,13 +279,21 @@ def get_recall(comparison: ComparisonSet,
         comparison_event = comparison.original_pandda.events[comparison_event_id]
 
         if comparison_event.actually_built:
-            if (comparison_event.distance_to_ligand_model > 0) and (
-                    comparison_event.distance_to_ligand_model < cutoff_distance_to_model):
+            pass
+        if comparison_event.distance_to_ligand_model > 0:
+            if comparison_event.distance_to_ligand_model < cutoff_distance_to_model:
                 distance = get_distance(event, comparison_event)
                 if distance < cutoff_distance_to_event:
                     recall_vector.append(1)
                 else:
                     recall_vector.append(0)
+            else:
+                # Original event was not acutall a hit
+                pass
+
+        else:
+            # Comparison event could not get a distance to model
+            pass
 
     recall = sum(recall_vector) / len(recall_vector)
 
@@ -370,6 +378,10 @@ def make_comparison_table(comparison_sets: Dict):
 
         if len([event for event in comparison_set.original_pandda.events.values() if event.actually_built]) == 0:
             print("\t\tOld PanDDA {} has no built events: cannot calculate recall: skipping!".format(comparison_set.original_pandda.pandda_dir))
+            continue
+        if len([event for event in comparison_set.original_pandda.values() if event.distance_to_ligand_model > 0]) ==0:
+            print("\t\tOld PanDDA {} has no built events with a known distance to event: cannot calculate recall: skipping!".format(
+                comparison_set.original_pandda.pandda_dir))
             continue
         new_pandda_recall = get_recall(comparison_set)
         print("\t\tNew PanDDA recall: {}".format(new_pandda_recall))
