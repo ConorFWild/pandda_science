@@ -274,7 +274,7 @@ def get_recall(comparison: ComparisonSet,
                cutoff_distance_to_event: float = 8.0,
                ):
     recall_vector = []
-    num_true_positives = len([e for e in comparison.original_pandda.events.values() if e.actually_built])
+    # num_true_positives = len([e for e in comparison.original_pandda.events.values() if e.actually_built])
     for event_id, event in comparison.new_pandda.events.items():
         comparison_event_id: EventID = comparison.event_mapping.event_mapping_new_to_original[event_id]
         comparison_event = comparison.original_pandda.events[comparison_event_id]
@@ -300,7 +300,10 @@ def get_recall(comparison: ComparisonSet,
             # Comparison event could not get a distance to model
             pass
 
-    recall = sum(recall_vector) / num_true_positives
+    if len(recall_vector) == 0:
+        return -1
+
+    recall = sum(recall_vector) / len(recall_vector)
 
     return recall
 
@@ -393,6 +396,9 @@ def make_comparison_table(comparison_sets: Dict):
             continue
 
         new_pandda_recall = get_recall(comparison_set)
+        if new_pandda_recall == -1:
+            print("\t\tCould not compare! Skipping!")
+            continue
         print("\t\tNew PanDDA recall: {}".format(new_pandda_recall))
 
         record = ComparisonRecord(comparison_set,
