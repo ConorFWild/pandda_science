@@ -56,6 +56,7 @@ class Output:
     def __init__(self, out_dir_path: Path):
         self.out_dir_path: Path = out_dir_path
         self.pandda_comparison_table_path = out_dir_path / "pandda_comparison_table.csv"
+        self.comparison_json_path = out_dir_path / "comparison.json"
 
     def attempt_mkdir(self, path: Path):
         try:
@@ -99,6 +100,9 @@ class EventID:
 
     def __eq__(self, other):
         return (self.dtag, self.event_idx) == (other.dtag, other.event_idx)
+
+    def to_tuple(self):
+        return (self.dtag, self.event_idx)
 
 
 class PanDDA:
@@ -153,13 +157,26 @@ class EventMapping:
     event_mapping_original_to_new: Dict[EventID, EventID]
     event_mapping_new_to_original: Dict[EventID, EventID]
 
-    def __init__(self, original_pandda: PanDDA, new_pandda: PanDDA):
-        self.event_mapping_original_to_new = self.map_events(original_pandda,
-                                                             new_pandda,
-                                                             )
-        self.event_mapping_new_to_original = self.map_events(new_pandda,
-                                                             original_pandda,
-                                                             )
+    def __init__(self, original_pandda: PanDDA = None,
+                 new_pandda: PanDDA = None,
+                 mappings_dict=None, ):
+        if mappings_dict is not None:
+
+            self.event_mapping_original_to_new = {EventID(key[0], key[1]): EventID(value[0], value[1])
+                                                  for key, value
+                                                  in mappings_dict["event_mapping_original_to_new"]
+                                                  }
+            self.event_mapping_new_to_original = {EventID(key[0], key[1]): EventID(value[0], value[1])
+                                                  for key, value
+                                                  in mappings_dict["event_mapping_new_to_original"]
+                                                  }
+        else:
+            self.event_mapping_original_to_new = self.map_events(original_pandda,
+                                                                 new_pandda,
+                                                                 )
+            self.event_mapping_new_to_original = self.map_events(new_pandda,
+                                                                 original_pandda,
+                                                                 )
 
     def map_events(self, pandda_from, pandda_to):
         mapping = {}
@@ -191,6 +208,18 @@ class EventMapping:
         distance = np.linalg.norm(distance_vector)
 
         return distance
+
+    def to_dict(self):
+        mapping_dict = {}
+        mapping_dict["event_mapping_original_to_new"] = {key.to_tuple(): value.to_tuple()
+                                                         for key, value
+                                                         in self.event_mapping_original_to_new.items()
+                                                         }
+        mapping_dict["event_mapping_new_to_original"] = {key.to_tuple(): value.to_tuple()
+                                                         for key, value
+                                                         in self.event_mapping_new_to_original.items()
+                                                         }
+        return mapping_dict
 
 
 def get_distance(event1, event2):
@@ -265,6 +294,10 @@ def get_recall(comparison: ComparisonSet,
 def get_precission_base(pandda: PanDDA,
                         cutoff_distance_to_model: float = 8.0):
     num_events = len(pandda.events)
+    if num_events == 0:
+        print("\t\t\tpandda {} has 0 events!".format(pandda.pandda_dir))
+        return 0
+
     hits = []
     for event_id, event in pandda.events.items():
         if event.actually_built:
@@ -311,12 +344,13 @@ class ComparisonRecord:
         return record
 
 
-def make_comparison_table(comparison_sets: List[ComparisonSet]):
+def make_comparison_table(comparison_sets: Dict):
     comparison_records = []
-    for comparison_set in comparison_sets:
+    for key, comparison_set in comparison_sets.items():
         base_pandda_precission = get_precission_base(comparison_set.original_pandda)
         new_pandda_precission = get_precission(comparison_set)
         new_pandda_recall = get_recall(comparison_set)
+
         record = ComparisonRecord(comparison_set,
                                   base_pandda_precission,
                                   new_pandda_precission,
@@ -335,7 +369,6 @@ def match_panddas(original_panddas: List[PanDDA],
         for new_pandda in new_panddas:
             if str(new_pandda.data_dir) == str(original_pandda.data_dir):
                 matches.append((original_pandda, new_pandda))
-                break
 
     return matches
 
@@ -411,6 +444,41 @@ def get_event_table(event_table_path: Path):
     return event_table
 
 
+def to_json(comparisons: Dict,
+            output_path: Path,
+            ):
+    comparison_dict = {}
+    for key, comparison in comparisons.items():
+        comparison_dict[key] = comparison.event_mapping.to_dict()
+
+    json_string = json.dumps(comparison_dict)
+
+    with open(str(output_path), "w") as f:
+        f.write(json_string)
+
+
+def from_json(matches, json_path):
+    comparsons = {}
+
+    with open(str(json_path), "r") as f:
+        json_string = f.read()
+
+    comparisons_dict = json.loads(json_string)
+
+    for original_pandda, new_pandda in matches:
+        mapping_dict = comparisons_dict[(original_pandda.pandda_dir, new_pandda.pandda_dir)]
+        event_mapping = EventMapping(mappings_dict=mapping_dict)
+
+        comparison = ComparisonSet(original_pandda,
+                                   new_pandda,
+                                   event_mapping,
+                                   )
+
+        comparsons[(original_pandda.pandda_dir, new_pandda.pandda_dir)] = comparison
+
+    return comparsons
+
+
 def main():
     print("Parsing args...")
     args = parse_args()
@@ -435,25 +503,39 @@ def main():
     pandda_matches = match_panddas(original_panddas,
                                    new_panddas,
                                    )
-    print(pandda_matches)
+    print("\tFound {} matches!".format(pandda_matches))
 
-    print("Comparing panddas")
-    comparisons = []
-    for original_pandda, new_pandda in pandda_matches:
-        print("\tGetting event mapping for: {} and {}".format(original_pandda.pandda_dir.name,
-                                                              new_pandda.pandda_dir.name,
-                                                              ))
-        event_mapping = EventMapping(original_pandda, new_pandda)
-        print("\tComparing panddas")
-        comparison = ComparisonSet(original_pandda,
-                                   new_pandda,
-                                   event_mapping,
-                                   )
+    print("Getting event mappings...")
+    if not output.comparison_json_path.exists():
+        comparisons = {}
+        for original_pandda, new_pandda in pandda_matches:
+            print("\tGetting event mapping for: {} and {}".format(original_pandda.pandda_dir.name,
+                                                                  new_pandda.pandda_dir.name,
+                                                                  )
+                  )
+            event_mapping = EventMapping(original_pandda, new_pandda)
 
-        comparisons.append(comparison)
+            comparison = ComparisonSet(original_pandda,
+                                       new_pandda,
+                                       event_mapping,
+                                       )
+
+            comparisons[(original_pandda.pandda_dir, new_pandda.pandda_dir)] = comparison
+
+        print("Saving mappings...")
+        to_json(comparisons,
+                output_path=output.comparison_json_path,
+                )
+
+    else:
+        comparisons = from_json(pandda_matches,
+                                output.comparison_json_path,
+                                )
 
     print("Getting comparison dataframe...")
     comparison_df = make_comparison_table(comparisons)
+    print(comparison_df.head())
+
     print("Outputting comparison dataframe to {}".format(output.pandda_comparison_table_path))
     output_comparison_table(comparison_df,
                             output.pandda_comparison_table_path,
