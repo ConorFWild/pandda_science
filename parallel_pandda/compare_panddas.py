@@ -536,7 +536,7 @@ def main():
         # comparisons = from_json(pandda_matches,
         #                         output.comparison_json_path,
         #                         )
-        cloudpickle.load(output.comparison_json_path)
+        comparisons = cloudpickle.load(output.comparison_json_path)
 
     print("Getting comparison dataframe...")
     comparison_df = make_comparison_table(comparisons)
