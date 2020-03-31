@@ -119,7 +119,7 @@ class Event(NamedTuple):
                                  event_idx=int(event_record["event_idx"]),
                                  occupancy=event_record["1-BDC"],
                                  analysed_resolution=event_record["analysed_resolution"],
-                                 high_resolution=event_record["high_resolution"],
+                                 high_resolution=0, # TODO: Not in PandDDA2 output
                                  interesting=event_record["Interesting"],
                                  ligand_placed=event_record["Ligand Placed"],
                                  ligand_confidence=event_record["Ligand Confidence"],
