@@ -560,6 +560,7 @@ def main():
         #                         )
         with open(str(output.comparison_json_path), "rb") as f:
             comparisons = cloudpickle.load(f)
+            print(comparisons)
 
     print("Getting comparison dataframe...")
     comparison_df = make_comparison_table(comparisons)
