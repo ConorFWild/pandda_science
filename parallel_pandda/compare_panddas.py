@@ -349,6 +349,12 @@ def make_comparison_table(comparison_sets: Dict):
     comparison_records = []
     for key, comparison_set in comparison_sets.items():
         print("\tProcessing match: {}".format(key))
+        print("\tOld pandda has {} events".format(len(comparison_set.original_pandda.events)))
+        print("\tNew panddas has {} events".format(len(comparison_set.new_pandda.events)))
+        print("\tOld pandda has {} built events".format(len([event
+                                                             for event
+                                                             in comparison_set.original_pandda.events
+                                                             if event.actually_built])))
 
         if len(comparison_set.original_pandda.events) == 0:
             print("\t\tPanDDA {} has no events: cannot calculate precision: skipping!".format(comparison_set.original_pandda.pandda_dir))
@@ -362,8 +368,8 @@ def make_comparison_table(comparison_sets: Dict):
         new_pandda_precission = get_precission(comparison_set)
         print("\t\tNew PanDDA precision: {}".format(new_pandda_precission))
 
-        if len([event for event in comparison_set.new_pandda.events if event.actually_built]) == 0:
-            print("\t\tOld PanDDA {} has no built events: cannot calculate recall: skipping!").format(comparison_set.old_pandda.pandda_dir)
+        if len([event for event in comparison_set.original_pandda.events if event.actually_built]) == 0:
+            print("\t\tOld PanDDA {} has no built events: cannot calculate recall: skipping!").format(comparison_set.original_pandda.pandda_dir)
             continue
         new_pandda_recall = get_recall(comparison_set)
         print("\t\tNew PanDDA recall: {}".format(new_pandda_recall))
