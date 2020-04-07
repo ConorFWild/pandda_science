@@ -121,6 +121,8 @@ if __name__ == "__main__":
         train_table, test_table = get_train_test_split(event_table)  # TODO: Needs implementing
         print(len(train_table))
         print(len(test_table))
+        print(len(train_table[train_table["actually_built"]==True]))
+        print(len(test_table[test_table["actually_built"]==True]))
         exit()
         train_table.to_csv(str(output.train_table_path))
         test_table.to_csv(str(output.test_table_path))
