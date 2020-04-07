@@ -10,7 +10,7 @@ def get_train_test_split(event_table,
 
         train_model_dirs = unique_initial_models.sample(frac=1 - test_split)
         for model_dir in train_model_dirs:
-            train_table = event_table[event_table["model_dir"] = model_dir]
+            train_table = event_table[event_table["model_dir"] == model_dir]
             train_tables.append(train_table)
 
         train_table = pd.concatenate(train_tables)
