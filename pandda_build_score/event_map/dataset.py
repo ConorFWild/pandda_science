@@ -80,7 +80,7 @@ def sample_map(gemmi_grid,
 
     tr.mat.fromlist(rotation.tolist())
     tr.vec.fromlist(offset_translation.tolist())
-    gemmi_grid.interpolate_values(arr,
+    gemmi_grid.grid.interpolate_values(arr,
                                   tr,
                                   )
     return arr
