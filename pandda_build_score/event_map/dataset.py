@@ -40,20 +40,22 @@ def get_ligand_model(path):
 
 
 def sample_rotation():
-    angles = np.random.rand(3) * np.pi * 2
-    rotation = Rotation.from_euler("xyz",
-                                   [
-                                       [angles[0], 0, 0],
-                                       [0, angles[1], 0],
-                                       [0, 0, angles[2]]
-                                   ],
-                                   )
-    rotation_matrixs = rotation.as_matrix()
-    rotation_matrix = np.matmul(np.matmul(rotation_matrixs[0],
-                                          rotation_matrixs[1],
-                                          ),
-                                rotation_matrixs[2],
-                                )
+    # angles = np.random.rand(3) * np.pi * 2
+    # rotation = Rotation.from_euler("xyz",
+    #                                [
+    #                                    [angles[0], 0, 0],
+    #                                    [0, angles[1], 0],
+    #                                    [0, 0, angles[2]]
+    #                                ],
+    #                                )
+    # rotation_matrixs = rotation.as_matrix()
+    # rotation_matrix = np.matmul(np.matmul(rotation_matrixs[0],
+    #                                       rotation_matrixs[1],
+    #                                       ),
+    #                             rotation_matrixs[2],
+    #                             )
+    rotation = Rotation.random()
+    rotation_matrix = rotation.as_matrix()
     return rotation_matrix
 
 
