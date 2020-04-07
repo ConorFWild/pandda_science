@@ -138,13 +138,15 @@ class EventMapDataset(Dataset):
 
         label = get_label(event)
 
-        return {"id": {"pandda_name": event.pandda_name,
+        sample_dict = {"id": {"pandda_name": event.pandda_name,
                        "dtag": event.dtag,
                        "event_idx": event.event_idx,
                        },
                 "data": data,
                 "label": label,
                 }
+
+        return sample_dict
 
 
 def get_dataloader(table,
