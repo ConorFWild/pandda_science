@@ -41,9 +41,18 @@ def distribution_plot(data_series,
     plt.close(fig)
 
 
-def bar_plot(x, y, output_path):
+def bar_plot(x, y, output_path,
+             title="",
+             x_label="",
+             y_label="",
+             ):
     ax = sns.barplot(x, y)
     fig = ax.get_figure()
+
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+
     fig.savefig(str(output_path))
     plt.close(fig)
 

@@ -33,6 +33,8 @@ def num_modelable_distribution_histogram(global_cluster_distribution_df,
                                )
 
     bar_plot(values,
-                      counts,
-                      output_path / "num_modelable_clusters.png",
-                      )
+             counts,
+             output_path / "num_modelable_clusters.png",
+             x_label="Number of modelable clusters for system (n datasets > 60)",
+             y_label="Number of systems",
+             )

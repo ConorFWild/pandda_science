@@ -14,7 +14,7 @@ import torch.nn as nn
 
 from pandda_types.data import PanDDA, Event
 
-from pandda_build_score.train.dataset import get_dataloader
+from pandda_build_score.train.dataset_autobuild import get_dataloader
 from pandda_build_score.train.network import get_network
 from pandda_build_score.train.training import train
 
