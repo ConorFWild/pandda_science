@@ -153,7 +153,9 @@ class EventMapDataset(Dataset):
                                            self.sample_shape,
                                            )
 
-        data = event_map_layer
+        data = np.expand_dims(event_map_layer,
+                              axis=-1,
+                              )
 
         label = get_label(event)
 
