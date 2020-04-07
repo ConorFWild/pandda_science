@@ -122,7 +122,7 @@ class EventMapDataset(Dataset):
                                    event.z,
                                    ])
 
-        event_map: gemmi.Grid = gemmi.read_ccp4_map(event.data_path)
+        event_map: gemmi.Grid = gemmi.read_ccp4_map(event.event_map_path)
 
         rotation = sample_rotation()
         translation = sample_translation()
