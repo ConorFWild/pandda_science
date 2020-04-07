@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 def get_train_test_split(event_table,
@@ -8,7 +9,11 @@ def get_train_test_split(event_table,
     while True:
         train_tables = []
 
-        train_model_dirs = unique_initial_models.sample(frac=1 - test_split)
+        # train_model_dirs = unique_initial_models.sample(frac=1 - test_split)
+        train_model_dirs = np.random.choice(unique_initial_models,
+                                            size=int(test_split*len(unique_initial_models)),
+                                            replace=False,
+                                            )
         for model_dir in train_model_dirs:
             train_table = event_table[event_table["model_dir"] == model_dir]
             train_tables.append(train_table)
