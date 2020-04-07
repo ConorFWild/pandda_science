@@ -11,7 +11,7 @@ def get_train_test_split(event_table,
 
         # train_model_dirs = unique_initial_models.sample(frac=1 - test_split)
         train_model_dirs = np.random.choice(unique_initial_models,
-                                            size=int(test_split*len(unique_initial_models)),
+                                            size=int((1-test_split)*len(unique_initial_models)),
                                             replace=False,
                                             )
         for model_dir in train_model_dirs:
@@ -20,7 +20,10 @@ def get_train_test_split(event_table,
 
         train_table = pd.concat(train_tables)
 
-        print("Train table length: {}".format(train_table))
+        print("Number of unique initial dirs: {}".format(len(unique_initial_models)))
+        print("Number of sampled systems: {}".format(len(train_model_dirs)))
+        print("Train table length: {}".format(len(train_table)))
+        print("target length: {}".format((1-test_split)*len(event_table))
 
         if (len(train_table) < (1-test_split) + num_datasets_bounds) and (
                 len(train_table) > (1-test_split) - num_datasets_bounds):
