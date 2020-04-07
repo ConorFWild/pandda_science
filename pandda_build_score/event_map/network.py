@@ -7,7 +7,7 @@ class Network(nn.Module):
                  shape,
                  ):
         super(Network, self).__init__()
-        self.conv1 = nn.Conv3d(3,
+        self.conv1 = nn.Conv3d(1,
                                10,
                                kernel_size=3)
         self.conv2 = nn.Conv3d(10,
