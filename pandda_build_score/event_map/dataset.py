@@ -75,7 +75,8 @@ def sample_map(gemmi_grid,
 
     offset_translation = centroid + rotated_offset
 
-    arr = np.zeros(shape).astype(float)
+    arr = np.zeros(shape,
+                   dtype=np.float32)
     tr = gemmi.Transform()
 
     tr.mat.fromlist(rotation.tolist())
