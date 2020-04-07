@@ -22,6 +22,8 @@ def train(network,
             label_batch = batch["label"]
             id_batch = batch["id"]
 
+            print(sample_batch.shape)
+
             estimated_label_batch = network(sample_batch)
 
             loss = F.nll_loss(estimated_label_batch,
