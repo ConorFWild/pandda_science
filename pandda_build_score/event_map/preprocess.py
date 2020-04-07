@@ -20,8 +20,10 @@ def get_train_test_split(event_table,
 
         train_table = pd.concat(train_tables)
 
-        if (len(train_table) < test_split + num_datasets_bounds) and (
-                len(train_table) > test_split - num_datasets_bounds):
+        print("Train table length: {}".format(train_table))
+
+        if (len(train_table) < (1-test_split) + num_datasets_bounds) and (
+                len(train_table) > (1-test_split) - num_datasets_bounds):
             test_initial_dirs = [initial_dir
                                  for initial_dir
                                  in unique_initial_models
