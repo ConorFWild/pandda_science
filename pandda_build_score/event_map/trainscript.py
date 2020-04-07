@@ -119,6 +119,9 @@ if __name__ == "__main__":
     else:
         event_table = pd.read_csv(config.input_training_table_path)
         train_table, test_table = get_train_test_split(event_table)  # TODO: Needs implementing
+        print(len(train_table))
+        print(len(test_table))
+        exit()
         train_table.to_csv(str(output.train_table_path))
         test_table.to_csv(str(output.test_table_path))
         train_dataloader = get_dataloader(train_table,
