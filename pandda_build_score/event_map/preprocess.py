@@ -18,7 +18,7 @@ def get_train_test_split(event_table,
             train_table = event_table[event_table["model_dir"] == model_dir]
             train_tables.append(train_table)
 
-        train_table = pd.concatenate(train_tables)
+        train_table = pd.concat(train_tables)
 
         if (len(train_table) < test_split + num_datasets_bounds) and (
                 len(train_table) > test_split - num_datasets_bounds):
@@ -31,7 +31,7 @@ def get_train_test_split(event_table,
             for test_initial_dir in test_initial_dirs:
                 test_table = event_table[event_table["model_dir"] == test_initial_dir]
                 test_tables.append(test_table)
-            test_table = pd.concatenate(test_tables)
+            test_table = pd.concat(test_tables)
             break
 
     return train_table, test_table
