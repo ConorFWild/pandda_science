@@ -3,7 +3,7 @@ import pandas as pd
 def get_train_test_split(event_table,
                          test_split=0.15,
                          num_datasets_bounds=0.05):
-    unique_initial_models = event_table["model_dir"].unqiue()
+    unique_initial_models = event_table["model_dir"].unique()
 
     while True:
         train_tables = []
