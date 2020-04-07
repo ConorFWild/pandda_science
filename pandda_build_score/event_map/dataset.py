@@ -131,7 +131,7 @@ class EventMapDataset(Dataset):
                                            event_centroid,
                                            rotation,
                                            translation,
-                                           self.shape,
+                                           self.sample_shape,
                                            )
 
         data = event_map_layer
