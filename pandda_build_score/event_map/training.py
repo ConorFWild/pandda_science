@@ -24,6 +24,8 @@ def train(network,
 
             print(sample_batch.shape)
 
+            sample_batch = sample_batch.unsqueeze(-1)
+
             estimated_label_batch = network(sample_batch)
 
             loss = F.nll_loss(estimated_label_batch,
