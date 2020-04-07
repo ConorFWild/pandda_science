@@ -22,9 +22,9 @@ def train(network,
             label_batch = batch["label"]
             id_batch = batch["id"]
 
+            sample_batch = sample_batch.unsqueeze(-1)
             print(sample_batch.shape)
 
-            sample_batch = sample_batch.unsqueeze(-1)
 
             estimated_label_batch = network(sample_batch)
 
