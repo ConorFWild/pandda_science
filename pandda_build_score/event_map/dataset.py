@@ -152,7 +152,7 @@ class EventMapDataset(Dataset):
                                            translation,
                                            self.sample_shape,
                                            )
-
+        data = event_map_layer
 
         label = get_label(event)
 
