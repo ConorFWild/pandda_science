@@ -34,11 +34,11 @@ def get_train_test_split(event_table,
                                  in unique_initial_models
                                  if initial_dir not in train_model_dirs
                                  ]
-        test_tables = []
-        for test_initial_dir in test_initial_dirs:
-            test_table = event_table[event_table["model_dir"] == test_initial_dir]
-        test_tables.append(test_table)
-        test_table = pd.concat(test_tables)
-        break
+            test_tables = []
+            for test_initial_dir in test_initial_dirs:
+                test_table = event_table[event_table["model_dir"] == test_initial_dir]
+                test_tables.append(test_table)
+                test_table = pd.concat(test_tables)
+            break
 
     return train_table, test_table
