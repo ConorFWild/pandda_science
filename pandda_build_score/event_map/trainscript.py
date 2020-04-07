@@ -123,7 +123,7 @@ if __name__ == "__main__":
         print(len(test_table))
         print(len(train_table[train_table["actually_built"]==True]))
         print(len(test_table[test_table["actually_built"]==True]))
-        exit()
+        # exit()
         train_table.to_csv(str(output.train_table_path))
         test_table.to_csv(str(output.test_table_path))
         train_dataloader = get_dataloader(train_table,
