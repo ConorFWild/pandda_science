@@ -48,7 +48,12 @@ def sample_rotation():
                                        [0, 0, angles[2]]
                                    ],
                                    )
-    rotation_matrix = rotation.as_matrix()
+    rotation_matrixs = rotation.as_matrix()
+    rotation_matrix = np.matmul(np.matmul(rotation_matrixs[0],
+                                          rotation_matrixs[1],
+                                          ),
+                                rotation_matrixs[2],
+                                )
     return rotation_matrix
 
 
