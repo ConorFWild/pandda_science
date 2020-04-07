@@ -3,6 +3,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.spatial.transform import Rotation
 
 import gemmi
 
@@ -39,7 +40,16 @@ def get_ligand_model(path):
 
 
 def sample_rotation():
-    return np.random.rand(3) * np.pi * 2
+    angles = np.random.rand(3) * np.pi * 2
+    rotation = Rotation.from_euler("xyz",
+                                   [
+                                       [angles[0], 0, 0],
+                                       [0, angles[1], 0],
+                                       [0, 0, angles[2]]
+                                   ],
+                                   )
+    rotation_matrix = rotation.as_matrix()
+    return rotation_matrix
 
 
 def sample_translation(magnitude=3):
@@ -60,6 +70,7 @@ def sample_map(gemmi_grid,
 
     arr = np.zeros(shape)
     tr = gemmi.Transform()
+
     tr.mat.fromlist(rotation.tolist())
     tr.vec.fromlist(offset_translation.tolist())
     gemmi_grid.interpolate_values(arr,
@@ -139,12 +150,12 @@ class EventMapDataset(Dataset):
         label = get_label(event)
 
         sample_dict = {"id": {"pandda_name": event.pandda_name,
-                       "dtag": event.dtag,
-                       "event_idx": event.event_idx,
-                       },
-                "data": data,
-                "label": label,
-                }
+                              "dtag": event.dtag,
+                              "event_idx": event.event_idx,
+                              },
+                       "data": data,
+                       "label": label,
+                       }
 
         return sample_dict
 
