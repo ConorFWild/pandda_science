@@ -25,9 +25,11 @@ def get_train_test_split(event_table,
         print("Number of sampled systems: {}".format(len(train_model_dirs)))
         print("Train table length: {}".format(len(train_table)))
         print("target length: {}".format((1 - test_split) * len(event_table)))
+        print("Target upper bound: {}".format(((1 - test_split) + num_datasets_bounds) * len(event_table)))
+        print("Target lower bound: {}".format(((1 - test_split) - num_datasets_bounds) * len(event_table)))
 
-        if (len(train_table) < ((1 + test_split) + num_datasets_bounds)) and (
-                len(train_table) > ((1 - test_split) - num_datasets_bounds)):
+        if (len(train_table) < ((1 - test_split) + num_datasets_bounds) * len(event_table)) and (
+                len(train_table) > ((1 - test_split) - num_datasets_bounds) * len(event_table)):
 
             test_initial_dirs = [initial_dir
                                  for initial_dir
