@@ -53,31 +53,27 @@ def train(network,
                 running_loss_300 += loss.item()
 
                 if i_batch % 30 == 29:  # print every 30 mini-batches
-                    print("===30 dataset average===")
+                    print("=30 dataset average=")
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                           i_batch,
-                                                                          running_loss_30 / 30) + "\n")
-                    print(estimated_label_batch)
-                    print(label_batch)
+                                                                          running_loss_30 / 30))
+                    print("\t{}".format(id_batch))
+                    print("\t{}".format(estimated_label_batch))
+                    print("\t{}".format(label_batch))
                     running_loss_30 = 0
 
                 if i_batch % 100 == 99:  # print every 30 mini-batches
                     print("===100 dataset average===")
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                           i_batch,
-                                                                          running_loss_100 / 100) + "\n")
-                    print(estimated_label_batch)
-                    print(label_batch)
+                                                                          running_loss_100 / 100))
                     running_loss_100 = 0
 
                 if i_batch % 300 == 299:  # print every 30 mini-batches
-                    print("===300 dataset average===")
+                    print("=====300 dataset average=====")
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                           i_batch,
                                                                           running_loss_300 / 300) )
-                    print(id_batch)
-                    print(estimated_label_batch)
-                    print(label_batch)
                     running_loss_300 = 0
 
                 for i, index in enumerate(id_batch["pandda_name"]):
