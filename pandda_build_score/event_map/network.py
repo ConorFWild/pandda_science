@@ -260,13 +260,13 @@ class Network(nn.Module):
     No global pooling
     """
 
-    def __init__(self, filters, grid_dimension=32, training=True):
+    def __init__(self, filters=10, grid_size=32, training=True):
         # Instatiate Network layers
 
         super().__init__()
 
         self.filters = filters
-        self.grid_size = grid_dimension
+        self.grid_size = grid_size
 
         self.bn = nn.BatchNorm3d(3)
 
@@ -279,7 +279,7 @@ class Network(nn.Module):
         self.layer_2 = ResidualLayerWithDrop(filters * 2, filters * 4, training)
         self.layer_3 = ResidualLayerWithDrop(filters * 4, filters * 8, training)
 
-        size_after_convs = int((grid_dimension / (2 ** 4)) ** 3)
+        size_after_convs = int((grid_size / (2 ** 4)) ** 3)
         n_in = filters * 8 * size_after_convs
 
         self.fc1 = nn.Sequential(nn.Linear(n_in, int(n_in / 4)),
@@ -307,6 +307,6 @@ class Network(nn.Module):
 
 
 def get_network(shape):
-    network = Network(shape=32)
+    network = Network(10, grid_size=32)
 
     return network
