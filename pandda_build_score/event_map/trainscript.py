@@ -46,7 +46,7 @@ class Config(NamedTuple):
 def get_training_config(args):
     config = Config(input_training_table_path=Path(args.event_table),
                     out_dir_path=Path(args.out_dir_path),
-                    shape=np.array([16, 16, 16]),
+                    shape=np.array([32, 32, 32]),
                     )
 
     return config

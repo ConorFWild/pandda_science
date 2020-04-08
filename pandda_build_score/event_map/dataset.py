@@ -68,7 +68,10 @@ def sample_map(gemmi_grid,
                rotation,
                translation,
                shape,
+               scale=np.eye(3)*0.5,
                ):
+    rotation = np.matmul(rotation, scale,)
+
     offset = translation - (np.array(shape) / 2)
 
     rotated_offset = np.matmul(rotation, offset)
