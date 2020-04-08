@@ -93,13 +93,13 @@ def get_label(event,
     if event.actually_built:
         if event.distance_to_ligand_model > 0:
             if event.distance_to_ligand_model < cutoff:
-                return [0, 1]
+                return np.array([0, 1])
             else:
-                return [1, 0]
+                return np.array([1, 0])
         else:
-            return [1, 0]
+            return np.array([1, 0])
     else:
-        return [1, 0]
+        return np.array([1, 0])
 
 
 def sample_event_map(event_map,
@@ -173,7 +173,7 @@ class EventMapDataset(Dataset):
                                   "event_idx": event.event_idx,
                                   },
                            "data": np.zeros(self.shape, dtype=np.float32),
-                           "label": [1, 0],
+                           "label": np.array([1, 0]),
                            }
 
             return sample_dict
