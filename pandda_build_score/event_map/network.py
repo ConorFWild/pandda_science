@@ -34,7 +34,7 @@ class Network(nn.Module):
 
         x = F.relu(self.conv2(x))
 
-        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
 
         # x = x.view(-1, 320)
         # x = F.relu(self.fc1(x))
