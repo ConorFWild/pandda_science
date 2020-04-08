@@ -13,11 +13,11 @@ def train(network,
     network.train()
     loss_function = nn.BCELoss()
 
-    # optimizer = optim.SGD(network.parameters(),
-                          # lr=0.01,
-                          # )
-    optimizer = optim.Adam(network.parameters(),
-                           lr=0.00001)
+    optimizer = optim.SGD(network.parameters(),
+                          lr=0.0001,
+                          )
+    # optimizer = optim.Adam(network.parameters(),
+    #                        lr=0.00001)
 
     for epoch in range(epochs):
 
