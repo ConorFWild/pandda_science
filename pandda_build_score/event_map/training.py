@@ -26,6 +26,7 @@ def train(network,
             sample_batch = batch["data"]
             label_batch = batch["label"]
             id_batch = batch["id"]
+            print(id_batch)
 
             sample_batch = sample_batch.unsqueeze(1)
             print(sample_batch.shape)
