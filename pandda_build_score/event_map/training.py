@@ -31,6 +31,7 @@ def train(network,
         running_loss_30 = 0
         running_loss_100 = 0
         running_loss_300 = 0
+        running_loss_1000 = 0
         try:
             for i_batch, batch in enumerate(dataloader):
                 sample_batch = batch["data"]
@@ -51,6 +52,7 @@ def train(network,
                 running_loss_30 += loss.item()
                 running_loss_100 += loss.item()
                 running_loss_300 += loss.item()
+                running_loss_1000 += loss.item()
 
                 if i_batch % 30 == 29:  # print every 30 mini-batches
                     print("=30 dataset average=")
@@ -75,6 +77,37 @@ def train(network,
                                                                           i_batch,
                                                                           running_loss_300 / 300) )
                     running_loss_300 = 0
+
+                if i_batch % 1000 == 999:  # print every 30 mini-batches
+                    print("=======1000 dataset average=======")
+                    print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
+                                                                          i_batch,
+                                                                          running_loss_1000 / 1000) )
+                    running_loss_1000 = 0
+
+                    recent_labels = labels[-999:]
+
+                    true_positives = 0
+                    false_positives = 0
+                    true_negatives = 0
+                    false_negatives = 0
+
+                    for label in recent_labels:
+                        if label["estimated_class"] == 1:
+                            if label["true_class"] == 1:
+                                true_positives += 1
+                            else:
+                                false_positives += 1
+                        else:
+                            if label["true_class"] == 1:
+                                false_negatives += 1
+                            else:
+                                true_negatives += 1
+
+                    print("\tThe number of true positives is: {}".format(true_positives))
+                    print("\tThe number of false positives is: {}".format(false_positives))
+                    print("\tThe number of false positives is: {}".format(false_negatives))
+                    print("\tThe number of true Negatives is: {}".format(true_negatives))
 
                 for i, index in enumerate(id_batch["pandda_name"]):
                     pandda_name = deepcopy(id_batch["pandda_name"][i])
