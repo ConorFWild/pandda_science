@@ -80,7 +80,7 @@ def train(network,
                     pandda_name = deepcopy(id_batch["pandda_name"][i])
                     dtag = deepcopy(id_batch["dtag"][i])
                     event_idx = deepcopy(id_batch["event_idx"][i].detach().numpy())
-                    class_array = deepcopy(label_batch[i].detatch().numpy())
+                    class_array = deepcopy(label_batch[i].detach().numpy())
                     true_class = np.argmax(class_array)
                     estimated_class_array = deepcopy(estimated_label_batch[i].detach().numpy())
                     estimated_class = np.argmax(estimated_class_array)
