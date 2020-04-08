@@ -82,8 +82,8 @@ def sample_map(gemmi_grid,
     tr.mat.fromlist(rotation.tolist())
     tr.vec.fromlist(offset_translation.tolist())
     gemmi_grid.grid.interpolate_values(arr,
-                                  tr,
-                                  )
+                                       tr,
+                                       )
     return arr
 
 
@@ -135,36 +135,48 @@ class EventMapDataset(Dataset):
         event_record = self.table.iloc[item]
 
         event = Event.from_record(event_record)
+        try:
 
-        event_centroid = np.array([event.x,
-                                   event.y,
-                                   event.z,
-                                   ])
+            event_centroid = np.array([event.x,
+                                       event.y,
+                                       event.z,
+                                       ])
 
-        event_map: gemmi.Grid = gemmi.read_ccp4_map(event.event_map_path)
+            event_map: gemmi.Grid = gemmi.read_ccp4_map(event.event_map_path)
 
-        rotation = sample_rotation()
-        translation = sample_translation()
+            rotation = sample_rotation()
+            translation = sample_translation()
 
-        event_map_layer = sample_event_map(event_map,
-                                           event_centroid,
-                                           rotation,
-                                           translation,
-                                           self.sample_shape,
-                                           )
-        data = event_map_layer
+            event_map_layer = sample_event_map(event_map,
+                                               event_centroid,
+                                               rotation,
+                                               translation,
+                                               self.sample_shape,
+                                               )
+            data = event_map_layer
 
-        label = get_label(event)
+            label = get_label(event)
 
-        sample_dict = {"id": {"pandda_name": event.pandda_name,
-                              "dtag": event.dtag,
-                              "event_idx": event.event_idx,
-                              },
-                       "data": data,
-                       "label": label,
-                       }
+            sample_dict = {"id": {"pandda_name": event.pandda_name,
+                                  "dtag": event.dtag,
+                                  "event_idx": event.event_idx,
+                                  },
+                           "data": data,
+                           "label": label,
+                           }
 
-        return sample_dict
+            return sample_dict
+        except:
+            # Null result
+            sample_dict = {"id": {"pandda_name": event.pandda_name,
+                                  "dtag": event.dtag,
+                                  "event_idx": event.event_idx,
+                                  },
+                           "data": np.zeros(self.shape, dtype=np.float32),
+                           "label": [1, 0],
+                           }
+
+            return sample_dict
 
 
 def get_dataloader(table,
