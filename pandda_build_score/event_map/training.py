@@ -33,19 +33,10 @@ def train(network,
         running_loss_300 = 0
         try:
             for i_batch, batch in enumerate(dataloader):
-                initial_sample_batch = batch["data"]
-                initial_label_batch = batch["label"]
-                intial_id_batch = batch["id"]
+                sample_batch = batch["data"]
+                label_batch = batch["label"]
+                id_batch = batch["id"]
 
-                sample_batch = deepcopy(initial_sample_batch)
-                label_batch = deepcopy(initial_label_batch)
-                id_batch = deepcopy(intial_id_batch)
-
-                del initial_sample_batch
-                del initial_label_batch
-                del intial_id_batch
-                del batch
-                
                 sample_batch = sample_batch.unsqueeze(1)
 
                 optimizer.zero_grad()
@@ -60,7 +51,6 @@ def train(network,
                 running_loss_30 += loss.item()
                 running_loss_100 += loss.item()
                 running_loss_300 += loss.item()
-
 
                 if i_batch % 30 == 29:  # print every 30 mini-batches
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
@@ -87,27 +77,25 @@ def train(network,
                     running_loss_300 = 0
 
                 for i, index in enumerate(id_batch["pandda_name"]):
-                    record = {"pandda_name": id_batch["pandda_name"][i],
-                              "dtag": id_batch["dtag"][i],
-                              "event_idx": id_batch["event_idx"][i].detach().numpy(),
-                              "true_class": np.argmax(label_batch[i].detach().numpy()),
-                              "estimated_class": np.argmax(estimated_label_batch[i].detach().numpy()),
+                    pandda_name = deepcopy(id_batch["pandda_name"][i])
+                    dtag = deepcopy(id_batch["dtag"][i])
+                    event_idx = deepcopy(id_batch["event_idx"][i].detach().numpy())
+                    class_array = deepcopy(label_batch[i].detatch().numpy())
+                    true_class = np.argmax(class_array)
+                    estimated_class_array = deepcopy(estimated_label_batch[i].detach().numpy())
+                    estimated_class = np.argmax(estimated_class_array)
+                    record = {"pandda_name": pandda_name,
+                              "dtag": dtag,
+                              "event_idx": event_idx,
+                              "true_class": true_class,
+                              "estimated_class": estimated_class,
                               }
-                    # print(record)
-                # for index, label, estimated_label in zip(id_batch, label_batch, estimated_label_batch):
-                #     print(index)
-                #     print(label)
-                #     print(estimated_label)
-                #     record = {"dtag": index["dtag"],
-                #               "event_idx": index["event_idx"],
-                #               "true_class": np.argmax(label),
-                #               "estimated_class": np.argmax(estimated_label),
-                #               }
                     labels.append(record)
 
-                del sample_batch
-                del label_batch
                 del id_batch
+                del label_batch
+                del estimated_label_batch
+                del batch
 
         except Exception as e:
             print("Failed for some reason")
