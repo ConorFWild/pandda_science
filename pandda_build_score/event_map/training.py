@@ -110,7 +110,10 @@ def train(network,
                         print("\t\tThe number of false positives is: {}".format(false_positives))
                         print("\t\tThe number of false positives is: {}".format(false_negatives))
                         print("\t\tThe number of true Negatives is: {}".format(true_negatives))
-                        print("\t\tPrecision is: {}".format(true_positives/(true_positives+false_positives)))
+                        if true_positives+false_positives > 0:
+                            print("\t\tPrecision is: {}".format(true_positives/(true_positives+false_positives)))
+                        else:
+                            print("\t\tPrecision is: {}".format(0))
                         print("\t\tRecall is: {}".format(true_positives/(true_positives+false_negatives)))
 
                 for i, index in enumerate(id_batch["pandda_name"]):
