@@ -15,17 +15,20 @@ def train(network,
 
     loss_function = get_loss_function()
 
-    optimizer = optim.SGD(network.parameters(),
-                          lr=0.0001,
-                          )
-    
-    # optimizer = optim.Adam(network.parameters(),
-    #                        lr=0.00001)
+    # optimizer = optim.SGD(network.parameters(),
+    #                       lr=0.0001,
+    #                       )
+
+    optimizer = optim.Adam(network.parameters(),
+                           lr=0.0001,
+                           )
 
     for epoch in range(epochs):
 
         labels = []
-        running_loss = 0
+        running_loss_30 = 0
+        running_loss_100 = 0
+        running_loss_300 = 0
         try:
             for i_batch, batch in enumerate(dataloader):
                 sample_batch = batch["data"]
@@ -42,21 +45,39 @@ def train(network,
                 loss.backward()
                 optimizer.step()
 
-                running_loss += loss.item()
+                running_loss_30 += loss.item()
+                running_loss_100 += loss.item()
+                running_loss_300 += loss.item()
 
-                if i_batch % 30 == 29:  # print every 100 mini-batches
+
+                if i_batch % 30 == 29:  # print every 30 mini-batches
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                           i_batch,
-                                                                          running_loss / 30) + "\n")
+                                                                          running_loss_30 / 30) + "\n")
                     print(estimated_label_batch)
                     print(label_batch)
-                    running_loss = 0
-                # print("\t\tBatch {} loss")
+                    running_loss_30 = 0
+
+                if i_batch % 100 == 99:  # print every 30 mini-batches
+                    print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
+                                                                          i_batch,
+                                                                          running_loss_100 / 30) + "\n")
+                    print(estimated_label_batch)
+                    print(label_batch)
+                    running_loss_100 = 0
+
+                if i_batch % 300 == 299:  # print every 30 mini-batches
+                    print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
+                                                                          i_batch,
+                                                                          running_loss_300 / 30) + "\n")
+                    print(estimated_label_batch)
+                    print(label_batch)
+                    running_loss_300 = 0
 
                 for i, index in enumerate(id_batch["pandda_name"]):
                     record = {"pandda_name": id_batch["pandda_name"][i],
                               "dtag": id_batch["dtag"][i],
-                              "event_idx": id_batch["event_idx"][i],
+                              "event_idx": id_batch["event_idx"][i].detach().numpy(),
                               "true_class": np.argmax(label_batch[i].detach().numpy()),
                               "estimated_class": np.argmax(estimated_label_batch[i].detach().numpy()),
                               }
