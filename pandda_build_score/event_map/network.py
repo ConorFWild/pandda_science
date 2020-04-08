@@ -62,7 +62,7 @@ class Network(nn.Module):
                                   )
         self.dropout3 = nn.Dropout3d(p=0.5)
 
-        self.fc1 = nn.Linear(int(self.shape[0]*self.shape[1]*self.shape[2]*(1/2)*(1/2)*(1/2)*35),
+        self.fc1 = nn.Linear(int(self.shape[0]*self.shape[1]*self.shape[2]*(1/8)*(1/8)*(1/8)*35),
                              30,
                              )
         self.fc2 = nn.Linear(30,
