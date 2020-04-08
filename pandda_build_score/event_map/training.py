@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 import pandas as pd
 
@@ -31,9 +33,19 @@ def train(network,
         running_loss_300 = 0
         try:
             for i_batch, batch in enumerate(dataloader):
-                sample_batch = batch["data"]
-                label_batch = batch["label"]
-                id_batch = batch["id"]
+                initial_sample_batch = batch["data"]
+                initial_label_batch = batch["label"]
+                intial_id_batch = batch["id"]
+
+                sample_batch = deepcopy(initial_sample_batch)
+                label_batch = deepcopy(initial_label_batch)
+                id_batch = deepcopy(intial_id_batch)
+
+                del initial_sample_batch
+                del initial_label_batch
+                del intial_id_batch
+                del batch
+                
                 sample_batch = sample_batch.unsqueeze(1)
 
                 optimizer.zero_grad()
@@ -61,7 +73,7 @@ def train(network,
                 if i_batch % 100 == 99:  # print every 30 mini-batches
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                           i_batch,
-                                                                          running_loss_100 / 30) + "\n")
+                                                                          running_loss_100 / 100) + "\n")
                     print(estimated_label_batch)
                     print(label_batch)
                     running_loss_100 = 0
@@ -69,7 +81,7 @@ def train(network,
                 if i_batch % 300 == 299:  # print every 30 mini-batches
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                           i_batch,
-                                                                          running_loss_300 / 30) + "\n")
+                                                                          running_loss_300 / 300) + "\n")
                     print(estimated_label_batch)
                     print(label_batch)
                     running_loss_300 = 0
