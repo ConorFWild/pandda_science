@@ -23,7 +23,9 @@ class Network(nn.Module):
                                stride=1,
                                padding=1,
                                )
-        self.pool1 = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.pool1 = nn.MaxPool3d(kernel_size=2,
+                                  stride=2,
+                                  )
         self.dropout1 = nn.Dropout3d(p=0.5)
 
         self.conv3 = nn.Conv3d(15,
@@ -38,7 +40,9 @@ class Network(nn.Module):
                                stride=1,
                                padding=1,
                                )
-        self.pool2 = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.pool2 = nn.MaxPool3d(kernel_size=2,
+                                  stride=2,
+                                  )
         self.dropout2 = nn.Dropout3d(p=0.5)
 
         self.conv5 = nn.Conv3d(25,
@@ -53,10 +57,12 @@ class Network(nn.Module):
                                stride=1,
                                padding=1,
                                )
-        self.pool3 = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.pool3 = nn.MaxPool3d(kernel_size=2,
+                                  stride=2,
+                                  )
         self.dropout3 = nn.Dropout3d(p=0.5)
 
-        self.fc1 = nn.Linear(self.shape[0]*self.shape[1]*self.shape[2]*(1/2)*(1/2)*(1/2)*35,
+        self.fc1 = nn.Linear(int(self.shape[0]*self.shape[1]*self.shape[2]*(1/2)*(1/2)*(1/2)*35),
                              30,
                              )
         self.fc2 = nn.Linear(30,
