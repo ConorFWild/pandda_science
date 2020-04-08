@@ -147,6 +147,21 @@ class EventMapDataset(Dataset):
         event_record = self.table.iloc[item]
 
         event = Event.from_record(event_record)
+        print(event.viewed)
+        print(type(event.viewed))
+
+        if bool(event.viewed) is False:
+            sample_dict = {"id": {"pandda_name": event.pandda_name,
+                                  "dtag": event.dtag,
+                                  "event_idx": event.event_idx,
+                                  },
+                           "data": np.zeros(self.sample_shape,
+                                            dtype=np.float32,
+                                            ),
+                           "label": np.array([1, 0], dtype=np.float32),
+                           }
+
+            return sample_dict
         try:
 
             event_centroid = np.array([event.x,
