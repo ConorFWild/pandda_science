@@ -34,6 +34,7 @@ class Network(nn.Module):
                              )
 
     def forward(self, x):
+        activation_function = nn.Softmax()
         # Perform the usual forward pass
         x = F.relu(self.conv1(x))
 
@@ -47,7 +48,7 @@ class Network(nn.Module):
         x = F.relu(self.fc1(x))
         # x = F.dropout(x, training=self.training)
         x = self.fc2(x)
-        x = nn.Softmax(x)
+        x = activation_function(x)
 
         return x
 
