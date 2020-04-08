@@ -59,7 +59,7 @@ def sample_rotation():
     return rotation_matrix
 
 
-def sample_translation(magnitude=3):
+def sample_translation(magnitude=2):
     return (np.random.rand(3) * 2 * magnitude) - magnitude
 
 
@@ -68,18 +68,19 @@ def sample_map(gemmi_grid,
                rotation,
                translation,
                shape,
-               scale=np.eye(3)*0.5,
+               scale=0.5,
                ):
-    rotation = np.matmul(rotation, scale,)
+    rotation = np.matmul(rotation, np.eye(3)*scale,)
 
-    offset = translation - (np.array(shape) / 2)
+    offset = -(np.array(shape) / 2)*scale
 
-    rotated_offset = np.matmul(rotation, offset)
+    rotated_offset = np.matmul(rotation, offset) + translation
 
     offset_translation = centroid + rotated_offset
 
     arr = np.zeros(shape,
-                   dtype=np.float32)
+                   dtype=np.float32,
+                   )
     tr = gemmi.Transform()
 
     tr.mat.fromlist(rotation.tolist())
