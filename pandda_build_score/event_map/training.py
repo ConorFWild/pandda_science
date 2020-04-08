@@ -46,6 +46,9 @@ def train(network,
             print("\t\tBatch {} loss")
 
             for index, label, estimated_label in zip(id_batch, label_batch, estimated_label_batch):
+                print(index)
+                print(label)
+                print(estimated_label)
                 record = {"dtag": index["dtag"],
                           "event_idx": index["event_idx"],
                           "true_class": np.argmax(label),
