@@ -9,6 +9,7 @@ import torch.optim as optim
 
 from pandda_build_score.event_map.functions import get_loss_function
 
+
 def train(network,
           dataloader,
           epochs: int = 10,
@@ -75,39 +76,42 @@ def train(network,
                     print("=====300 dataset average=====")
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                           i_batch,
-                                                                          running_loss_300 / 300) )
+                                                                          running_loss_300 / 300))
                     running_loss_300 = 0
 
                 if i_batch % 1000 == 999:  # print every 30 mini-batches
                     print("=======1000 dataset average=======")
                     print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                           i_batch,
-                                                                          running_loss_1000 / 1000) )
+                                                                          running_loss_1000 / 1000))
                     running_loss_1000 = 0
 
                     recent_labels = labels[-999:]
 
-                    true_positives = 0
-                    false_positives = 0
-                    true_negatives = 0
-                    false_negatives = 0
+                    for cutoff in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95]:
+                        true_positives = 0
+                        false_positives = 0
+                        true_negatives = 0
+                        false_negatives = 0
 
-                    for label in recent_labels:
-                        if label["estimated_class"] == 1:
-                            if label["true_class"] == 1:
-                                true_positives += 1
+                        for label in recent_labels:
+                            if label["estimated_class"] >= cutoff:
+                                if label["true_class"] == 1:
+                                    true_positives += 1
+                                else:
+                                    false_positives += 1
                             else:
-                                false_positives += 1
-                        else:
-                            if label["true_class"] == 1:
-                                false_negatives += 1
-                            else:
-                                true_negatives += 1
-
-                    print("\tThe number of true positives is: {}".format(true_positives))
-                    print("\tThe number of false positives is: {}".format(false_positives))
-                    print("\tThe number of false positives is: {}".format(false_negatives))
-                    print("\tThe number of true Negatives is: {}".format(true_negatives))
+                                if label["true_class"] == 1:
+                                    false_negatives += 1
+                                else:
+                                    true_negatives += 1
+                        print("\tAt cutoff: {}".format(cutoff))
+                        print("\t\tThe number of true positives is: {}".format(true_positives))
+                        print("\t\tThe number of false positives is: {}".format(false_positives))
+                        print("\t\tThe number of false positives is: {}".format(false_negatives))
+                        print("\t\tThe number of true Negatives is: {}".format(true_negatives))
+                        print("\t\tPrecision is: {}".format(true_positives/(true_positives+false_positives)))
+                        print("\t\tRecall is: {}".format(true_positives/(true_positives+false_negatives)))
 
                 for i, index in enumerate(id_batch["pandda_name"]):
                     pandda_name = deepcopy(id_batch["pandda_name"][i])
@@ -116,7 +120,7 @@ def train(network,
                     class_array = deepcopy(label_batch[i].detach().numpy())
                     true_class = np.argmax(class_array)
                     estimated_class_array = deepcopy(estimated_label_batch[i].detach().numpy())
-                    estimated_class = np.argmax(estimated_class_array)
+                    estimated_class = estimated_class_array[1]
                     record = {"pandda_name": pandda_name,
                               "dtag": dtag,
                               "event_idx": event_idx,
