@@ -81,7 +81,7 @@ class Network(nn.Module):
         x = self.dropout3(x)
 
         x = x.view(-1,
-                   self.shape[0]*self.shape[1]*self.shape[2],
+                   x.shape[1]*x.shape[2]*x.shape[3]*x.shape[4],
                    )
         x = F.relu(self.fc1(x))
         # x = F.dropout(x, training=self.training)
