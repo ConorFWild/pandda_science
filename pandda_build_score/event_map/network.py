@@ -7,7 +7,8 @@ class Network(nn.Module):
                  shape,
                  ):
         super(Network, self).__init__()
-        self.conv1 = nn.Conv3d(1,
+        self.shape = shape
+        self.self = nn.Conv3d(1,
                                10,
                                kernel_size=3,
                                stride=1,
@@ -25,8 +26,10 @@ class Network(nn.Module):
                                stride=1,
                                padding=1,
                                )
-        # self.fc1 = nn.Linear(320, 50)
-        # self.fc2 = nn.Linear(50, 10)
+        self.fc1 = nn.Linear(self.shape[0]*self.shape[1]*self.shape[2],
+                             20,
+                             )
+        self.fc2 = nn.Linear(20, 2)
 
     def forward(self, x):
         # Perform the usual forward pass
@@ -36,10 +39,12 @@ class Network(nn.Module):
 
         x = F.relu(self.conv3(x))
 
-        # x = x.view(-1, 320)
-        # x = F.relu(self.fc1(x))
+        x = x.view(-1,
+                   self.shape[0]*self.shape[1]*self.shape[2],
+                   )
+        x = F.relu(self.fc1(x))
         # x = F.dropout(x, training=self.training)
-        # x = self.fc2(x)
+        x = self.fc2(x)
 
         return x
 
