@@ -47,8 +47,8 @@ def train(network,
                 record = {"pandda_name": id_batch["pandda_name"][i],
                           "dtag": id_batch["dtag"][i],
                           "event_idx": id_batch["event_idx"][i],
-                          "true_class": np.argmax(label_batch[i]),
-                          "estimated_class": np.argmax(estimated_label_batch[i]),
+                          "true_class": np.argmax(label_batch[i].detach().numpy()),
+                          "estimated_class": np.argmax(estimated_label_batch[i].detach().numpy()),
                           }
                 print(record)
             # for index, label, estimated_label in zip(id_batch, label_batch, estimated_label_batch):
