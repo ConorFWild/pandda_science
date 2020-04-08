@@ -26,11 +26,8 @@ def train(network,
             sample_batch = batch["data"]
             label_batch = batch["label"]
             id_batch = batch["id"]
-            print(id_batch)
 
             sample_batch = sample_batch.unsqueeze(1)
-            print(sample_batch.shape)
-
 
             estimated_label_batch = network(sample_batch)
 
@@ -46,7 +43,7 @@ def train(network,
 
             print("\t\tBatch {} loss")
 
-            for i, index in id_batch["pandda_name"]:
+            for i, index in enumerate(id_batch["pandda_name"]):
                 record = {"pandda_name": id_batch["pandda_name"][i],
                           "dtag": id_batch["dtag"][i],
                           "event_idx": id_batch["event_idx"][i],
