@@ -46,15 +46,23 @@ def train(network,
 
             print("\t\tBatch {} loss")
 
-            for index, label, estimated_label in zip(id_batch, label_batch, estimated_label_batch):
-                print(index)
-                print(label)
-                print(estimated_label)
-                record = {"dtag": index["dtag"],
-                          "event_idx": index["event_idx"],
-                          "true_class": np.argmax(label),
-                          "estimated_class": np.argmax(estimated_label),
+            for i, index in id_batch["pandda_name"]:
+                record = {"pandda_name": id_batch["pandda_name"][i],
+                          "dtag": id_batch["dtag"][i],
+                          "event_idx": id_batch["event_idx"][i],
+                          "true_class": np.argmax(label_batch[i]),
+                          "estimated_class": np.argmax(estimated_label_batch[i]),
                           }
+                print(record)
+            # for index, label, estimated_label in zip(id_batch, label_batch, estimated_label_batch):
+            #     print(index)
+            #     print(label)
+            #     print(estimated_label)
+            #     record = {"dtag": index["dtag"],
+            #               "event_idx": index["event_idx"],
+            #               "true_class": np.argmax(label),
+            #               "estimated_class": np.argmax(estimated_label),
+            #               }
                 labels.append(record)
 
         training_table = pd.DataFrame(labels)
