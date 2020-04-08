@@ -197,7 +197,7 @@ def get_dataloader(table,
                                        )
 
     dataloader: DataLoader = DataLoader(dataset,
-                                        batch_size=4,
+                                        batch_size=20,
                                         shuffle=True,
                                         num_workers=20,
                                         )
