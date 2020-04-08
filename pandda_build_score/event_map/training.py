@@ -22,6 +22,7 @@ def train(network,
     for epoch in range(epochs):
 
         labels = []
+        running_loss = 0
         for i_batch, batch in enumerate(dataloader):
             sample_batch = batch["data"]
             label_batch = batch["label"]
@@ -41,6 +42,13 @@ def train(network,
             loss.backward()
             optimizer.step()
 
+            running_loss += loss.item()
+
+            if i_batch % 30 == 29:  # print every 100 mini-batches
+                print("Loss at epoch {}, iteration {} is {}".format(epoch,
+                                                                      i_batch,
+                                                                      running_loss / 30) + "\n")
+                running_loss = 0
             print("\t\tBatch {} loss")
 
             for i, index in enumerate(id_batch["pandda_name"]):
@@ -50,7 +58,7 @@ def train(network,
                           "true_class": np.argmax(label_batch[i].detach().numpy()),
                           "estimated_class": np.argmax(estimated_label_batch[i].detach().numpy()),
                           }
-                print(record)
+                # print(record)
             # for index, label, estimated_label in zip(id_batch, label_batch, estimated_label_batch):
             #     print(index)
             #     print(label)
