@@ -45,11 +45,11 @@ def train(network,
             running_loss += loss.item()
 
             if i_batch % 30 == 29:  # print every 100 mini-batches
-                print("Loss at epoch {}, iteration {} is {}".format(epoch,
+                print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                       i_batch,
                                                                       running_loss / 30) + "\n")
                 running_loss = 0
-            print("\t\tBatch {} loss")
+            # print("\t\tBatch {} loss")
 
             for i, index in enumerate(id_batch["pandda_name"]):
                 record = {"pandda_name": id_batch["pandda_name"][i],
