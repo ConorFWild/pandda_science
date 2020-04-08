@@ -48,6 +48,8 @@ def train(network,
                 print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                       i_batch,
                                                                       running_loss / 30) + "\n")
+                print(estimated_label_batch)
+                print(label_batch)
                 running_loss = 0
             # print("\t\tBatch {} loss")
 
