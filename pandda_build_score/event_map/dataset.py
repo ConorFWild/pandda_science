@@ -199,7 +199,7 @@ def get_dataloader(table,
     dataloader: DataLoader = DataLoader(dataset,
                                         batch_size=4,
                                         shuffle=True,
-                                        num_workers=4,
+                                        num_workers=20,
                                         )
 
     return dataloader
