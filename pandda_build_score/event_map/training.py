@@ -27,18 +27,14 @@ def train(network,
             sample_batch = batch["data"]
             label_batch = batch["label"]
             id_batch = batch["id"]
-
             sample_batch = sample_batch.unsqueeze(1)
 
-            estimated_label_batch = network(sample_batch)
+            optimizer.zero_grad()
 
-            # loss = F.nll_loss(estimated_label_batch,
-            #                   label_batch,
-            #                   )
+            estimated_label_batch = network(sample_batch)
             loss = loss_function(estimated_label_batch,
                                  label_batch,
                                  )
-
             loss.backward()
             optimizer.step()
 
