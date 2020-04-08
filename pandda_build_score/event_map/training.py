@@ -18,6 +18,7 @@ def train(network,
     optimizer = optim.SGD(network.parameters(),
                           lr=0.0001,
                           )
+    
     # optimizer = optim.Adam(network.parameters(),
     #                        lr=0.00001)
 
