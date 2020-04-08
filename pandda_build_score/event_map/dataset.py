@@ -147,8 +147,8 @@ class EventMapDataset(Dataset):
         event_record = self.table.iloc[item]
 
         event = Event.from_record(event_record)
-        print(event.viewed)
-        print(type(event.viewed))
+        # print(event.viewed)
+        # print(type(event.viewed))
 
         if bool(event.viewed) is False:
             sample_dict = {"id": {"pandda_name": event.pandda_name,
