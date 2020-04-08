@@ -29,7 +29,9 @@ class Network(nn.Module):
         self.fc1 = nn.Linear(self.shape[0]*self.shape[1]*self.shape[2],
                              20,
                              )
-        self.fc2 = nn.Linear(20, 2)
+        self.fc2 = nn.Linear(20,
+                             2,
+                             )
 
     def forward(self, x):
         # Perform the usual forward pass

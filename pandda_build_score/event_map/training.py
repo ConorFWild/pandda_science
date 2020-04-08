@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+import torch.nn
 import torch.nn.functional as F
 import torch.optim as optim
 
@@ -10,9 +11,13 @@ def train(network,
           epochs: int = 10,
           ):
     network.train()
-    optimizer = optim.SGD(network.parameters(),
-                          lr=0.01,
-                          )
+    loss_function = nn.BCELoss()
+
+    # optimizer = optim.SGD(network.parameters(),
+                          # lr=0.01,
+                          # )
+    optimizer = optim.Adam(network.parameters(),
+                           lr=0.0001)
 
     for epoch in range(epochs):
 
@@ -28,11 +33,15 @@ def train(network,
 
             estimated_label_batch = network(sample_batch)
 
-            loss = F.nll_loss(estimated_label_batch,
-                              label_batch,
-                              )
+            # loss = F.nll_loss(estimated_label_batch,
+            #                   label_batch,
+            #                   )
+            loss = loss_function(estimated_label_batch,
+                                 label_batch,
+                                 )
 
             loss.backward()
+            optimizer.step()
 
             print("\t\tBatch {} loss")
 

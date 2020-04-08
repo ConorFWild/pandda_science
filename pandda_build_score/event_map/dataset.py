@@ -172,7 +172,9 @@ class EventMapDataset(Dataset):
                                   "dtag": event.dtag,
                                   "event_idx": event.event_idx,
                                   },
-                           "data": np.zeros(self.shape, dtype=np.float32),
+                           "data": np.zeros(self.sample_shape,
+                                            dtype=np.float32,
+                                            ),
                            "label": np.array([1, 0]),
                            }
 
