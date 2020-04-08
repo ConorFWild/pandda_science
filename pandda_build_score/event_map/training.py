@@ -92,6 +92,11 @@ def train(network,
                 #               "estimated_class": np.argmax(estimated_label),
                 #               }
                     labels.append(record)
+
+                del sample_batch
+                del label_batch
+                del id_batch
+
         except Exception as e:
             print("Failed for some reason")
             print(e)
