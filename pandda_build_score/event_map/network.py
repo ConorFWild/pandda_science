@@ -268,9 +268,9 @@ class Network(nn.Module):
         self.filters = filters
         self.grid_size = grid_size
 
-        self.bn = nn.BatchNorm3d(3)
+        self.bn = nn.BatchNorm3d(1)
 
-        self.conv_1 = nn.Sequential(nn.Conv3d(3, filters, kernel_size=9, stride=1, padding=4),
+        self.conv_1 = nn.Sequential(nn.Conv3d(1, filters, kernel_size=9, stride=1, padding=4),
                                     nn.BatchNorm3d(filters),
                                     nn.ReLU(),
                                     nn.MaxPool3d(kernel_size=2, stride=2))
