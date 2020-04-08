@@ -16,7 +16,7 @@ def train(network,
     loss_function = get_loss_function()
 
     optimizer = optim.SGD(network.parameters(),
-                          lr=0.00001,
+                          lr=0.0001,
                           )
     # optimizer = optim.Adam(network.parameters(),
     #                        lr=0.00001)
