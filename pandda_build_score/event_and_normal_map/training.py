@@ -119,7 +119,10 @@ def train(network,
                         print("\t\tPrecision is: {}".format(true_positives/(true_positives+false_positives)))
                     else:
                         print("\t\tPrecision is: {}".format(0))
-                    print("\t\tRecall is: {}".format(true_positives/(true_positives+false_negatives)))
+                    if true_positives+false_negatives > 0:
+                        print("\t\tRecall is: {}".format(true_positives/(true_positives+false_negatives)))
+                    else:
+                        print("\t\tRecall is: {}".format(0))
 
             for i, index in enumerate(id_batch["pandda_name"]):
                 pandda_name = deepcopy(id_batch["pandda_name"][i])
