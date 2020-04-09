@@ -40,7 +40,7 @@ def train(network,
             label_batch = batch["label"]
             id_batch = batch["id"]
 
-            print(sample_batch.shape)
+            # print(sample_batch.shape)
 
             optimizer.zero_grad()
 
