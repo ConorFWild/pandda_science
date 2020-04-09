@@ -174,7 +174,7 @@ class EventAndNormalMapDataset(Dataset):
                                        event.z,
                                        ])
 
-            data_map = get_map_from_mtz(event.data_path)
+            data_map = get_map_from_mtz_path(event.data_path)
             event_map: gemmi.Grid = gemmi.read_ccp4_map(event.event_map_path)
 
             rotation = sample_rotation()
