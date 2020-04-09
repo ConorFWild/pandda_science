@@ -225,12 +225,12 @@ class EventAndNormalMapDataset(Dataset):
 def get_dataloader(table,
                    shape,
                    ):
-    dataset: Dataset = EventMapDataset(table=table,
+    dataset: Dataset = EventAndNormalMapDataset(table=table,
                                        shape=shape,
                                        )
 
     dataloader: DataLoader = DataLoader(dataset,
-                                        batch_size=1,
+                                        batch_size=3,
                                         shuffle=True,
                                         num_workers=20,
                                         )
