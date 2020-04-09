@@ -85,7 +85,7 @@ def sample_map(gemmi_grid,
 
     tr.mat.fromlist(rotation.tolist())
     tr.vec.fromlist(offset_translation.tolist())
-    gemmi_grid.grid.interpolate_values(arr,
+    gemmi_grid.interpolate_values(arr,
                                        tr,
                                        )
     return arr
@@ -120,7 +120,7 @@ def sample_event_map(event_map,
                      translation,
                      shape,
                      ):
-    return sample_map(event_map,
+    return sample_map(event_map.grid,
                       centroid,
                       rotation,
                       translation,
