@@ -47,10 +47,11 @@ def train(network,
             sample_batch_cuda = sample_batch.cuda()
             label_batch_cuda = label_batch.cuda()
 
-            estimated_label_batch = network(sample_batch_cuda)
-            loss = loss_function(estimated_label_batch,
+            estimated_label_batch_cuda = network(sample_batch_cuda)
+            loss = loss_function(estimated_label_batch_cuda,
                                  label_batch_cuda,
                                  )
+            estimated_label_batch = estimated_label_batch_cuda.cpu()
             loss.backward()
             optimizer.step()
 
