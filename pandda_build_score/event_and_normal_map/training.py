@@ -40,6 +40,8 @@ def train(network,
             label_batch = batch["label"]
             id_batch = batch["id"]
 
+            print(sample_batch.shape)
+
             optimizer.zero_grad()
 
             sample_batch_cuda = sample_batch.cuda()
