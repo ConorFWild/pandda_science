@@ -44,12 +44,12 @@ def train(network,
 
             optimizer.zero_grad()
 
-            sample_batch.cuda()
-            label_batch.cuda()
+            sample_batch_cuda = sample_batch.cuda()
+            label_batch_cuda = label_batch.cuda()
 
-            estimated_label_batch = network(sample_batch)
+            estimated_label_batch = network(sample_batch_cuda)
             loss = loss_function(estimated_label_batch,
-                                 label_batch,
+                                 label_batch_cuda,
                                  )
             loss.backward()
             optimizer.step()
