@@ -211,8 +211,9 @@ class EventAndNormalMapDataset(Dataset):
                            }
 
             return sample_dict
-        except:
+        except Exception as e:
             # Null result
+            print(e)
             sample_dict = {"id": {"pandda_name": event.pandda_name,
                                   "dtag": event.dtag,
                                   "event_idx": event.event_idx,
