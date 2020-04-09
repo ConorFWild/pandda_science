@@ -15,6 +15,7 @@ def train(network,
           epochs: int = 10,
           ):
     network.train()
+    network.cuda()
 
     loss_function = get_loss_function()
 
@@ -43,6 +44,7 @@ def train(network,
 
                 optimizer.zero_grad()
 
+                sample_batch.cuda()
                 estimated_label_batch = network(sample_batch)
                 loss = loss_function(estimated_label_batch,
                                      label_batch,
