@@ -12,7 +12,7 @@ from pandda_build_score.event_map.functions import get_loss_function
 
 def train(network,
           dataloader,
-          epochs: int = 10,
+          epochs: int = 1000,
           ):
     network.train()
     network.cuda()

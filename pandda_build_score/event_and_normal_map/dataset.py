@@ -217,7 +217,7 @@ class EventAndNormalMapDataset(Dataset):
             sample_dict = {"id": {"pandda_name": event.pandda_name,
                                   "dtag": event.dtag,
                                   "event_idx": event.event_idx,
-                                  "initial_model_dir": event.,
+                                  # "initial_model_dir": ,
                                   },
                            "data":np.zeros((2,
                                              self.sample_shape[0],
