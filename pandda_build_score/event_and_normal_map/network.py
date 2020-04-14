@@ -278,13 +278,16 @@ class Network(nn.Module):
         self.layer_1 = ResidualLayerWithDrop(filters, filters * 2, training)
         self.layer_2 = ResidualLayerWithDrop(filters * 2, filters * 4, training)
         self.layer_3 = ResidualLayerWithDrop(filters * 4, filters * 8, training)
+        self.layer_4 = ResidualLayerWithDrop(filters * 8, filters * 16, training)
 
-        size_after_convs = int((grid_size / (2 ** 4)) ** 3)
-        n_in = filters * 8 * size_after_convs
+        size_after_convs = int((grid_size / (2 ** 5)) ** 3)
+        n_in = filters * 16 * size_after_convs
 
         self.fc1 = nn.Sequential(nn.Linear(n_in, int(n_in / 4)),
                                  nn.ReLU())
-        self.fc2 = nn.Sequential(nn.Linear(int(n_in / 4), 2))
+        self.fc2 = nn.Sequential(nn.Linear(int(n_in / 4), int(n_in / 8)))
+
+        self.fc3 = nn.Sequential(nn.Linear(int(n_in / 8), 2))
 
         self.act = nn.Softmax()
 
@@ -297,11 +300,15 @@ class Network(nn.Module):
 
         x = self.layer_3(x)
 
+        x = self.layer_4(x)
+
         x = x.view(-1, (x.shape[1] * x.shape[2] * x.shape[3] * x.shape[4]))
 
         x = self.fc1(x)
 
         x = self.fc2(x)
+
+        x = self.fc3(x)
 
         return self.act(x)
 

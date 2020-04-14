@@ -83,7 +83,7 @@ def sample_map(gemmi_grid,
                    )
     tr = gemmi.Transform()
 
-    tr.mat.fromlist(np.transpose(rotation).tolist())
+    tr.mat.fromlist(rotation.tolist())
     tr.vec.fromlist(offset_translation.tolist())
     gemmi_grid.interpolate_values(arr,
                                        tr,
