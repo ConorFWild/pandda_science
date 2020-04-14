@@ -131,6 +131,7 @@ def train(network,
                         row["dtag"],
                         row["event_idx"],
                         row["estimated_class"],
+                        row["coords"],
                         row["event_map_path"],) for index, row in table.sort_values(by="estimated_class").tail(10).iterrows()])
 
             for i, index in enumerate(id_batch["pandda_name"]):
