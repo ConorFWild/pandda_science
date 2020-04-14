@@ -134,8 +134,8 @@ def train(network,
                 true_class = np.argmax(class_array)
                 estimated_class_array = deepcopy(estimated_label_batch[i].detach().numpy())
                 estimated_class = estimated_class_array[1]
-                event_map_path = deepcopy(id_batch["event_map_path"][i])
-                coords = deepcopy(id_batch["coords"][i])
+                event_map_path = deepcopy(label_batch["event_map_path"][i])
+                coords = deepcopy(label_batch["coords"][i])
                 record = {"pandda_name": pandda_name,
                           "dtag": dtag,
                           "event_idx": event_idx,
