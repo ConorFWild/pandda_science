@@ -124,7 +124,10 @@ def train(network,
                     else:
                         print("\t\tRecall is: {}".format(0))
 
+                table = pd.DataFrame(recent_labels)
+                table = table[table["true_class"] == 0]
 
+                print(table.sort_values(by="estimated_class").tail(10))
 
             for i, index in enumerate(id_batch["pandda_name"]):
                 pandda_name = deepcopy(id_batch["pandda_name"][i])
@@ -151,10 +154,6 @@ def train(network,
             del estimated_label_batch
             del batch
 
-            table = pd.DataFrame(recent_labels)
-            table = table[table["true_class"] == 0]
-
-            print(table.sort_values(by="estimated_class").tail(10))
 
         # except Exception as e:
         #     print("Failed for some reason")
