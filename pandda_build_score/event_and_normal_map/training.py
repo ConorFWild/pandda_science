@@ -127,7 +127,11 @@ def train(network,
                 table = pd.DataFrame(recent_labels)
                 table = table[table["true_class"] == 0]
 
-                print([row for index, row in table.sort_values(by="estimated_class").tail(10).iterrows()])
+                print([(row["pandda_name"],
+                        row["dtag"],
+                        row["event_udx"],
+                        row["estimated_class"],
+                        row["event_map_path"],) for index, row in table.sort_values(by="estimated_class").tail(10).iterrows()])
 
             for i, index in enumerate(id_batch["pandda_name"]):
                 pandda_name = deepcopy(id_batch["pandda_name"][i])
