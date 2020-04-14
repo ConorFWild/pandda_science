@@ -129,7 +129,7 @@ def train(network,
 
                 print([(row["pandda_name"],
                         row["dtag"],
-                        row["event_udx"],
+                        row["event_idx"],
                         row["estimated_class"],
                         row["event_map_path"],) for index, row in table.sort_values(by="estimated_class").tail(10).iterrows()])
 
