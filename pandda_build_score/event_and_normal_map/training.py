@@ -151,10 +151,10 @@ def train(network,
             del estimated_label_batch
             del batch
 
-        table = pd.DataFrame(recent_labels)
-        table = table[table["true_class"] == 0]
+            table = pd.DataFrame(recent_labels)
+            table = table[table["true_class"] == 0]
 
-        print(table.sort_values(by="estimated_class").tail(10))
+            print(table.sort_values(by="estimated_class").tail(10))
 
         # except Exception as e:
         #     print("Failed for some reason")
