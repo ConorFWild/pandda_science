@@ -124,6 +124,10 @@ def train(network,
                     else:
                         print("\t\tRecall is: {}".format(0))
 
+                    table = pd.DataFrame(recent_labels)
+
+                    print(table.sort_values(by="estimated_class").tail(10))
+
             for i, index in enumerate(id_batch["pandda_name"]):
                 pandda_name = deepcopy(id_batch["pandda_name"][i])
                 dtag = deepcopy(id_batch["dtag"][i])
