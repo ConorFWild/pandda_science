@@ -125,6 +125,7 @@ def train(network,
                         print("\t\tRecall is: {}".format(0))
 
                     table = pd.DataFrame(recent_labels)
+                    table = table[table["true_class"] == 0]
 
                     print(table.sort_values(by="estimated_class").tail(10))
 
