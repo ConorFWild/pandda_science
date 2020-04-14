@@ -170,6 +170,7 @@ class EventAndNormalMapDataset(Dataset):
                            "label": np.array([1, 0], dtype=np.float32),
                            "event_map_path": str(event.event_map_path),
                            "model_path": str(event.initial_model_path),
+                           "coords": str([event.x, event.y, event.z])
                            }
 
             return sample_dict
@@ -212,6 +213,7 @@ class EventAndNormalMapDataset(Dataset):
                            "label": label,
                            "event_map_path": str(event.event_map_path),
                            "model_path": str(event.initial_model_path),
+                           "coords": str([event.x, event.y, event.z])
                            }
 
             return sample_dict
@@ -233,6 +235,7 @@ class EventAndNormalMapDataset(Dataset):
                            "label": np.array([1, 0], dtype=np.float32),
                            "event_map_path": str(event.event_map_path),
                            "model_path": str(event.initial_model_path),
+                           "coords": str([event.x, event.y, event.z])
                            }
 
             return sample_dict

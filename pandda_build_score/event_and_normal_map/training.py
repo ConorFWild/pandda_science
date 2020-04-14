@@ -124,10 +124,7 @@ def train(network,
                     else:
                         print("\t\tRecall is: {}".format(0))
 
-                    table = pd.DataFrame(recent_labels)
-                    table = table[table["true_class"] == 0]
 
-                    print(table.sort_values(by="estimated_class").tail(10))
 
             for i, index in enumerate(id_batch["pandda_name"]):
                 pandda_name = deepcopy(id_batch["pandda_name"][i])
@@ -137,11 +134,15 @@ def train(network,
                 true_class = np.argmax(class_array)
                 estimated_class_array = deepcopy(estimated_label_batch[i].detach().numpy())
                 estimated_class = estimated_class_array[1]
+                event_map_path = deepcopy(id_batch["event_map_path"][i])
+                coords = deepcopy(id_batch["coords"][i])
                 record = {"pandda_name": pandda_name,
                           "dtag": dtag,
                           "event_idx": event_idx,
                           "true_class": true_class,
                           "estimated_class": estimated_class,
+                          "event_map_path": event_map_path,
+                          "coords": coords,
                           }
                 labels.append(record)
 
@@ -149,6 +150,11 @@ def train(network,
             del label_batch
             del estimated_label_batch
             del batch
+
+        table = pd.DataFrame(recent_labels)
+        table = table[table["true_class"] == 0]
+
+        print(table.sort_values(by="estimated_class").tail(10))
 
         # except Exception as e:
         #     print("Failed for some reason")
