@@ -135,6 +135,10 @@ def get_rscc_table(events, autobuilding_dir):
 
         rscc_regex = "^[\s]+1[\s]+[0-9\.]+[\s]+([0-9\.])"
 
+        if not phenix_results_file.exists():
+            print("\tCould not find results!")
+            continue
+
         with open(str(phenix_results_file), "r") as f:
             result_string = f.read()
 
