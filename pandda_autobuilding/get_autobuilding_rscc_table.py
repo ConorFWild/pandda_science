@@ -28,6 +28,12 @@ def parse_args():
                         required=True
                         )
 
+    parser.add_argument("-a", "--autobuilding_dir",
+                        type=str,
+                        help="The directory for output and intermediate files to be saved to",
+                        required=True
+                        )
+
     parser.add_argument("-o", "--out_dir_path",
                         type=str,
                         help="The directory for output and intermediate files to be saved to",
@@ -42,11 +48,13 @@ def parse_args():
 class Config(NamedTuple):
     out_dir_path: Path
     event_table_path: Path
+    autobuilding_dir: Path
 
 
 def get_config(args):
     config = Config(out_dir_path=Path(args.out_dir_path),
                     event_table_path=Path(args.event_table_path),
+                    autobuilding_dir=Path(args.autobuilding_dir)
                     )
 
     return config
@@ -118,9 +126,12 @@ class Build:
 def get_rscc_table(events, autobuilding_dir):
     records = []
     for event in events:
-        event_autobuild_dir = autobuilding_dir
+        event_autobuild_dir = autobuilding_dir / "{}_{}_{}".format(event.pandda_name,
+                                                                   event.dtag,
+                                                                   event.event_idx,
+                                                                   )
 
-        phenix_results_file = event_autobuild_dir
+        phenix_results_file = event_autobuild_dir / "phenix_event" / "LigandFit_run_1_" / "LigandFit_summary.dat"
 
         rscc_regex = "^[\s]+1[\s]+[0-9\.]+[\s]+([0-9\.])"
 
@@ -159,7 +170,7 @@ def main():
     events = get_event_table(config.event_table_path)
     print("\tGot {} events!".format(len(events)))
 
-    rscc_table = get_rscc_table(events, output)
+    rscc_table = get_rscc_table(events, config.autobuilding_dir)
 
     rscc_table.to_csv(str(output.rscc_table_path))
 
