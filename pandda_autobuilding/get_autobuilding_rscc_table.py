@@ -42,13 +42,11 @@ def parse_args():
 class Config(NamedTuple):
     out_dir_path: Path
     event_table_path: Path
-    rscc_table_path: Path
 
 
 def get_config(args):
     config = Config(out_dir_path=Path(args.out_dir_path),
                     event_table_path=Path(args.event_table_path),
-                    rscc_table_path=Path(args.rscc_table_path),
                     )
 
     return config
