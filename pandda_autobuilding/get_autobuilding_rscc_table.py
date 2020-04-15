@@ -144,7 +144,9 @@ def get_rscc_table(events, autobuilding_dir):
 
         match = re.findall(rscc_regex, result_string)
 
-        print(result_string)
+        if len(match) == 0:
+            print("\tCouldn't find rscc!")
+
         print(match)
 
         rscc_string = match[0]
