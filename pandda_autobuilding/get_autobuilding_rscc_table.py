@@ -146,6 +146,7 @@ def get_rscc_table(events, autobuilding_dir):
 
         if len(match) == 0:
             print("\tCouldn't find rscc!")
+            continue
 
         print(match)
 
