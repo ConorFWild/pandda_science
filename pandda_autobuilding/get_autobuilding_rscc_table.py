@@ -137,6 +137,13 @@ def get_rscc_table(events, autobuilding_dir):
 
         if not phenix_results_file.exists():
             print("\tCould not find results!")
+            record = {}
+            record["pandda_name"] = event.pandda_name
+            record["dtag"] = event.dtag
+            record["event_idx"] = event.event_idx
+            record["rscc"] = 0
+
+            records.append(record)
             continue
 
         with open(str(phenix_results_file), "r") as f:
@@ -146,6 +153,13 @@ def get_rscc_table(events, autobuilding_dir):
 
         if len(match) == 0:
             print("\tCouldn't find rscc!")
+            record = {}
+            record["pandda_name"] = event.pandda_name
+            record["dtag"] = event.dtag
+            record["event_idx"] = event.event_idx
+            record["rscc"] = 0
+
+            records.append(record)
             continue
 
         print(match)
