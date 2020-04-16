@@ -106,17 +106,24 @@ def train(network,
 
                 recent_labels = labels[-999:]
 
+                correlation = np.sum([record["rscc"] / record["estimated_rscc"] for record in recent_labels])
+                print("\tCorrelation: {}".format(correlation))
+
 
             for i, index in enumerate(id_batch["pandda_name"]):
                 pandda_name = deepcopy(id_batch["pandda_name"][i])
                 dtag = deepcopy(id_batch["dtag"][i])
                 event_idx = deepcopy(id_batch["event_idx"][i].detach().numpy())
                 class_array = deepcopy(label_batch[i].detach().numpy())
+                rscc_array = deepcopy(rscc[i].detach().numpy())
+                estimated_rscc_array = deepcopy(estimated_rscc[i].detatch().numpy())
                 true_class = np.argmax(class_array)
                 event_map_path = deepcopy(batch["event_map_path"][i])
                 coords = deepcopy(batch["coords"][i])
                 record = {"pandda_name": pandda_name,
                           "dtag": dtag,
+                          "estimated_rscc": estimated_rscc_array,
+                         "rscc": rscc_array,
                           "event_idx": event_idx,
                           "true_class": true_class,
                           "event_map_path": event_map_path,
@@ -129,7 +136,7 @@ def train(network,
             del batch
 
 
-     
+
         training_table = pd.DataFrame(labels)
         print(training_table.head())
 
