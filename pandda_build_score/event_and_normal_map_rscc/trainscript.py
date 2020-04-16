@@ -112,8 +112,8 @@ if __name__ == "__main__":
 
     output: Output = setup_output(config.out_dir_path)
 
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    torch.cuda.set_device(0)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # torch.cuda.set_device(0)
 
     if output.train_table_path.exists():
         train_table = pd.read_csv(str(output.train_table_path))
