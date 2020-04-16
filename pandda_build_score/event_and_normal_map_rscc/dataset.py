@@ -259,7 +259,7 @@ rscc_table,
 
 
     dataloader: DataLoader = DataLoader(dataset,
-                                        batch_size=3,
+                                        batch_size=1,
                                         shuffle=True,
                                         num_workers=20,
                                         )
