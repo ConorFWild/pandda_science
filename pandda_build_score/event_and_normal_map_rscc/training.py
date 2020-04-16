@@ -116,7 +116,7 @@ def train(network,
                 event_idx = deepcopy(id_batch["event_idx"][i].detach().numpy())
                 class_array = deepcopy(label_batch[i].detach().numpy())
                 rscc_array = deepcopy(rscc[i].detach().numpy())
-                estimated_rscc_array = deepcopy(estimated_rscc[i].detatch().numpy())
+                estimated_rscc_array = deepcopy(estimated_rscc[i].detach().numpy())
                 true_class = np.argmax(class_array)
                 event_map_path = deepcopy(batch["event_map_path"][i])
                 coords = deepcopy(batch["coords"][i])
