@@ -314,15 +314,15 @@ class Network(nn.Module):
 
         y = self.fc1(x)
 
-        y = self.fc2(x)
+        y = self.fc2(y)
 
-        y = self.fc3(x)
+        y = self.fc3(y)
 
         z = self.fc1_rscc(x)
 
-        z = self.fc2_rscc(x)
+        z = self.fc2_rscc(z)
 
-        z = self.fc3_rscc(x)
+        z = self.fc3_rscc(z)
 
 
         return self.act(y), self.act_rscc(z)
