@@ -58,8 +58,8 @@ def train(network,
             loss = loss_function_rscc(estimated_rscc_cuda,
                                            rscc_batch_cuda,
                                            )
-            print(estimated_rscc_cuda.type())
-            print(rscc.type())
+            # print(estimated_rscc_cuda.type())
+            # print(rscc.type())
 
             # total_loss = loss + loss_rscc
 
