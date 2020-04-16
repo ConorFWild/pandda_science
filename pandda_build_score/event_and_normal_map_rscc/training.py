@@ -63,8 +63,8 @@ def train(network,
 
             estimated_label_batch = estimated_label_batch_cuda.cpu()
             estimated_rscc = estimated_rscc_cuda.cpu()
-            loss.backward()
-            optimizer.step()
+            # loss.backward()
+            # optimizer.step()
             #
             loss_rscc.backward()
             optimizer.step()
