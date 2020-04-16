@@ -115,13 +115,17 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # torch.cuda.set_device(0)
 
+    rscc_table = pd.read_csv(str(config.rscc_table_path))
+
     if output.train_table_path.exists():
         train_table = pd.read_csv(str(output.train_table_path))
         test_table = pd.read_csv(str(output.test_table_path))
         train_dataloader = get_dataloader(train_table,
+                                          rscc_table,
                                           shape=config.shape,
                                           )
         test_dataloader = get_dataloader(test_table,
+                                         rscc_table,
                                          shape=config.shape,
                                          )
 

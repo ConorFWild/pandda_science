@@ -249,9 +249,11 @@ class EventAndNormalMapDataset(Dataset):
 
 
 def get_dataloader(table,
+rscc_table,
                    shape,
                    ):
     dataset: Dataset = EventAndNormalMapDataset(table=table,
+                                                rscc_table=rscc_table,
                                        shape=shape,
                                        )
 
