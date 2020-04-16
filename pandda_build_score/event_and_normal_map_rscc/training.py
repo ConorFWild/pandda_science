@@ -3,6 +3,7 @@ from copy import deepcopy
 import numpy as np
 import pandas as pd
 
+import torch
 from torch import nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -40,7 +41,7 @@ def train(network,
             sample_batch = batch["data"]
             label_batch = batch["label"]
             id_batch = batch["id"]
-            rscc = batch["rscc"]
+            rscc = batch["rscc"].type(torch.FloatTensor)
 
             # print(sample_batch.shape)
 
