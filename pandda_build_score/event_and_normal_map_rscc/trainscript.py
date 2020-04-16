@@ -10,11 +10,11 @@ import pandas as pd
 
 import torch
 
-from pandda_build_score.event_and_normal_map.preprocess import get_train_test_split
-from pandda_build_score.event_and_normal_map.dataset import get_dataloader
-from pandda_build_score.event_and_normal_map.network import get_network
-from pandda_build_score.event_and_normal_map.training import train
-from pandda_build_score.event_and_normal_map.testing import test
+from pandda_build_score.event_and_normal_map_rscc.preprocess import get_train_test_split
+from pandda_build_score.event_and_normal_map_rscc.dataset import get_dataloader
+from pandda_build_score.event_and_normal_map_rscc.network import get_network
+from pandda_build_score.event_and_normal_map_rscc.training import train
+from pandda_build_score.event_and_normal_map_rscc.testing import test
 
 
 def parse_args():
