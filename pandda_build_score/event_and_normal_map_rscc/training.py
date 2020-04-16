@@ -36,6 +36,11 @@ def train(network,
         running_loss_100 = 0
         running_loss_300 = 0
         running_loss_1000 = 0
+
+        running_loss_rscc_30 = 0
+        running_loss_rscc_100 = 0
+        running_loss_rscc_300 = 0
+        running_loss_rscc_1000 = 0
         # try:
         for i_batch, batch in enumerate(dataloader):
             sample_batch = batch["data"]
@@ -79,38 +84,62 @@ def train(network,
             running_loss_300 += loss.item()
             running_loss_1000 += loss.item()
 
+            running_loss_rscc_30 += loss.item()
+            running_loss_rscc_100 += loss.item()
+            running_loss_rscc_300 += loss.item()
+            running_loss_rscc_1000 += loss.item()
+
             if i_batch % 30 == 29:  # print every 30 mini-batches
                 print("=30 dataset average=")
                 print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                       i_batch,
                                                                       running_loss_30 / 30))
+                print("\tLoss rscc at epoch {}, iteration {} is {}".format(epoch,
+                                                                      i_batch,
+                                                                      running_loss_rscc_30 / 30))
                 print("\t{}".format(id_batch))
                 print("\t{}".format(estimated_label_batch))
                 print("\t{}".format(label_batch))
                 print("\t{}".format(rscc))
                 print("\t{}".format(estimated_rscc))
                 running_loss_30 = 0
+                running_loss_rscc_30 = 0
 
             if i_batch % 100 == 99:  # print every 30 mini-batches
                 print("===100 dataset average===")
                 print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                       i_batch,
                                                                       running_loss_100 / 100))
+                print("\tLoss rscc at epoch {}, iteration {} is {}".format(epoch,
+                                                                      i_batch,
+                                                                      running_loss_rscc_100 / 100))
                 running_loss_100 = 0
+                running_loss_rscc_100 = 0
+
 
             if i_batch % 300 == 299:  # print every 30 mini-batches
                 print("=====300 dataset average=====")
                 print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                       i_batch,
                                                                       running_loss_300 / 300))
+                print("\tLoss rscc at epoch {}, iteration {} is {}".format(epoch,
+                                                                      i_batch,
+                                                                      running_loss_rscc_300 / 300))
                 running_loss_300 = 0
+                running_loss_rscc_300 = 0
+
 
             if i_batch % 1000 == 999:  # print every 30 mini-batches
                 print("=======1000 dataset average=======")
                 print("\tLoss at epoch {}, iteration {} is {}".format(epoch,
                                                                       i_batch,
                                                                       running_loss_1000 / 1000))
+                print("\tLoss rscc at epoch {}, iteration {} is {}".format(epoch,
+                                                                      i_batch,
+                                                                      running_loss_rscc_1000 / 1000))
                 running_loss_1000 = 0
+                running_loss_rscc_3000 = 0
+
 
                 recent_labels = labels[-999:]
 
