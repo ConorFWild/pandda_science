@@ -16,7 +16,7 @@ def train(network,
           epochs: int = 1000,
           ):
     network.train()
-    # network.cuda()
+    network.cuda()
 
     loss_function = get_loss_function()
     loss_function_rscc = nn.MSELoss()
@@ -47,8 +47,8 @@ def train(network,
 
             optimizer.zero_grad()
 
-            sample_batch_cuda = sample_batch# .cuda()
-            label_batch_cuda = label_batch# .cuda()
+            sample_batch_cuda = sample_batch.cuda()
+            label_batch_cuda = label_batch.cuda()
 
             estimated_label_batch_cuda, estimated_rscc_cuda = network(sample_batch_cuda)
             # loss = loss_function(estimated_label_batch_cuda,

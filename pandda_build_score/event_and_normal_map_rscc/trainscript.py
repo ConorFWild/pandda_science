@@ -112,8 +112,8 @@ if __name__ == "__main__":
 
     output: Output = setup_output(config.out_dir_path)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # torch.cuda.set_device(0)
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch.cuda.set_device(0)
 
     rscc_table = pd.read_csv(str(config.rscc_table_path))
 
