@@ -60,7 +60,7 @@ def train(network,
             loss.backward()
             optimizer.step()
 
-            loss_rscc.backwar()
+            loss_rscc.backward()
             optimizer.step()
 
             running_loss_30 += loss.item()
