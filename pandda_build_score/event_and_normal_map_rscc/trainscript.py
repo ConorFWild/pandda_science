@@ -53,7 +53,7 @@ class Config(NamedTuple):
 def get_training_config(args):
     config = Config(input_training_table_path=Path(args.event_table),
                     out_dir_path=Path(args.out_dir_path),
-                    shape=np.array([32, 32, 32]),
+                    shape=np.array([64, 64, 64]),
                     rscc_table_path=Path(args.rscc_table),
                     )
 

@@ -273,15 +273,18 @@ class Network(nn.Module):
         self.conv_1 = nn.Sequential(nn.Conv3d(2, filters, kernel_size=9, stride=1, padding=4),
                                     nn.BatchNorm3d(filters),
                                     nn.ReLU(),
-                                    nn.MaxPool3d(kernel_size=2, stride=2))
+                                    nn.MaxPool3d(kernel_size=2, stride=2),
+                                    )
 
         self.layer_1 = ResidualLayerWithDrop(filters, filters * 2, training)
         self.layer_2 = ResidualLayerWithDrop(filters * 2, filters * 4, training)
         self.layer_3 = ResidualLayerWithDrop(filters * 4, filters * 8, training)
         self.layer_4 = ResidualLayerWithDrop(filters * 8, filters * 16, training)
+        self.layer_5 = ResidualLayerWithDrop(filters * 16, filters * 32, training)
 
-        size_after_convs = int((grid_size / (2 ** 5)) ** 3)
-        n_in = filters * 16 * size_after_convs
+
+        size_after_convs = int((grid_size / (2 ** 6)) ** 3)
+        n_in = filters * 32 * size_after_convs
 
         self.fc1 = nn.Sequential(nn.Linear(n_in, int(n_in / 4)),
                                  nn.ReLU())
@@ -310,13 +313,15 @@ class Network(nn.Module):
 
         x = self.layer_4(x)
 
+        x = self.layer_5(x)
+
         x = x.view(-1, (x.shape[1] * x.shape[2] * x.shape[3] * x.shape[4]))
 
-        y = self.fc1(x)
-
-        y = self.fc2(y)
-
-        y = self.fc3(y)
+        # y = self.fc1(x)
+        #
+        # y = self.fc2(y)
+        #
+        # y = self.fc3(y)
 
         z = self.fc1_rscc(x)
 
@@ -325,7 +330,7 @@ class Network(nn.Module):
         z = self.fc3_rscc(z)
 
 
-        return self.act(y), self.act_rscc(z)
+        return self.act_rscc(z)
 
 
 def get_network(shape):

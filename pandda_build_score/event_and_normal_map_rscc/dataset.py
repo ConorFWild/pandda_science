@@ -68,7 +68,7 @@ def sample_map(gemmi_grid,
                rotation,
                translation,
                shape,
-               scale=0.5,
+               scale=0.25,
                ):
     rotation = np.matmul(rotation, np.eye(3) * scale, )
 
@@ -86,8 +86,8 @@ def sample_map(gemmi_grid,
     tr.mat.fromlist(rotation.tolist())
     tr.vec.fromlist(offset_translation.tolist())
     gemmi_grid.interpolate_values(arr,
-                                       tr,
-                                       )
+                                  tr,
+                                  )
     return arr
 
 
@@ -137,8 +137,9 @@ def clone_grid(grid):
 
 def get_map_from_mtz_path(path):
     mtz = gemmi.read_mtz_file(str(path))
-    xmap = mtz.transform_f_phi_to_map('FWT', 'PHWT', sample_rate=4)
+    xmap = mtz.transform_f_phi_to_map('FWT', 'PHWT', sample_rate=6)
     return xmap
+
 
 class EventAndNormalMapDataset(Dataset):
     def __init__(self, table, rscc_table, shape=np.array([16, 16, 16])):
@@ -156,29 +157,6 @@ class EventAndNormalMapDataset(Dataset):
 
         event = Event.from_record(event_record)
         rscc = self.rscc_dict[(event.pandda_name, event.dtag, event.event_idx)]
-        # print(event.viewed)
-        # print(type(event.viewed))
-
-        # if bool(event.viewed) is False:
-        #     sample_dict = {"id": {"pandda_name": event.pandda_name,
-        #                           "dtag": event.dtag,
-        #                           "event_idx": event.event_idx,
-        #                           },
-        #                    "data": np.zeros((2,
-        #                                      self.sample_shape[0],
-        #                                      self.sample_shape[1],
-        #                                      self.sample_shape[2],
-        #                                      ),
-        #                                     dtype=np.float32,
-        #                                     ),
-        #                    "label": np.array([1, 0], dtype=np.float32),
-        #                    "event_map_path": str(event.event_map_path),
-        #                    "model_path": str(event.initial_model_path),
-        #                    "coords": str([event.x, event.y, event.z]),
-        #                    "rscc": 0
-        #                    }
-        #
-        #     return sample_dict
 
         if float(rscc) == 0.0:
             sample_dict = {"id": {"pandda_name": event.pandda_name,
@@ -253,7 +231,7 @@ class EventAndNormalMapDataset(Dataset):
                                   "event_idx": event.event_idx,
                                   # "initial_model_dir": ,
                                   },
-                           "data":np.zeros((2,
+                           "data": np.zeros((2,
                                              self.sample_shape[0],
                                              self.sample_shape[1],
                                              self.sample_shape[2],
@@ -271,14 +249,13 @@ class EventAndNormalMapDataset(Dataset):
 
 
 def get_dataloader(table,
-rscc_table,
+                   rscc_table,
                    shape,
                    ):
     dataset: Dataset = EventAndNormalMapDataset(table=table,
                                                 rscc_table=rscc_table,
-                                       shape=shape,
-                                       )
-
+                                                shape=shape,
+                                                )
 
     dataloader: DataLoader = DataLoader(dataset,
                                         batch_size=1,
