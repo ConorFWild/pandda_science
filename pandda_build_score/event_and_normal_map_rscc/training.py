@@ -106,7 +106,7 @@ def train(network,
 
                 recent_labels = labels[-999:]
 
-                correlation = np.mean([np.abs(record["rscc"] - record["estimated_rscc"]) for record in recent_labels])
+                correlation = np.mean([np.abs(record["rscc"] - record["estimated_rscc"]) for record in recent_labels if record["rscc"] > 0.5])
                 print("\tCorrelation: {}".format(correlation))
 
 
