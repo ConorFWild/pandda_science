@@ -47,13 +47,17 @@ def train(network,
             optimizer.zero_grad()
 
             sample_batch_cuda = sample_batch.cuda()
+            label_batch_cuda = label_batch.cuda()
+
             rscc_batch_cuda = rscc.cuda()
 
             estimated_label_batch_cuda, estimated_rscc_cuda = network(sample_batch_cuda)
 
             loss = loss_function_rscc(estimated_rscc_cuda,
                                            rscc_batch_cuda,
-                                           )
+                                           ) + loss_function(estimated_label_batch_cuda,
+                                                    label_batch_cuda,
+                                                             )
 
 
             estimated_rscc = estimated_rscc_cuda.cpu()
@@ -134,6 +138,7 @@ def train(network,
             del id_batch
             del label_batch
             del batch
+            
 
 
 
