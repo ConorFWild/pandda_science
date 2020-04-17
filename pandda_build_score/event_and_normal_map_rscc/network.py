@@ -330,7 +330,7 @@ class Network(nn.Module):
         z = self.fc3_rscc(z)
 
 
-        return 0, self.act_rscc(z)
+        return torch.FloatTensor([0]), self.act_rscc(z)
 
 
 def get_network(shape):
