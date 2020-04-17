@@ -334,6 +334,6 @@ class Network(nn.Module):
 
 
 def get_network(shape):
-    network = Network(25, grid_size=32)
+    network = Network(25, grid_size=64)
 
     return network
