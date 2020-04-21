@@ -28,18 +28,19 @@ import joblib
 
 
 class AutobuildingCommand:
-    def __init__(self, out_dir_path,
-                 mtz,
-                 ligand,
-                 receptor,
-                 coord,
+    def __init__(self,
+                 out_dir_path=None,
+                 mtz_path=None,
+                 ligand_path=None,
+                 receptor_path=None,
+                 coord=(0,0,0),
                  ):
         env = "module load phenix"
         ligand_fit_command = "phenix.ligandfit"
         ligand_fit_args = "data={mtz} ligand={ligand} model={receptor} search_center=[{x},{y},{z}] search_dist=6"
-        ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz,
-                                                           ligand=ligand,
-                                                           receptor=receptor,
+        ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz_path,
+                                                           ligand=ligand_path,
+                                                           receptor=receptor_path,
                                                            x=coord[0],
                                                            y=coord[1],
                                                            z=coord[2],
@@ -99,16 +100,21 @@ def autobuild_event(event):
                      event.analysed_resolution,
                      )
 
-    autobuilding_command = AutobuildingCommand(event,
-                                               event_mtz_path,
+    out_dir_path = event.pandda_event_dir / "autobuild_event_{}".format()
+
+    autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
+                                               mtz_path=event_mtz_path,
                                                ligand=event.ligand_path,
-                                               coord=event.coord,
                                                receptor=event.receptor_path,
+                                               coord=event.coord,
                                                )
 
-    execute(autobuilding_command)
+    stdout, stderr = execute(autobuilding_command)
 
-    result = AutobuildingResult(event)
+    result = AutobuildingResult(event,
+                                stdout,
+                                stderr,
+                                )
 
     return result
 
@@ -262,7 +268,7 @@ def get_events(event_table, fs):
 
 
 class AutobuildingResult:
-    def __init__(self, event: Event):
+    def __init__(self, event: Event, stdout, stderr):
         event_autobuilding_dir = event.pandda_event_dir / "autobuilding_{}".format(event.event_idx)
         event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
         autobuilding_results_file = event_ligandfit_dir / "LigandFit_summary.dat"
@@ -274,6 +280,8 @@ class AutobuildingResult:
         match = re.findall(rscc_regex, result_string)
         rscc_string = match[0]
         self.rscc = float(rscc_string)
+        self.stdout = stdout
+        self.stderr = stderr
 
 
 class ResultsTable:
@@ -296,25 +304,34 @@ class ResultsTable:
 def main():
     config = Config()
 
+    print("Building I/O model...")
     fs = PanDDAFilesystemModel(config.input_pandda_dir)
+    print("\tFound {} dataset dirs".format(len(fs.pandda_processed_datasets_dirs)))
 
+    print("Geting event table...")
     event_table = get_event_table(fs.pandda_inspect_events_path)
+    print("\tFound {} PanDDA events".format(len(event_table)))
 
+    print("Getting event models...")
     events = get_events(event_table,
                         fs,
                         )
+    print("\tGot models of {} events".format(len(events)))
 
+    print("\tAutobuilding...")
     autobuilding_results = map_parallel(autobuild_event,
                                         events,
                                         )
+    print("\tAutobuilt {} events".format(len(autobuilding_results)))
+    for result in autobuilding_results: print("\t{}".format(result.stdout))
 
+    print("Making autobuilding results table...")
     results_table = ResultsTable(autobuilding_results)
+    print("\tMade autobuilding resutls table")
 
+    print("Outputing autobuilding results table...")
     results_table.to_csv(fs.autobuilding_results_table)
-
-    # map_parallel(merge_model,
-    #              autobuilding_results,
-    #              )
+    print("\tOutput autobuilding results table")
 
 
 if __name__ == "__main__":
