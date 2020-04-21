@@ -62,6 +62,7 @@ def execute(command):
                                    stderr=subprocess.PIPE,
                                    )
     stdout, stderr = submit_proc.communicate()
+    return stdout, stderr
 
 
 def event_map_to_mtz(event_map_path: Path,
@@ -174,6 +175,7 @@ def map_parallel(f, datasets):
         result = f(dataset)
         print(result)
         results.append(result)
+
     return results
 
 
