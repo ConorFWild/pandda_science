@@ -196,7 +196,7 @@ class Event:
         self.event_map_path = event_map_path
         self.ligand_path = ligand_path
         self.receptor_path = receptor_path
-        self.coords = coord_path
+        self.coords = coords
         self.analysed_resolution = analysed_resolution
 
 
