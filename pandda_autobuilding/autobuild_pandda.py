@@ -1,6 +1,8 @@
+import os
 import argparse
 import re
 import subprocess
+import shutil
 from pathlib import Path
 
 import pandas as pd
@@ -103,6 +105,13 @@ def autobuild_event(event):
                      )
 
     out_dir_path = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
+
+    try:
+        shutil.rmtree(str(out_dir_path))
+    except:
+        pass
+
+    os.mkdir(str(out_dir_path))
 
     autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
                                                mtz_path=event_mtz_path,
