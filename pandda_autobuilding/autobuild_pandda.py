@@ -353,7 +353,7 @@ def main():
                                         events,
                                         )
     print("\tAutobuilt {} events".format(len(autobuilding_results)))
-    for result in autobuilding_results: print("\t{}".format(result.stdout))
+    for result in autobuilding_results: print("\t{}".format(result.rscc))
 
     print("Making autobuilding results table...")
     results_table = ResultsTable(autobuilding_results)
