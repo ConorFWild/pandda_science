@@ -106,7 +106,7 @@ def autobuild_event(event):
                                                mtz_path=event_mtz_path,
                                                ligand_path=event.ligand_path,
                                                receptor_path=event.receptor_path,
-                                               coord=event.coord,
+                                               coord=event.coords,
                                                )
 
     stdout, stderr = execute(autobuilding_command)
@@ -187,7 +187,7 @@ class Event:
                  event_map_path,
                  ligand_path,
                  receptor_path,
-                 coord_path,
+                 coords,
                  analysed_resolution,
                  ):
         self.dtag = dtag
@@ -196,7 +196,7 @@ class Event:
         self.event_map_path = event_map_path
         self.ligand_path = ligand_path
         self.receptor_path = receptor_path
-        self.coord_path = coord_path
+        self.coords = coord_path
         self.analysed_resolution = analysed_resolution
 
 
