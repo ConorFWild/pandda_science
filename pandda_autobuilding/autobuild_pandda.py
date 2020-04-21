@@ -100,12 +100,12 @@ def autobuild_event(event):
                      event.analysed_resolution,
                      )
 
-    out_dir_path = event.pandda_event_dir / "autobuild_event_{}".format()
+    out_dir_path = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
 
     autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
                                                mtz_path=event_mtz_path,
-                                               ligand=event.ligand_path,
-                                               receptor=event.receptor_path,
+                                               ligand_path=event.ligand_path,
+                                               receptor_path=event.receptor_path,
                                                coord=event.coord,
                                                )
 
@@ -213,13 +213,15 @@ def get_event_map_path(pandda_event_dir, dtag, event_idx, occupancy):
 
 
 def get_ligand_path(pandda_event_dir):
-    print("\t\t{}".format(pandda_event_dir))
+    # print("\t\t{}".format(pandda_event_dir))
 
     event_dir = pandda_event_dir
 
     ligands = list((event_dir / "ligand_files").glob("*.pdb"))
     ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
 
+    if len(ligand_strings) == 0:
+        return None
 
     ligand_pdb_path: Path = Path(min(ligand_strings,
                                      key=len,
@@ -252,6 +254,8 @@ def get_events(event_table, fs):
                                             dtag, event_idx, occupancy
                                             )
         ligand_path = get_ligand_path(pandda_event_dir)
+        if ligand_path is None:
+            continue
         receptor_path = get_receptor_path(pandda_event_dir, dtag)
         coords = get_coords(row)
         analysed_resolution = get_analyed_resolution(row)
