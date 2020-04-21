@@ -294,7 +294,7 @@ def get_events(event_table, fs):
 
 class AutobuildingResult:
     def __init__(self, event: Event, stdout, stderr):
-        event_autobuilding_dir = event.pandda_event_dir / "autobuilding_{}".format(event.event_idx)
+        event_autobuilding_dir = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
         event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
         autobuilding_results_file = event_ligandfit_dir / "LigandFit_summary.dat"
 
