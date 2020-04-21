@@ -247,7 +247,7 @@ def get_events(event_table, fs):
         dtag = row["dtag"]
         event_idx = row["event_idx"]
         occupancy = row["1-BDC"]
-        pandda_event_dir = fs.pandda_processed_datasets_dir / "{}"
+        pandda_event_dir = fs.pandda_processed_datasets_dir / "{}".format(dtag)
         event_map_path = get_event_map_path(pandda_event_dir,
                                             dtag, event_idx, occupancy
                                             )
