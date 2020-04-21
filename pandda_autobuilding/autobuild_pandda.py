@@ -56,6 +56,7 @@ class AutobuildingCommand:
 
 
 def execute(command):
+    print("\t\t: {}".format(command))
     submit_proc = subprocess.Popen(str(command),
                                    shell=True,
                                    stdout=subprocess.PIPE,
