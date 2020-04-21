@@ -240,7 +240,7 @@ def get_analyed_resolution(row):
 
 def get_events(event_table, fs):
     events = []
-    for row in event_table.iterrows():
+    for index, row in event_table.iterrows():
         dtag = row["dtag"]
         event_idx = row["event_idx"]
         occupancy = row["1-BDC"]
