@@ -176,16 +176,16 @@ class PanDDAFilesystemModel:
 
 
 def map_parallel(f, datasets):
-    # results = joblib.Parallel(n_jobs=20)(joblib.delayed(f)(dataset)
-    #                                      for dataset
-    #                                      in datasets)
-    #
-    results = []
-    for dataset in datasets:
-        result = f(dataset)
-        print(result)
-        print(result.rscc)
-        results.append(result)
+    results = joblib.Parallel(n_jobs=20)(joblib.delayed(f)(dataset)
+                                         for dataset
+                                         in datasets)
+
+    # results = []
+    # for dataset in datasets:
+    #     result = f(dataset)
+    #     print(result)
+    #     print(result.rscc)
+    #     results.append(result)
 
     return results
 
