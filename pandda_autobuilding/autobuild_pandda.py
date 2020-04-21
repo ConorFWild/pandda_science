@@ -184,6 +184,7 @@ def map_parallel(f, datasets):
     for dataset in datasets:
         result = f(dataset)
         print(result)
+        print(result.rscc)
         results.append(result)
 
     return results
