@@ -307,6 +307,8 @@ class AutobuildingResult:
         rscc_regex = "[\s]+1[\s]+[0-9\.]+[\s]+([0-9\.]+)"
         match = re.findall(rscc_regex, result_string)
         rscc_string = match[0]
+        self.dtag = event.dtag
+        self.event_idx = event.event_idx
         self.rscc = float(rscc_string)
         self.stdout = stdout
         self.stderr = stderr
