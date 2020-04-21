@@ -165,9 +165,15 @@ class PanDDAFilesystemModel:
 
 
 def map_parallel(f, datasets):
-    results = joblib.Parallel(n_jobs=20)(joblib.delayed(f)(dataset)
-                                         for dataset
-                                         in datasets)
+    # results = joblib.Parallel(n_jobs=20)(joblib.delayed(f)(dataset)
+    #                                      for dataset
+    #                                      in datasets)
+    #
+    results = []
+    for dataset in datasets:
+        result = f(dataset)
+        print(result)
+        results.append(result)
     return results
 
 
@@ -325,7 +331,7 @@ def main():
                         )
     print("\tGot models of {} events".format(len(events)))
 
-    print("\tAutobuilding...")
+    print("Autobuilding...")
     autobuilding_results = map_parallel(autobuild_event,
                                         events,
                                         )
