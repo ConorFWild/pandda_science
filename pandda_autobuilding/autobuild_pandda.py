@@ -35,7 +35,7 @@ class AutobuildingCommand:
                  mtz_path=None,
                  ligand_path=None,
                  receptor_path=None,
-                 coord=(0,0,0),
+                 coord=(0, 0, 0),
                  ):
         env = "module load phenix"
         ligand_fit_command = "phenix.ligandfit"
@@ -179,8 +179,8 @@ def map_parallel(f, datasets):
     results = joblib.Parallel(n_jobs=20,
                               verbose=50,
                               )(joblib.delayed(f)(dataset)
-                                         for dataset
-                                         in datasets)
+                                for dataset
+                                in datasets)
 
     # results = []
     # for dataset in datasets:
@@ -331,6 +331,52 @@ class ResultsTable:
         self.table.to_csv(str(path))
 
 
+def get_highest_rscc_events(events,
+                            results_table,
+                            ):
+    unique_dtags = results_table["dtag"].unique()
+
+    events_map = {(event.dtag, event.event_idx): event for event in events}
+
+    max_events = []
+    for unique_dtag in unique_dtags:
+        events_table = results_table[results_table["dtag"] == unique_dtag]
+        max_rscc_label = events_table["rscc"].idxmax()
+        event_row = events_table.loc[max_rscc_label]
+        dtag = event_row["dtag"]
+        event_idx = event_row["event_idx"]
+        max_events.append(events_map[(dtag, event_idx)])
+
+    return max_events
+
+
+def copy_event_to_processed_models(event: Event, fs):
+    event_autobuilding_dir = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
+    event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
+    event_build_path = event_ligandfit_dir / "ligand_fit_1.pdb"
+
+    pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
+    pandda_inspect_model_path = pandda_inspect_model_dir / "{}-pandda-model.pdb".format(event.dtag)
+
+    shutil.copyfile(str(event_build_path),
+                    str(pandda_inspect_model_path),
+                    )
+
+
+def merge_models(events,
+                 results_table,
+                 fs,
+                 ):
+    highest_rscc_events = get_highest_rscc_events(events,
+                                                  results_table,
+                                                  )
+
+    print("\t\tAfter filetering duplicate events got {} events".format(len(highest_rscc_events)))
+
+    for event in highest_rscc_events:
+        copy_event_to_processed_models(event, fs)
+
+
 def main():
     config = Config()
 
@@ -358,6 +404,12 @@ def main():
     print("Making autobuilding results table...")
     results_table = ResultsTable(autobuilding_results)
     print("\tMade autobuilding resutls table")
+
+    print("Merging best models")
+    merge_models(events,
+                 results_table.table,
+                 fs,
+                 )
 
     print("Outputing autobuilding results table...")
     results_table.to_csv(fs.autobuilding_results_table)
