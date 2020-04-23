@@ -9,6 +9,7 @@ import pandas as pd
 
 import joblib
 
+from biopandas.pdb import PandasPdb
 
 # class Dataset:
 #     def __init__(self, dataset_dir, data_path, model_path, compound_path, event_map_paths):
@@ -355,12 +356,23 @@ def copy_event_to_processed_models(event: Event, fs):
     event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
     event_build_path = event_ligandfit_dir / "ligand_fit_1.pdb"
 
+    initial_model_path = event_autobuilding_dir / "{}-pandda-input.pdb".format(event.dtag)
+
     pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
     pandda_inspect_model_path = pandda_inspect_model_dir / "{}-pandda-model.pdb".format(event.dtag)
 
-    shutil.copyfile(str(event_build_path),
-                    str(pandda_inspect_model_path),
-                    )
+    initial_model = PandasPdb().read_pdb(str(initial_model_path))
+    best_autobuild_model = PandasPdb().read_psb(str(event_build_path))
+
+    initial_model.df["HETATM"] = initial_model.df["HETATM"].append(best_autobuild_model.df["HETATM"])
+
+    renumber(initial_model.df["HETATM"])
+
+    initial_model.to_pdb(str(pandda_inspect_model_path))
+    #
+    # shutil.copyfile(str(event_build_path),
+    #                 str(pandda_inspect_model_path),
+    #                 )
 
 
 def merge_models(events,
@@ -374,7 +386,7 @@ def merge_models(events,
     print("\t\tAfter filetering duplicate events got {} events".format(len(highest_rscc_events)))
 
     for event in highest_rscc_events:
-        copy_event_to_processed_models(event, fs)
+        merge_model(event, fs)
 
 
 def main():
@@ -399,7 +411,7 @@ def main():
                                         events,
                                         )
     print("\tAutobuilt {} events".format(len(autobuilding_results)))
-    for result in autobuilding_results: print("\t{}".format(result.rscc))
+    for result in autobuilding_results: print("\t{} {} : RSCC: {}".format(result.dtag, result.event_idx, result.rscc))
 
     print("Making autobuilding results table...")
     results_table = ResultsTable(autobuilding_results)
