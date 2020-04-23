@@ -158,26 +158,26 @@ class EventAndNormalMapDataset(Dataset):
         event = Event.from_record(event_record)
         rscc = self.rscc_dict[(event.pandda_name, event.dtag, event.event_idx)]
 
-        if bool(event.viewed) is False:
-            sample_dict = {"id": {"pandda_name": event.pandda_name,
-                                  "dtag": event.dtag,
-                                  "event_idx": event.event_idx,
-                                  },
-                           "data": np.zeros((2,
-                                             self.sample_shape[0],
-                                             self.sample_shape[1],
-                                             self.sample_shape[2],
-                                             ),
-                                            dtype=np.float32,
-                                            ),
-                           "label": np.array([1, 0], dtype=np.float32),
-                           "event_map_path": str(event.event_map_path),
-                           "model_path": str(event.initial_model_path),
-                           "coords": str([event.x, event.y, event.z]),
-                           "rscc": 0,
-                           }
-
-            return sample_dict
+        # if bool(event.viewed) is False:
+        #     sample_dict = {"id": {"pandda_name": event.pandda_name,
+        #                           "dtag": event.dtag,
+        #                           "event_idx": event.event_idx,
+        #                           },
+        #                    "data": np.zeros((2,
+        #                                      self.sample_shape[0],
+        #                                      self.sample_shape[1],
+        #                                      self.sample_shape[2],
+        #                                      ),
+        #                                     dtype=np.float32,
+        #                                     ),
+        #                    "label": np.array([1, 0], dtype=np.float32),
+        #                    "event_map_path": str(event.event_map_path),
+        #                    "model_path": str(event.initial_model_path),
+        #                    "coords": str([event.x, event.y, event.z]),
+        #                    "rscc": 0,
+        #                    }
+        #
+        #     return sample_dict
 
         if float(rscc) == 0.0:
             sample_dict = {"id": {"pandda_name": event.pandda_name,
