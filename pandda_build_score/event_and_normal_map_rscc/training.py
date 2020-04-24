@@ -140,7 +140,7 @@ def train(network,
                           # "estimated_rscc": estimated_rscc_array,
                           "estimated_rscc_class_array": estimated_rscc_class_array,
                          "rscc": rscc_array,
-                          "rscc_class": np.argmax(rscc_class)
+                          "rscc_class": np.argmax(rscc_class),
                           "event_idx": event_idx,
                           "true_class": true_class,
                           "event_map_path": event_map_path,
