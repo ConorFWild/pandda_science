@@ -271,7 +271,7 @@ class EventAndNormalMapDataset(Dataset):
                            "model_path": str(event.initial_model_path),
                            "coords": str([event.x, event.y, event.z]),
                            "rscc": 0.0,
-                           "rscc_class": [1, 0],
+                           "rscc_class": np.array([1, 0], dtype=np.float32),
                            }
 
             return sample_dict
