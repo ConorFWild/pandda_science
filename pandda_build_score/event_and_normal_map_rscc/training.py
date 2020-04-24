@@ -117,8 +117,11 @@ def train(network,
 
                 recent_labels = labels[-999:]
 
-                correlation = np.mean([np.abs(record["rscc"] - record["estimated_rscc"]) for record in recent_labels if record["rscc"] > 0.5])
-                print("\tCorrelation: {}".format(correlation))
+                # correlation = np.mean([np.abs(record["rscc"] - record["estimated_rscc"]) for record in recent_labels if record["rscc"] > 0.5])
+                # print("\tCorrelation: {}".format(correlation))
+                # positives = [x for x in recent_labels if x["rscc_class"] == 1]
+                # negatives = [x for x in recent_labels if x["rscc_class"] == 0]
+                # false_positives = [x for x in pos]
 
 
             for i, index in enumerate(id_batch["pandda_name"]):
@@ -137,6 +140,7 @@ def train(network,
                           # "estimated_rscc": estimated_rscc_array,
                           "estimated_rscc_class_array": estimated_rscc_class_array,
                          "rscc": rscc_array,
+                          "rscc_class": np.argmax(rscc_class)
                           "event_idx": event_idx,
                           "true_class": true_class,
                           "event_map_path": event_map_path,
