@@ -318,19 +318,19 @@ class Network(nn.Module):
 
         x = x.view(-1, (x.shape[1] * x.shape[2] * x.shape[3] * x.shape[4]))
 
-        # y = self.fc1(x)
+        y = self.fc1(x)
+
+        y = self.fc2(y)
+
+        y = self.fc3(y)
+
+        # z = self.fc1_rscc(x)
         #
-        # y = self.fc2(y)
+        # z = self.fc2_rscc(z)
         #
-        # y = self.fc3(y)
+        # z = self.fc3_rscc(z)
 
-        z = self.fc1_rscc(x)
-
-        z = self.fc2_rscc(z)
-
-        z = self.fc3_rscc(z)
-
-        return self.act(z)
+        return self.act(y)
 
 
 def get_network(shape):
