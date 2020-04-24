@@ -195,7 +195,8 @@ class EventAndNormalMapDataset(Dataset):
                            "event_map_path": str(event.event_map_path),
                            "model_path": str(event.initial_model_path),
                            "coords": str([event.x, event.y, event.z]),
-                           "rscc": 0
+                           "rscc": 0.0,
+                           "rscc_class": [1.0,0.0],
                            }
 
             return sample_dict
@@ -231,6 +232,11 @@ class EventAndNormalMapDataset(Dataset):
 
             label = get_label(event)
 
+            if rscc <0.7:
+                rscc_class = [1.0, 0.0]
+            else:
+                rscc_class = [0.0,1.0]
+
             sample_dict = {"id": {"pandda_name": event.pandda_name,
                                   "dtag": event.dtag,
                                   "event_idx": event.event_idx,
@@ -241,6 +247,7 @@ class EventAndNormalMapDataset(Dataset):
                            "model_path": str(event.initial_model_path),
                            "coords": str([event.x, event.y, event.z]),
                            "rscc": rscc,
+                           "rscc_class": [1.0, 0.0],
                            }
 
             return sample_dict
@@ -263,7 +270,8 @@ class EventAndNormalMapDataset(Dataset):
                            "event_map_path": str(event.event_map_path),
                            "model_path": str(event.initial_model_path),
                            "coords": str([event.x, event.y, event.z]),
-                           "rscc": 0,
+                           "rscc": 0.0,
+                           "rscc_class": [1, 0],
                            }
 
             return sample_dict

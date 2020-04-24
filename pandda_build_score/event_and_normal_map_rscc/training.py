@@ -43,26 +43,28 @@ def train(network,
             label_batch = batch["label"]
             id_batch = batch["id"]
             rscc = batch["rscc"].type(torch.FloatTensor)
+            rscc_class = batch["rscc_class"].type(torch.FloatTensor)
 
             optimizer.zero_grad()
 
             sample_batch_cuda = sample_batch.cuda()
             label_batch_cuda = label_batch.cuda()
-
             rscc_batch_cuda = rscc.cuda()
+            rscc_class_cuda = rscc_class.cuda()
 
-            estimated_rscc_cuda = network(sample_batch_cuda)
+            estimated_rscc_class_cuda = network(sample_batch_cuda)
+
+            loss = loss_function(estimated_rscc_class_cuda,
+                                           rscc_class_cuda,
+                                           )
 
             # loss = loss_function_rscc(estimated_rscc_cuda,
-            #                                rscc_batch_cuda,
-            #                                )
-
-            loss = loss_function_rscc(estimated_rscc_cuda,
-                                      rscc_batch_cuda,
-                                      )
+            #                           rscc_batch_cuda,
+            #                           )
 
 
-            estimated_rscc = estimated_rscc_cuda.cpu()
+            # estimated_rscc = estimated_rscc_cuda.cpu()
+            estimated_rscc_class = estimated_rscc_class_cuda.cpu()
             # estimated_label = estimated_label_batch_cuda.cpu()
             loss.backward()
             optimizer.step()
@@ -82,7 +84,8 @@ def train(network,
                 print("\t{}".format(label_batch))
                 # print("\t{}".format(estimated_label))
                 print("\t{}".format(rscc))
-                print("\t{}".format(estimated_rscc))
+                print("\t{}".format(rscc_class))
+                print("\t{}".format(estimated_rscc_class))
                 running_loss_rscc_30 = 0
 
             if i_batch % 100 == 99:  # print every 30 mini-batches
@@ -124,13 +127,15 @@ def train(network,
                 event_idx = deepcopy(id_batch["event_idx"][i].detach().numpy())
                 class_array = deepcopy(label_batch[i].detach().numpy())
                 rscc_array = deepcopy(rscc[i].detach().numpy())
-                estimated_rscc_array = deepcopy(estimated_rscc[i].detach().numpy())
+                # estimated_rscc_array = deepcopy(estimated_rscc[i].detach().numpy())
+                estimated_rscc_class_array = deepcopy(estimated_rscc_class[i].detach().numpy())
                 true_class = np.argmax(class_array)
                 event_map_path = deepcopy(batch["event_map_path"][i])
                 coords = deepcopy(batch["coords"][i])
                 record = {"pandda_name": pandda_name,
                           "dtag": dtag,
-                          "estimated_rscc": estimated_rscc_array,
+                          # "estimated_rscc": estimated_rscc_array,
+                          "estimated_rscc_class_array": estimated_rscc_class_array,
                          "rscc": rscc_array,
                           "event_idx": event_idx,
                           "true_class": true_class,

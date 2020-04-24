@@ -330,8 +330,7 @@ class Network(nn.Module):
 
         z = self.fc3_rscc(z)
 
-
-        return self.act_rscc(z)
+        return self.act(z)
 
 
 def get_network(shape):
