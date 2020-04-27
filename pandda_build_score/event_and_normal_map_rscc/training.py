@@ -34,7 +34,6 @@ def evaluate_model(network,
         dtag = deepcopy(id_batch["dtag"][0])
         event_idx = deepcopy(id_batch["event_idx"][0].detach().numpy())
 
-
         sample_batch_cuda = sample_batch.cuda()
 
         estimate_rscc_class_cuda = network(sample_batch_cuda)
@@ -44,7 +43,7 @@ def evaluate_model(network,
         record = {"pandda_name":pandda_name,
                   "dtag": dtag,
                   "event_idx": event_idx,
-                      "rscc_class":  np.argmax(rscc_class),
+                      "rscc_class":  np.argmax(rscc_class.numpy()),
                   "score": estimate_rscc_class,
                   }
         records.append(record)
@@ -77,7 +76,7 @@ def evaluate_model(network,
         if len(true_positives_table) + len(false_negatives_table) == 0:
             recall = 0
         else:
-            recall = len(true_negatives_table) / (len(true_positives_table) + len(false_negatives_table))
+            recall = len(true_positives_table) / (len(true_positives_table) + len(false_negatives_table))
 
         precision_recall = {"cutoff": cutoff,
                             "precision": precision,
