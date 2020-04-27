@@ -42,7 +42,7 @@ def evaluate_model(network,
                   "dtag": dtag,
                   "event_idx": event_idx,
                       "rscc_class":  np.argmax(rscc_class),
-                  "score": estimate_rscc_class[1],
+                  "score": estimate_rscc_class[0, 1],
                   }
         records.append(record)
 
