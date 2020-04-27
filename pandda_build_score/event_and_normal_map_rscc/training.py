@@ -56,10 +56,11 @@ def evaluate_model(network,
         del batch
         del estimate_rscc_class
 
-        if i_batch == 500:
+        if i_batch == 1000:
             break
 
     test_score_table = pd.DataFrame(records)
+    test_score_table = test_score_table[test_score_table["rscc"] != 0]
 
     precision_recalls = []
     for i in range(100):
@@ -194,7 +195,6 @@ def train(network,
                                                                            i_batch,
                                                                            running_loss_rscc_300 / 300))
                 running_loss_rscc_300 = 0
-                break
 
             if i_batch % 1000 == 999:  # print every 30 mini-batches
                 print("=======1000 dataset average=======")
@@ -211,6 +211,7 @@ def train(network,
                 # positives = [x for x in recent_labels if x["rscc_class"] == 1]
                 # negatives = [x for x in recent_labels if x["rscc_class"] == 0]
                 # false_positives = [x for x in pos]
+                break
 
             for i, index in enumerate(id_batch["pandda_name"]):
                 pandda_name = deepcopy(id_batch["pandda_name"][i])
@@ -236,9 +237,11 @@ def train(network,
                           }
                 labels.append(record)
 
+
             del id_batch
             del label_batch
             del batch
+
 
         # Save the model
         save_model(network,
