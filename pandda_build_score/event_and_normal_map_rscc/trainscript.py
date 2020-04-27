@@ -150,6 +150,8 @@ if __name__ == "__main__":
 
     trained_network, train_score_table = train(network,
                                                train_dataloader,
+                                               test_dataloader,
+                                               config.out_dir_path,
                                                )
 
     test_score_table = test(network,
