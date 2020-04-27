@@ -2,7 +2,7 @@ from copy import deepcopy
 
 import numpy as np
 import pandas as pd
-pd.options.display.max_rows = 999
+pd.options.display.max_rows = 100
 
 import torch
 from torch import nn
