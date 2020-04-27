@@ -234,7 +234,7 @@ def train(network,
 
         # Save the model
         save_model(network,
-                   results_dir / "{epoch}.pt".format(epoch),
+                   results_dir / "{}.pt".format(epoch),
                    )
 
         # Evaluate performance on the test set
@@ -247,10 +247,10 @@ def train(network,
 
         # Update and write table
         write_results(precision_recall_table,
-                      results_dir / "precision_recall_{epoch}.csv".format(epoch),
+                      results_dir / "precision_recall_{}.csv".format(epoch),
                       )
         write_results(test_score_table,
-                      results_dir / "scores_{epoch}.csv".format(epoch),
+                      results_dir / "scores_{}.csv".format(epoch),
                       )
 
         training_table = pd.DataFrame(labels)
