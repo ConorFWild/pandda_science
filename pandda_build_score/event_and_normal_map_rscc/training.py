@@ -23,7 +23,7 @@ def save_model(network,
 def evaluate_model(network,
                    dataloader_test,
                    ):
-    network.eval()
+    # network.eval()
 
     records = []
     for i_batch, batch in enumerate(dataloader_test):
@@ -87,7 +87,7 @@ def evaluate_model(network,
                             }
         precision_recalls.append(precision_recall)
 
-    network.train()
+    # network.train()
 
     return pd.DataFrame(precision_recalls), test_score_table
 
