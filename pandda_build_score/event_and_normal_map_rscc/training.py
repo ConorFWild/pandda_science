@@ -39,7 +39,7 @@ def evaluate_model(network,
 
         estimate_rscc_class_cuda = network(sample_batch_cuda)
 
-        estimate_rscc_class = deepcopy(estimate_rscc_class_cuda[0].detach().numpy())[1]
+        estimate_rscc_class = deepcopy(estimate_rscc_class_cuda.cpu()[0].detach().numpy())[1]
 
         record = {"pandda_name":pandda_name,
                   "dtag": dtag,
