@@ -30,6 +30,7 @@ def evaluate_model(network,
         sample_batch = batch["data"]
         label_batch = batch["label"]
         id_batch = batch["id"]
+        rscc = batch["rscc"].type(torch.FloatTensor)
         rscc_class = batch["rscc_class"].type(torch.FloatTensor)
         pandda_name = deepcopy(id_batch["pandda_name"][0])
         dtag = deepcopy(id_batch["dtag"][0])
@@ -44,6 +45,7 @@ def evaluate_model(network,
         record = {"pandda_name":pandda_name,
                   "dtag": dtag,
                   "event_idx": event_idx,
+                  "rscc": deepcopy(rscc[0].detach().numpy()),
                       "rscc_class":  np.argmax(rscc_class.numpy()),
                   "score": estimate_rscc_class,
                   }
