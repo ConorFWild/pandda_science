@@ -34,7 +34,9 @@ def evaluate_model(network,
         dtag = deepcopy(id_batch["dtag"][0])
         event_idx = deepcopy(id_batch["event_idx"][0].detach().numpy())
 
-        estimate_rscc_class = network(sample_batch)
+        sample_batch_cuda = sample_batch.cuda()
+
+        estimate_rscc_class = network(sample_batch_cuda)
 
         record = {"pandda_name":pandda_name,
                   "dtag": dtag,
