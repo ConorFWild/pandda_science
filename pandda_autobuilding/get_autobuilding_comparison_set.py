@@ -123,7 +123,7 @@ def get_rsccs(rscc_table_path):
     rscc_table = pd.read_csv(str(rscc_table_path))
 
     rsccs = {}
-    for rscc_id, row in rscc_table:
+    for rscc_id, row in rscc_table.iterrows():
         rscc = float(row["rscc"])
         rsccs[(row["pandda_name"], row["dtag"], int(row["event_idx"]))] = rscc
 
