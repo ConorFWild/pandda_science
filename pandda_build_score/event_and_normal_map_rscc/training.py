@@ -142,7 +142,7 @@ def train(network,
             print(deepcopy(rscc[0].detach().numpy()))
             print(type(deepcopy(rscc[0].detach().numpy())))
 
-            if deepcopy(rscc[0].detach().numpy()) == 0:
+            if float(deepcopy(rscc[0].detach().numpy())) == 0:
                 del id_batch
                 del label_batch
                 del batch
