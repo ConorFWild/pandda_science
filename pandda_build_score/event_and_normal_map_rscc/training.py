@@ -139,6 +139,12 @@ def train(network,
             rscc = batch["rscc"].type(torch.FloatTensor)
             rscc_class = batch["rscc_class"].type(torch.FloatTensor)
 
+            if deepcopy(rscc[i].detach().numpy())[0] == 0:
+                del id_batch
+                del label_batch
+                del batch
+                continue
+
             optimizer.zero_grad()
 
             sample_batch_cuda = sample_batch.cuda()
