@@ -303,6 +303,17 @@ def write_coot_script(event, autobuild_path):
 
     return coot_script_path
 
+def setup_coot(event, autobuild_path):
+    g = handle_read_ccp4_map(event.event_map_path, 0)
+    set_last_map_contour_level(1)
+    set_map_displayed(g, 1)
+    h = read_pdb(event.final_model_path)
+    a = read_pdb(autobuild_path)
+
+    set_rotation_centre(float(event.x), float(event.y), float(event.z))
+
+    return g, h, a
+
 
 def make_shell_command(coot_script_path):
     command = "module load ccp4; coot --no-guano --no-state-script --script {}".format(coot_script_path)
@@ -361,6 +372,12 @@ def write_table(table, path):
     table.to_csv(str(path))
 
 
+def clear_coot(xmap, human_model, autobuilt_model):
+
+    close_molecule(human_model)
+    close_molecule(autobuilt_model)
+    close_molecule(xmap)
+
 def main():
     # args = parse_args()
 
@@ -379,13 +396,17 @@ def main():
     while True:
         event, rscc = select_event(events, rsccs)
 
-        process = open_event(event,
-                             autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)],
-                             )
+        # process = open_event(event,
+        #                      autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)],
+        #                      )
+        xmap, human_model, autobuilt_model = setup_coot(event,
+                   autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)],
+                   )
 
         response = prompt_response()
 
-        close_process(process)
+        # close_process(process)
+        clear_coot(xmap, human_model, autobuilt_model)
 
         update_table(table,
                      event,
