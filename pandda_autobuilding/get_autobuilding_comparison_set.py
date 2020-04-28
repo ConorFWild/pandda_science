@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-import pandda_types
+from pandda_types.data import Event
 
 
 def parse_args():
@@ -113,7 +113,7 @@ def get_events(event_talbe_path):
 
     events = {}
     for event_id, row in event_table.iterrows():
-        event = pandda_types.Event.from_record(row)
+        event = Event.from_record(row)
         events[(event.pandda_name, event.dtag, event.event_idx)] = event
 
     return events
