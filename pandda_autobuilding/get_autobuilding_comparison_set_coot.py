@@ -403,10 +403,13 @@ def main():
         event, rscc = select_event(events, rsccs)
         autobuild_path = autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)]
         if not Path(str(event.event_map_path)).exists():
+            print("\t{}".format(event.event_map_path))
             continue
         if not Path(str(event.final_model_path)).exists():
+            print("\t{}".format(event.final_model_path))
             continue
         if not Path(str(autobuild_path)).exists():
+            print("\t{}".format(autobuild_path))
             continue
 
         # process = open_event(event,
