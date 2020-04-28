@@ -61,7 +61,7 @@ class Event:
         self.z = z,
         self.distance_to_ligand_model = distance_to_ligand_model,
         self.event_size = event_size
-        
+
 
     @staticmethod
     def from_record(row):
@@ -160,7 +160,7 @@ class Config:
         name = name
 
 
-def get_training_config(args):
+def get_training_config():
     event_table_path = Path(str(input("Please enter event table path: ")))
     out_dir_path = Path(str(input("Please enter out_dir_path: ")))
     autobuilds_dir = Path(str(input("Please enter autobuilds_dir: ")))
