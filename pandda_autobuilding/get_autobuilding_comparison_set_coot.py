@@ -149,7 +149,6 @@ class Config:
                  event_table_path,
                  rscc_table_path,
                  autobuilds_dir,
-
                  out_dir_path,
                  name,
                  ):
@@ -161,11 +160,17 @@ class Config:
 
 
 def get_training_config():
-    event_table_path = Path(str(raw_input("Please enter event table path: ")))
-    out_dir_path = Path(str(raw_input("Please enter out_dir_path: ")))
-    autobuilds_dir = Path(str(raw_input("Please enter autobuilds_dir: ")))
+    # event_table_path = Path(str(raw_input("Please enter event table path: ")))
+    event_table_path = Path("/dls/science/groups/i04-1/conor_dev/experiments/pandda_science/event_table.csv")
+    # out_dir_path = Path(str(raw_input("Please enter out_dir_path: ")))
+    out_dir_path = Path("/dls/science/groups/i04-1/conor_dev/experiments/pandda_science")
+    # autobuilds_dir = Path(str(raw_input("Please enter autobuilds_dir: ")))
+    autobuilds_dir = Path("/dls/labxchem/data/2015/lb13379-1/processing/analysis/TMP_autobuilding")
     name = str(raw_input("Please enter your first name: "))
-    rscc_table_path = Path(str(raw_input("Please enter rscc table path: ")))
+    # rscc_table_path = Path(str(raw_input("Please enter rscc table path: ")))
+    rscc_table_path ="/dls/science/groups/i04-1/conor_dev/experiments/pandda_science/rscc.csv"
+
+
 
     config = Config(event_table_path=event_table_path,
                     out_dir_path=out_dir_path,
