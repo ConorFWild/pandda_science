@@ -81,7 +81,7 @@ class Event:
                       pandda_name=row["pandda_name"],
                       final_model_path=row["final_model_path"],
                       event_map_path=row["event_map_path"],
-                      actually_built=row["actually_built"],
+                      actually_built=bool(row["actually_built"]),
                       ligand_smiles_path=row["ligand_smiles_path"],
                       x=row["x"],
                       y=row["y"],
@@ -274,8 +274,9 @@ def choose_one(indexed):
 
 def select_event(events, rsccs):
     high_rscc_event_keys = list(filter(lambda x: rsccs[x] > 0.7, rsccs))
+    actually_built_high_rscc_event_keys= list(filter(lambda x: events[x].actually_built == True, rsccs))
 
-    event_key = choose_one(high_rscc_event_keys)
+    event_key = choose_one(actually_built_high_rscc_event_keys)
     print(list(events.keys())[0])
     print(event_key)
     event = events[event_key]
