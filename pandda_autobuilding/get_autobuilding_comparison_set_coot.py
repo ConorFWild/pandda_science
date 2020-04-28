@@ -9,7 +9,87 @@ import subprocess
 import numpy as np
 import pandas as pd
 
-from pandda_types.data import Event
+
+# from pandda_types.data import Event
+
+class Event:
+    def __init__(self,
+                 dtag,
+                 event_idx,
+                 occupancy,
+                 analysed_resolution,
+                 high_resolution,
+                 interesting,
+                 ligand_placed,
+                 ligand_confidence,
+                 viewed,
+                 initial_model_path,
+                 data_path,
+                 model_dir,
+                 pandda_dir,
+                 pandda_name,
+                 final_model_path,
+                 event_map_path,
+                 actually_built,
+                 ligand_smiles_path,
+                 x,
+                 y,
+                 z,
+                 distance_to_ligand_model,
+                 event_size,
+        ):
+        self.dtag = dtag,
+        self.event_idx = event_idx,
+        self.occupancy = occupancy,
+        self.analysed_resolution = analysed_resolution,
+        self.high_resolution = high_resolution,
+        self.interesting = interesting,
+        self.ligand_placed = ligand_placed,
+        self.ligand_confidence = ligand_confidence,
+        self.viewed = viewed,
+        self.initial_model_path = initial_model_path,
+        self.data_path = data_path,
+        self.model_dir = model_dir,
+        self.pandda_dir = pandda_dir,
+        self.pandda_name = pandda_name,
+        self.final_model_path = final_model_path,
+        self.event_map_path = event_map_path,
+        self.actually_built = actually_built,
+        self.ligand_smiles_path = ligand_smiles_path,
+        self.x = x,
+        self.y = y,
+        self.z = z,
+        self.distance_to_ligand_model = distance_to_ligand_model,
+        self.event_size = event_size
+        
+
+    @staticmethod
+    def from_record(row):
+        event = Event(dtag=str(row["dtag"]),
+                      event_idx=int(row["event_idx"]),
+                      occupancy=float(row["occupancy"]),
+                      analysed_resolution=float(row["analysed_resolution"]),
+                      high_resolution=float(row["high_resolution"]),
+                      interesting=row["interesting"],
+                      ligand_placed=row["ligand_placed"],
+                      ligand_confidence=row["ligand_confidence"],
+                      viewed=row["viewed"],
+                      initial_model_path=row["initial_model_path"],
+                      data_path=row["data_path"],
+                      model_dir=row["model_dir"],
+                      pandda_dir=row["pandda_dir"],
+                      pandda_name=row["pandda_name"],
+                      final_model_path=row["final_model_path"],
+                      event_map_path=row["event_map_path"],
+                      actually_built=row["actually_built"],
+                      ligand_smiles_path=row["ligand_smiles_path"],
+                      x=row["x"],
+                      y=row["y"],
+                      z=row["z"],
+                      distance_to_ligand_model=row["distance_to_ligand_model"],
+                      event_size=row["event_size"]
+                      )
+        return event
 
 
 class Path:
