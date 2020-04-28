@@ -62,7 +62,7 @@ class Config(NamedTuple):
 def get_training_config(args):
     config = Config(event_table_path=Path(args.event_table),
                     out_dir_path=Path(args.out_dir_path),
-                    autobuilds_dir=args.autobuilds_dir,
+                    autobuilds_dir=Path(args.autobuilds_dir),
                     name=str(args.name),
                     rscc_table_path=Path(args.rscc_table),
                     )
