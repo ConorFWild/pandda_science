@@ -315,6 +315,10 @@ def setup_coot(event, autobuild_path):
     h = read_pdb(str(event.final_model_path))
     a = read_pdb(str(autobuild_path))
 
+    set_bond_colour_rotation_for_molecule(h, 100.0)
+    set_bond_colour_rotation_for_molecule(a, 300.0)
+
+
     set_rotation_centre(float(event.x), float(event.y), float(event.z))
 
     return g, h, a
