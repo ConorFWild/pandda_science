@@ -108,6 +108,9 @@ class Path:
     def glob(self):
         return list(os.listdir(self.path))
 
+    def name(self):
+        return os.path.basename(self.path)
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -251,7 +254,7 @@ def get_autobuilds(autobuilds_dir):
         event_dir = Path(str(autobuilt_event)) / "phenix_event"
         ligandfit_dir = event_dir / "LigandFit_run_1_"
         ligand_path = ligandfit_dir / "ligand_fit_1.pdb"
-        autobuilds[autobuilt_event.name] = ligand_path
+        autobuilds[Path(autobuilt_event).name()] = ligand_path
 
     return autobuilds
 
