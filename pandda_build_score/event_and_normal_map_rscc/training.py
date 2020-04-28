@@ -147,12 +147,12 @@ def train(network,
             rscc_class_cuda = rscc_class.cuda()
 
             estimated_rscc_class_cuda = network(sample_batch_cuda)
-            print(estimated_rscc_class_cuda)
-            print(estimated_rscc_class_cuda.cpu())
-            print(estimated_rscc_class_cuda.cpu().detach().numpy())
-            print(rscc_class_cuda)
-            print(rscc_class_cuda.cpu())
-            print(rscc_class_cuda.cpu().detach().numpy())
+            # print(estimated_rscc_class_cuda)
+            # print(estimated_rscc_class_cuda.cpu())
+            # print(estimated_rscc_class_cuda.cpu().detach().numpy())
+            # print(rscc_class_cuda)
+            # print(rscc_class_cuda.cpu())
+            # print(rscc_class_cuda.cpu().detach().numpy())
 
 
 
