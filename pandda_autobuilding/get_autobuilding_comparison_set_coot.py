@@ -348,11 +348,11 @@ def open_event(event, autobuild_path):
 
 def prompt_response():
     raw_response = input(
-        "Please enter '0' if model 1 is better, '1' if they are similar and '2' if model 2 is better and '3' if you encountered an error")
+        "Please enter '0' if the red model is better, '1' if they are similar and '2' if the green model is better and '3' if you encountered an error")
 
     response = int(raw_response)
 
-    if response not in [0, 1, 2]:
+    if response not in [0, 1, 2, 3]:
         print("Invalid response! Please try again")
         return prompt_response()
     else:
