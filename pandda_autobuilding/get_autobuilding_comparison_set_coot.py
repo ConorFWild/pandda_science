@@ -4,12 +4,26 @@ import random
 import argparse
 import signal
 import subprocess
-from pathlib import Path
+# from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from pandda_types.data import Event
+
+
+class Path:
+    def __init__(self, path):
+        self.path = path
+
+    def __truediv__(self, other):
+        return Path(self.path + "/" + other)
+
+    def __repr__(self):
+        return str(self.path)
+
+    def glob(self):
+        return list(os.listdir(self.path))
 
 
 def parse_args():
@@ -145,7 +159,7 @@ def get_rsccs(rscc_table_path):
 
 def get_autobuilds(autobuilds_dir):
     autobuilds = {}
-    for autobuilt_event in autobuilds_dir.glob("*"):
+    for autobuilt_event in autobuilds_dir.glob():
         event_dir = autobuilt_event / "phenix_event"
         ligandfit_dir = event_dir / "LigandFit_run_1_"
         ligand_path = ligandfit_dir / "ligand_fit_1.pdb"
