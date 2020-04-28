@@ -208,7 +208,7 @@ def open_event(event, autobuild_path):
 
 
 def prompt_response():
-    raw_response = input("Please enter '0' if model 1 is better, '1' if they are similar and '2' if model 2 is better")
+    raw_response = input("Please enter '0' if model 1 is better, '1' if they are similar and '2' if model 2 is better and '3' if you encountered an error")
 
     response = int(raw_response)
 
@@ -220,6 +220,7 @@ def prompt_response():
 
 
 def close_process(process):
+    print(process.stdout.read)
     os.killpg(os.getpgid(process.pid), signal.SIGTERM)
 
 
