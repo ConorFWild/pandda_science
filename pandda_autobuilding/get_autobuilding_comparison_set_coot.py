@@ -152,11 +152,11 @@ class Config:
                  out_dir_path,
                  name,
                  ):
-        event_table_path = event_table_path
-        rscc_table_path = rscc_table_path
-        autobuilds_dir = autobuilds_dir
-        out_dir_path = out_dir_path
-        name = name
+        self.event_table_path = event_table_path
+        self.rscc_table_path = rscc_table_path
+        self.autobuilds_dir = autobuilds_dir
+        self.out_dir_path = out_dir_path
+        self.name = name
 
 
 def get_training_config():
