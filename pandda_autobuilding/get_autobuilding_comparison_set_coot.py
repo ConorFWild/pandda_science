@@ -113,7 +113,7 @@ class Output:
 
 
 def setup_output(path, overwrite=False):
-    output: Output = Output(path)
+    output = Output(path)
     output.make(overwrite=overwrite)
     return output
 
