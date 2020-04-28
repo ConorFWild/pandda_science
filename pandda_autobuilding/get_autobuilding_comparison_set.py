@@ -170,7 +170,7 @@ def write_coot_script(event, autobuild_path):
     open_event_map = "g = handle_read_ccp4_map({}, 0)".format(event.event_map_path)
     set_contour_level = "set_last_map_contour_level(1)"
     set_displayed = "set_map_displayed(g, 1)"
-    open_handbuilt_model = "h = read_pdb({})".format(event.model_path)
+    open_handbuilt_model = "h = read_pdb({})".format(event.final_model_path)
     open_autobuilt_model = "a = read_pdb({})".format(autobuild_path)
 
     with open(coot_script_path, "w") as f:
