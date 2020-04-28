@@ -139,10 +139,11 @@ def train(network,
             rscc = batch["rscc"].type(torch.FloatTensor)
             rscc_class = batch["rscc_class"].type(torch.FloatTensor)
 
-            print(deepcopy(rscc[0].detach().numpy()))
-            print(type(deepcopy(rscc[0].detach().numpy())))
+            # print(deepcopy(rscc[0].detach().numpy()))
+            # print(type(deepcopy(rscc[0].detach().numpy())))
 
             if float(deepcopy(rscc[0].detach().numpy())) == 0:
+                print("empty, skipping")
                 del id_batch
                 del label_batch
                 del batch
