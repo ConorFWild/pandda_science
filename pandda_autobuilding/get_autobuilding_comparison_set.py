@@ -220,7 +220,7 @@ def prompt_response():
 
 
 def close_process(process):
-    print(str(process.stdout.read))
+    print(str(process.stdout.read()))
     os.killpg(os.getpgid(process.pid), signal.SIGTERM)
 
 
