@@ -37,7 +37,7 @@ class Event:
                  z,
                  distance_to_ligand_model,
                  event_size,
-        ):
+                 ):
         self.dtag = dtag
         self.event_idx = event_idx
         self.occupancy = occupancy
@@ -61,7 +61,6 @@ class Event:
         self.z = z
         self.distance_to_ligand_model = distance_to_ligand_model
         self.event_size = event_size
-
 
     @staticmethod
     def from_record(row):
@@ -177,9 +176,7 @@ def get_training_config():
     autobuilds_dir = Path("/dls/labxchem/data/2015/lb13379-1/processing/analysis/TMP_autobuilding")
     name = str(raw_input("Please enter your first name: "))
     # rscc_table_path = Path(str(raw_input("Please enter rscc table path: ")))
-    rscc_table_path ="/dls/science/groups/i04-1/conor_dev/experiments/pandda_science/rscc.csv"
-
-
+    rscc_table_path = "/dls/science/groups/i04-1/conor_dev/experiments/pandda_science/rscc.csv"
 
     config = Config(event_table_path=event_table_path,
                     out_dir_path=out_dir_path,
@@ -278,7 +275,7 @@ def choose_one(indexed):
 
 def select_event(events, rsccs):
     high_rscc_event_keys = list(filter(lambda x: rsccs[x] > 0.7, rsccs))
-    actually_built_high_rscc_event_keys= list(filter(lambda x: events[x].actually_built == True, high_rscc_event_keys))
+    actually_built_high_rscc_event_keys = list(filter(lambda x: events[x].actually_built == True, high_rscc_event_keys))
 
     event_key = choose_one(actually_built_high_rscc_event_keys)
     print(list(events.keys())[0])
@@ -307,6 +304,7 @@ def write_coot_script(event, autobuild_path):
                 )
 
     return coot_script_path
+
 
 def setup_coot(event, autobuild_path):
     g = handle_read_ccp4_map(str(event.event_map_path), 0)
@@ -370,7 +368,9 @@ def update_table(table, event, rscc, reponse):
     record["rscc"] = event.pandda_name
     record["response"] = event.pandda_name
 
-    table = table.append(record)
+    table = pd.concat([table, pd.DataFrame([record])],
+                      ignore_index=True,
+                      )
 
     return table
 
@@ -380,10 +380,10 @@ def write_table(table, path):
 
 
 def clear_coot(xmap, human_model, autobuilt_model):
-
     close_molecule(human_model)
     close_molecule(autobuilt_model)
     close_molecule(xmap)
+
 
 def main():
     # args = parse_args()
@@ -417,8 +417,8 @@ def main():
         #                      autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)],
         #                      )
         xmap, human_model, autobuilt_model = setup_coot(event,
-                   autobuild_path,
-                   )
+                                                        autobuild_path,
+                                                        )
 
         response = prompt_response()
 
