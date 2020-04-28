@@ -309,13 +309,13 @@ def write_coot_script(event, autobuild_path):
     return coot_script_path
 
 def setup_coot(event, autobuild_path):
-    g = handle_read_ccp4_map(event.event_map_path, 0)
+    g = handle_read_ccp4_map(str(event.event_map_path), 0)
     set_last_map_contour_level(1)
     set_map_displayed(g, 1)
     print(event.final_model_path)
     print(autobuild_path)
-    h = read_pdb(event.final_model_path)
-    a = read_pdb(autobuild_path)
+    h = read_pdb(str(event.final_model_path))
+    a = read_pdb(str(autobuild_path))
 
     set_rotation_centre(float(event.x), float(event.y), float(event.z))
 
