@@ -245,7 +245,7 @@ def get_rsccs(rscc_table_path):
 def get_autobuilds(autobuilds_dir):
     autobuilds = {}
     for autobuilt_event in autobuilds_dir.glob():
-        event_dir = autobuilt_event / "phenix_event"
+        event_dir = Path(autobuilt_event) / "phenix_event"
         ligandfit_dir = event_dir / "LigandFit_run_1_"
         ligand_path = ligandfit_dir / "ligand_fit_1.pdb"
         autobuilds[autobuilt_event.name] = ligand_path
