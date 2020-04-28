@@ -143,7 +143,7 @@ def train(network,
             # print(type(deepcopy(rscc[0].detach().numpy())))
 
             if float(deepcopy(rscc[0].detach().numpy())) == 0:
-                print("empty, skipping")
+                # print("empty, skipping")
                 del id_batch
                 del label_batch
                 del batch
@@ -215,7 +215,7 @@ def train(network,
                                                                            running_loss_rscc_300 / 300))
                 running_loss_rscc_300 = 0
 
-            if i_batch % 1000 == 999:  # print every 30 mini-batches
+            if i_batch % 3000 == 2999:  # print every 30 mini-batches
                 print("=======1000 dataset average=======")
 
                 print("\tLoss rscc at epoch {}, iteration {} is {}".format(epoch,
