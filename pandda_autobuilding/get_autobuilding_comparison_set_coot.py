@@ -99,6 +99,9 @@ class Path:
     def __truediv__(self, other):
         return Path(self.path + "/" + other)
 
+    def __div__(self, other):
+        return Path(self.path + "/" + str(other))
+
     def __repr__(self):
         return str(self.path)
 
@@ -245,7 +248,7 @@ def get_rsccs(rscc_table_path):
 def get_autobuilds(autobuilds_dir):
     autobuilds = {}
     for autobuilt_event in autobuilds_dir.glob():
-        event_dir = Path(str(autobuilt_event)) / Path("phenix_event")
+        event_dir = Path(str(autobuilt_event)) / "phenix_event"
         ligandfit_dir = event_dir / "LigandFit_run_1_"
         ligand_path = ligandfit_dir / "ligand_fit_1.pdb"
         autobuilds[autobuilt_event.name] = ligand_path
