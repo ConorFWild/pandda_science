@@ -111,6 +111,9 @@ class Path:
     def name(self):
         return os.path.basename(self.path)
 
+    def exists(self):
+        return os.path.exists(self.path)
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -398,12 +401,19 @@ def main():
 
     while True:
         event, rscc = select_event(events, rsccs)
+        autobuild_path = autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)]
+        if not Path(event.event_map_path).exists():
+            continue
+        if not Path(event.final_model_path).exists():
+            continue
+        if not Path(autobuild_path).exists():
+            continue
 
         # process = open_event(event,
         #                      autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)],
         #                      )
         xmap, human_model, autobuilt_model = setup_coot(event,
-                   autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)],
+                   autobuild_path,
                    )
 
         response = prompt_response()
