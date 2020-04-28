@@ -38,28 +38,28 @@ class Event:
                  distance_to_ligand_model,
                  event_size,
         ):
-        self.dtag = dtag,
-        self.event_idx = event_idx,
-        self.occupancy = occupancy,
-        self.analysed_resolution = analysed_resolution,
-        self.high_resolution = high_resolution,
-        self.interesting = interesting,
-        self.ligand_placed = ligand_placed,
-        self.ligand_confidence = ligand_confidence,
-        self.viewed = viewed,
-        self.initial_model_path = initial_model_path,
-        self.data_path = data_path,
-        self.model_dir = model_dir,
-        self.pandda_dir = pandda_dir,
-        self.pandda_name = pandda_name,
-        self.final_model_path = final_model_path,
-        self.event_map_path = event_map_path,
-        self.actually_built = actually_built,
-        self.ligand_smiles_path = ligand_smiles_path,
-        self.x = x,
-        self.y = y,
-        self.z = z,
-        self.distance_to_ligand_model = distance_to_ligand_model,
+        self.dtag = dtag
+        self.event_idx = event_idx
+        self.occupancy = occupancy
+        self.analysed_resolution = analysed_resolution
+        self.high_resolution = high_resolution
+        self.interesting = interesting
+        self.ligand_placed = ligand_placed
+        self.ligand_confidence = ligand_confidence
+        self.viewed = viewed
+        self.initial_model_path = initial_model_path
+        self.data_path = data_path
+        self.model_dir = model_dir
+        self.pandda_dir = pandda_dir
+        self.pandda_name = pandda_name
+        self.final_model_path = final_model_path
+        self.event_map_path = event_map_path
+        self.actually_built = actually_built
+        self.ligand_smiles_path = ligand_smiles_path
+        self.x = x
+        self.y = y
+        self.z = z
+        self.distance_to_ligand_model = distance_to_ligand_model
         self.event_size = event_size
 
 
