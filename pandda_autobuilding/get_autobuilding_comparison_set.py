@@ -150,7 +150,7 @@ def get_response_table():
 
 def choose_one(indexed):
     length = len(indexed)
-    rand = random.randint(length)
+    rand = random.randint(0, length)
     return indexed[rand]
 
 
@@ -191,7 +191,9 @@ def make_shell_command(coot_script_path):
 
 
 def open_coot(shell_command):
-    process = subprocess.Popen(shell_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(shell_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               preexec_fn=os.setsid,
+                               )
     return process
 
 
