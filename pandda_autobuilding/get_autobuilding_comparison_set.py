@@ -155,7 +155,7 @@ def choose_one(indexed):
 
 
 def select_event(events, rsccs):
-    high_rscc_event_keys = list(filter(lambda x: x[1] > 0.7, rsccs))
+    high_rscc_event_keys = list(filter(lambda x: rsccs[x] > 0.7, rsccs))
 
     event_key = choose_one(high_rscc_event_keys)
 
