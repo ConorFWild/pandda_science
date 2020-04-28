@@ -161,7 +161,9 @@ class Config:
 
 
 def get_training_config():
-    event_table_path = Path(str(input("Please enter event table path: ")))
+    event_table_path = input("Please enter event table path: ")
+    event_table_path = str(event_table_path)
+    event_table_path = Path(event_table_path)
     out_dir_path = Path(str(input("Please enter out_dir_path: ")))
     autobuilds_dir = Path(str(input("Please enter autobuilds_dir: ")))
     name = str(input("Please enter your first name: "))
