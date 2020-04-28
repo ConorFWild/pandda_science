@@ -120,7 +120,7 @@ def train(network,
     #                       )
 
     optimizer = optim.Adam(network.parameters(),
-                           lr=0.0001,
+                           lr=0.000001,
                            )
 
     for epoch in range(epochs):
