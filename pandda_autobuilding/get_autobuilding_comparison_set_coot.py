@@ -373,10 +373,10 @@ def close_process(process):
 def update_table(table, event, rscc, reponse):
     record = {}
     record["pandda_name"] = event.pandda_name
-    record["dtag"] = event.pandda_name
-    record["event_idx"] = event.pandda_name
-    record["rscc"] = event.pandda_name
-    record["response"] = event.pandda_name
+    record["dtag"] = event.dtag
+    record["event_idx"] = event.event_idx
+    record["rscc"] = rscc
+    record["response"] = reponse
 
     table = pd.concat([table, pd.DataFrame([record])],
                       ignore_index=True,
@@ -435,7 +435,7 @@ def main():
         # close_process(process)
         clear_coot(xmap, human_model, autobuilt_model)
 
-        update_table(table,
+        table = update_table(table,
                      event,
                      rscc,
                      response,
