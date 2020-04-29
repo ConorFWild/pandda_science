@@ -274,10 +274,16 @@ def choose_one(indexed):
 
 
 def select_event(events, rsccs):
-    high_rscc_event_keys = list(filter(lambda x: rsccs[x] > 0.7, rsccs))
-    actually_built_high_rscc_event_keys = list(filter(lambda x: events[x].actually_built == True, high_rscc_event_keys))
+    high_rscc_event_keys = list(filter(lambda x: rsccs[x] > 0.7,
+                                       rsccs))
+    actually_built_high_rscc_event_keys = list(filter(lambda x: events[x].actually_built == True,
+                                                      high_rscc_event_keys))
 
-    event_key = choose_one(actually_built_high_rscc_event_keys)
+    events_near_models = list(filter(lambda x: events[x].distance_to_ligand_model < 10.0,
+                                     actually_built_high_rscc_event_keys,
+                                     ))
+
+    event_key = choose_one(events_near_models)
     print(list(events.keys())[0])
     print(event_key)
     event = events[event_key]
@@ -317,7 +323,6 @@ def setup_coot(event, autobuild_path):
 
     set_bond_colour_rotation_for_molecule(h, 100.0)
     set_bond_colour_rotation_for_molecule(a, 300.0)
-
 
     set_rotation_centre(float(event.x), float(event.y), float(event.z))
 
