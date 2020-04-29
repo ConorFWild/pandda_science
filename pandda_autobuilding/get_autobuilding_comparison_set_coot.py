@@ -354,7 +354,7 @@ def open_event(event, autobuild_path):
 
 def prompt_response():
     raw_response = input(
-        "Please enter '0' if the red model is better, '1' if they are similar and '2' if the green model is better and '3' if you encountered an error")
+        "Please enter '0' if the red model is better, '1' if they are similar/are likely to refine to similar models and '2' if the green model is better and '3' if you encountered an error")
 
     response = int(raw_response)
 
