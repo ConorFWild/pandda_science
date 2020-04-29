@@ -4,6 +4,7 @@ import random
 import argparse
 import signal
 import subprocess
+import datetime
 # from pathlib import Path
 
 import numpy as np
@@ -171,7 +172,7 @@ def get_training_config():
     # event_table_path = Path(str(raw_input("Please enter event table path: ")))
     event_table_path = Path("/dls/science/groups/i04-1/conor_dev/experiments/pandda_science/event_table.csv")
     # out_dir_path = Path(str(raw_input("Please enter out_dir_path: ")))
-    out_dir_path = Path("/dls/science/groups/i04-1/conor_dev/experiments/pandda_science")
+    out_dir_path = Path("/dls/science/groups/i04-1/conor_dev/experiments/pandda_science/autobuilding_comparison")
     # autobuilds_dir = Path(str(raw_input("Please enter autobuilds_dir: ")))
     autobuilds_dir = Path("/dls/labxchem/data/2015/lb13379-1/processing/analysis/TMP_autobuilding")
     name = str(raw_input("Please enter your first name: "))
@@ -181,7 +182,7 @@ def get_training_config():
     config = Config(event_table_path=event_table_path,
                     out_dir_path=out_dir_path,
                     autobuilds_dir=autobuilds_dir,
-                    name=name,
+                    name=name + datetime.datetime.now().strftime("%m_%d_%Y_%H_%M_%S"),
                     rscc_table_path=rscc_table_path,
                     )
 
