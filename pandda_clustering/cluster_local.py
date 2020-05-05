@@ -313,7 +313,7 @@ def main():
                         )
     datasets = {dtag: dataset for dtag, dataset in datasets.items() if dataset is not None}
 
-    datasets_res_high = min([x.get_resolution() for x in datasets.values()])
+    datasets_res_high = min([x.get_resolution_high() for x in datasets.values()])
 
     reference_dataset = get_reference_dataset(datasets)
 
