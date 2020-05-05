@@ -320,8 +320,12 @@ def visualise_clusters(clusters,
                        path,
                        ):
     fig, axs = plt.subplots(nrows=len(clusters),
-                            ncols=max([len(cluster) for cluster in clusters]),
+                            ncols=max([len(clust) for clust in clusters]),
+                            figsize=(len(clusters),
+                                     max(len(clust) for clust in clusters),
+                                     )
                             )
+
 
     for i, cluster in enumerate(clusters):
         for j, xmap in enumerate(cluster):
