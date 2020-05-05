@@ -13,7 +13,7 @@ class PanDDADataset:
     @staticmethod
     def from_dir(path, mtz_regex="dimple.mtz", pdb_regex="dimple.pdb"):
         id = path.name
-        reflection_path =  path / mtz_regex
+        reflection_path = path / mtz_regex
         structure_path = path / pdb_regex
         return PanDDADataset.from_paths(id, reflection_path, structure_path)
 

@@ -292,6 +292,14 @@ def visualise_clusters(clusters,
 
     fig.savefig(str(path))
 
+def try_load(path):
+    try:
+        dataset = PanDDADataset.from_dir(path)
+        return dataset
+    except Exception as e:
+        print(e)
+        return None
+
 
 def main():
     args = Args()
@@ -300,9 +308,10 @@ def main():
                         args.out_dir,
                         )
 
-    datasets = map_dict(PanDDADataset.from_dir,
+    datasets = map_dict(try_load,
                         fs.initial_model_dirs,
                         )
+    datasets = {dtag: dataset for dtag, dataset in datasets.items() if dataset is not None}
 
     datasets_res_high = min([x.get_resolution() for x in datasets.values()])
 
