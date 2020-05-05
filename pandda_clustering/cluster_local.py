@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from scipy.optimize import differential_evolution
+from scipy.optimize import differential_evolution, shgo
 
 import hdbscan
 from sklearn.decomposition import PCA
@@ -158,7 +158,14 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
                              ),
                             )
 
-    result = differential_evolution(lambda x: sample_and_measure(reference_sample_map,
+    # result = differential_evolution(lambda x: sample_and_measure(reference_sample_map,
+    #                                                              moving_xmap,
+    #                                                              x,
+    #                                                              ),
+    #                                 bounds,
+    #                                 maxiter=20,
+    #                                 )
+    result = shgo(lambda x: sample_and_measure(reference_sample_map,
                                                                  moving_xmap,
                                                                  x,
                                                                  ),
