@@ -18,6 +18,9 @@ class PanDDAXMap:
 
 
 def sample(xmap, parameters):
+    shape = 32
+    scale = 0.5
+
     arr = np.zeros([32, 32, 32], dtype=np.float32)
     tr = gemmi.Transform()
     trans = [parameters[0],
@@ -33,11 +36,16 @@ def sample(xmap, parameters):
     rotation_y = Rotation.from_euler("y", angles[1])
     rotation_z = Rotation.from_euler("z", angles[2])
 
+    scale = np.eye(3)*0.5
+
     rotation = np.matmul(rotation_x.as_matrix(),
                          np.matmul(rotation_y.as_matrix(),
                                    rotation_z.as_matrix(),
                                    ),
                          )
+    rotation = np.matmul(rotation, scale)
+
+    trans = trans - np.matmul(rotation, np.array(shape, shape, shape)/2)
 
     tr.mat.fromlist(rotation.tolist())
     tr.vec.fromlist(trans)
