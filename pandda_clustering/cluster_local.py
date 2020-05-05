@@ -255,6 +255,8 @@ def cluster_datasets(truncated_datasets,
                      residues,
                      ):
 
+    print("\tClustering {} datasets".format(len(truncated_datasets)))
+
     reference_dataset = get_reference_dataset(truncated_datasets)
 
     alignments = get_alignments(residues,
