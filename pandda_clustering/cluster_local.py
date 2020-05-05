@@ -254,13 +254,18 @@ def cluster_datasets(truncated_datasets,
                                          truncated_datasets,
                                          alignments,
                                          )
+    print("\tRange of distances is {} {}".format(min(distances),
+                                                 max(distances),
+                                                 ))
 
     cluster_distances = cluster(distances)
+    print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances.labels_)))
 
     unclustered_datasets = get_unclustered_datasets(reference_dataset,
                                                     truncated_datasets,
                                                     cluster_distances,
                                                     )
+    print("\tGot {} unclustered datasets".format(len(unclustered_datasets)))
 
     if more_that_one_cluster(cluster_distances):
         return [aligned_maps] + [x for x in cluster_datasets(unclustered_datasets, residues)]
