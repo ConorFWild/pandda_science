@@ -334,8 +334,8 @@ def visualise_clusters(clusters,
                        ):
     fig, axs = plt.subplots(nrows=len(clusters),
                             ncols=10,
-                            figsize=(10*10,
-                                     len(clusters) * 10,
+                            figsize=(10,
+                                     len(clusters) ,
                                      )
                             )
 
