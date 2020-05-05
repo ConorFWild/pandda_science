@@ -271,7 +271,13 @@ def cluster_datasets(truncated_datasets,
                                                  ))
 
     # cluster_distances = cluster(distances)
-    cluster_distances = np.array([0 if distances < 0.08 else 1])
+    cluster_distances = []
+    for distance in distances:
+        if distance< 0.1:
+            cluster_distances.append(0)
+        else:
+            cluster_distances.append(1)
+    cluster_distances = np.array(cluster_distances)
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
                                                              return_counts=True,
                                                              )))
