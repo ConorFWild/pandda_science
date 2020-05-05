@@ -333,14 +333,13 @@ def visualise_clusters(clusters,
                        ):
     fig, axs = plt.subplots(nrows=len(clusters),
                             ncols=10,
-                            figsize=(len(clusters),
-                                     10,
+                            figsize=(10*10,
+                                     len(clusters) * 10,
                                      )
                             )
 
     for i, cluster in enumerate(clusters):
         for j, xmap in enumerate(cluster):
-            print(xmap.shape)
             image = np.mean(xmap, axis=0)
             axs[i, j].imshow(image)
             if j == 9:
