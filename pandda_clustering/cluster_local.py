@@ -303,10 +303,10 @@ def cluster_datasets(truncated_datasets,
 
     if len(unclustered_datasets) < 5:
         print("Less than 5 maps: cannot cluster any more!")
-        return cluster_maps + [[x] for x in uncluster_maps]
+        return [cluster_maps] + [[x] for x in uncluster_maps]
 
     if more_that_one_cluster(cluster_distances):
-        return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, residues)]
+        return [cluster_maps] + [[x] for x in cluster_datasets(unclustered_datasets, residues)]
     else:
         return [cluster_maps]
 
