@@ -336,7 +336,9 @@ def main():
                                                    residue_id,
                                                    )
                 print("\tGot {} residues".format(len(residues)))
-
+                residues = {dtag: residue for dtag, residue in residues.items() if residue is not None}
+                print("\tGot {} residues".format(len(residues)))
+                
                 clusters = cluster_datasets(truncated_datasets,
                                             residues,
                                             )
