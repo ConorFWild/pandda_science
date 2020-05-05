@@ -120,7 +120,7 @@ def cluster(distances):
 
     clusterer.fit(np.array(distances).astype(np.float64))
 
-    return clusterer
+    return clusterer.labels_
 
 
 def sample_and_measure(reference_sample_map,
