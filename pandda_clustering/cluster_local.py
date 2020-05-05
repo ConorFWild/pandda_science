@@ -343,7 +343,7 @@ def visualise_clusters(clusters,
             print(xmap.shape)
             image = np.mean(xmap, axis=0)
             axs[i, j].imshow(image)
-            if j > 9:
+            if j == 9:
                 break
 
     fig.savefig(str(path))
