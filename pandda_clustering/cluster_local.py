@@ -269,7 +269,7 @@ def cluster_datasets(truncated_datasets,
                                                  ))
 
     cluster_distances = cluster(distances)
-    print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances.labels_)))
+    print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances)))
 
     unclustered_datasets = get_unclustered_datasets(reference_dataset,
                                                     truncated_datasets,
