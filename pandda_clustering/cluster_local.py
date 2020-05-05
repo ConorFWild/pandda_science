@@ -248,7 +248,7 @@ def get_unclustered_datasets(reference_dataset,
                             if cluster_distances[i] == reference_cluster
                             }
 
-    return unclustered_datasets
+    return unclustered_datasets, reference_cluster
 
 
 def cluster_datasets(truncated_datasets,
@@ -275,12 +275,16 @@ def cluster_datasets(truncated_datasets,
                                                              return_counts=True,
                                                              )))
 
-    unclustered_datasets = get_unclustered_datasets(reference_dataset,
+    unclustered_datasets, reference_cluster = get_unclustered_datasets(reference_dataset,
                                                     truncated_datasets,
                                                     cluster_distances,
                                                     )
     print("\tGot {} unclustered datasets".format(len(unclustered_datasets)))
-    
+
+
+    cluster_maps = [aligned_map for i, aligned_map in aligned_maps if cluster_distances[i] == reference_cluster]
+
+
     if len(unclustered_datasets) < 3:
         print("Less than 3 maps: cannot cluster any more!")
         return [aligned_maps] + [[x] for x in aligned_maps]
