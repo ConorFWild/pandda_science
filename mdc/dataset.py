@@ -25,4 +25,4 @@ class PanDDADataset:
         return PanDDADataset(id, reflections, structure)
 
     def get_resolution_high(self):
-        return self.reflections.get_resolution()
+        return self.reflections.get_resolution_high()
