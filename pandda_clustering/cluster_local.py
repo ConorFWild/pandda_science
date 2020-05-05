@@ -330,7 +330,7 @@ def main():
             for residue in chain:
 
                 residue_id = (model.name, chain.name, residue.seqid.num)
-                print("\tWorking on dataset: {}".format())
+                print("\tWorking on dataset: {}".format(residue_id))
 
                 residues = get_comparable_residues(datasets,
                                                    residue_id,
