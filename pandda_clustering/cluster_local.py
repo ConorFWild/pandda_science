@@ -190,7 +190,7 @@ def align_maps(reference_dataset, datasets, alignments):
 
 def get_reference_dataset(datasets):
     reference_dataset = min(datasets.values(),
-                            key=lambda x: x.get_resolution(),
+                            key=lambda x: x.get_resolution_high(),
                             )
     return reference_dataset
 
@@ -312,10 +312,13 @@ def main():
                         fs.initial_model_dirs,
                         )
     datasets = {dtag: dataset for dtag, dataset in datasets.items() if dataset is not None}
+    print("\tNumber of datasets is {}".format(len(datasets)))
 
     datasets_res_high = min([x.get_resolution_high() for x in datasets.values()])
+    print("\tHigh resolution is {}".format(datasets_res_high))
 
     reference_dataset = get_reference_dataset(datasets)
+    print("\tReference dataset name is {}".format(reference_dataset.id))
 
     truncated_datasets = map_dict(lambda x: x.mtz.truncate_reflections(datasets_res_high),
                                   datasets,
