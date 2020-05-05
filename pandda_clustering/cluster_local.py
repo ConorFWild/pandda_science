@@ -122,14 +122,14 @@ def cluster(distances):
     return clusterer
 
 
-def sample_and_measure(reference_xmap,
-                       moving_dataset,
+def sample_and_measure(reference_sample_map,
+                       moving_xmap,
                        parameters,
                        ):
-    xmap = sample(moving_dataset,
+    sample_map = sample(moving_xmap,
                   parameters,
                   )
-    distance = np.mean(np.abs(reference_xmap - xmap))
+    distance = np.mean(np.abs(reference_sample_map - sample_map))
 
     return distance
 
@@ -143,7 +143,11 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
               (0, 2 * np.pi),
               )
 
-    reference_xmap = sample(reference_dataset,
+    reference_xmap = PanDDAXMap.from_dataset(reference_dataset)
+
+    moving_xmap = PanDDAXMap.from_dataset(moving_dataset)
+
+    reference_sample_map = sample(reference_xmap,
                             (reference_centre[0],
                              reference_centre[1],
                              reference_centre[2],
@@ -153,14 +157,14 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
                              ),
                             )
 
-    result = differential_evolution(lambda x: sample_and_measure(reference_xmap,
-                                                                 moving_dataset,
+    result = differential_evolution(lambda x: sample_and_measure(reference_sample_map,
+                                                                 moving_xmap,
                                                                  x,
                                                                  ),
                                     bounds,
                                     )
 
-    aligned_map = sample(moving_dataset,
+    aligned_map = sample(moving_xmap,
                          result.x,
                          )
 
@@ -239,7 +243,6 @@ def cluster_datasets(truncated_datasets,
                      residues,
                      ):
 
-    print(truncated_datasets)
     reference_dataset = get_reference_dataset(truncated_datasets)
 
     alignments = get_alignments(residues,
