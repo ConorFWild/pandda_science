@@ -10,7 +10,7 @@ class PanDDAXMap:
 
     @staticmethod
     def from_dataset(dataset, f="FWT", phi="PHWT", sample_rate=2.6):
-        grid = dataset.mtz.transform_f_phi_to_map(f,
+        grid = dataset.reflections.mtz.transform_f_phi_to_map(f,
                                                   phi,
                                                   sample_rate=sample_rate,
                                                   )
