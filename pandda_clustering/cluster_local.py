@@ -340,6 +340,7 @@ def visualise_clusters(clusters,
 
     for i, cluster in enumerate(clusters):
         for j, xmap in enumerate(cluster):
+            print(xmap.shape)
             image = np.mean(xmap, axis=0)
             axs[i, j].imshow(image)
 
