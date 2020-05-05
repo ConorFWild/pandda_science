@@ -322,9 +322,10 @@ def main():
     reference_dataset = get_reference_dataset(datasets)
     print("\tReference dataset name is {}".format(reference_dataset.id))
 
-    truncated_datasets = map_dict(lambda x: x.reflections.truncate_reflections(datasets_res_high),
+    map_dict(lambda x: x.reflections.truncate_reflections(datasets_res_high),
                                   datasets,
                                   )
+    truncated_datasets = datasets
     print("\tAfter truncation {} datasets".format(len(truncated_datasets)))
 
     for model in reference_dataset.structure.structure:
