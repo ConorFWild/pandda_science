@@ -205,9 +205,10 @@ def align_maps(reference_dataset, datasets, alignments):
 
 
 def get_reference_dataset(datasets):
-    reference_dataset = min(list(datasets.values()),
-                            key=lambda x: x.get_resolution_high(),
-                            )
+    # reference_dataset = min(list(datasets.values()),
+    #                         key=lambda x: x.get_resolution_high(),
+    #                         )
+    reference_dataset = np.random.choice(list(datasets.values()))
     return reference_dataset
 
 
