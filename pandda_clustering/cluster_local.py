@@ -162,6 +162,7 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
                                                                  x,
                                                                  ),
                                     bounds,
+                                    maxiter=20,
                                     )
 
     aligned_map = sample(moving_xmap,
@@ -174,6 +175,7 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
 def align_maps(reference_dataset, datasets, alignments):
     results = []
     for dtag, dataset in datasets.items():
+        print("\t\tAligning map {}".format(dtag))
         result = align_map(reference_dataset,
                            dataset,
                            alignments[reference_dataset.id],
