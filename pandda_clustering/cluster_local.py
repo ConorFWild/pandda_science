@@ -323,15 +323,19 @@ def main():
     truncated_datasets = map_dict(lambda x: x.reflections.truncate_reflections(datasets_res_high),
                                   datasets,
                                   )
+    print("\tAfter truncation {} datasets".format(len(truncated_datasets)))
 
     for model in reference_dataset.structure.structure:
         for chain in model:
             for residue in chain:
+
                 residue_id = (model.name, chain.name, residue.seqid.num)
+                print("\tWorking on dataset: {}".format())
 
                 residues = get_comparable_residues(datasets,
                                                    residue_id,
                                                    )
+                print("\tGot {} residues".format(len(residues)))
 
                 clusters = cluster_datasets(truncated_datasets,
                                             residues,
