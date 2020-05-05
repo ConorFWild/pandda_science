@@ -189,7 +189,7 @@ def align_maps(reference_dataset, datasets, alignments):
 
 
 def get_reference_dataset(datasets):
-    reference_dataset = min(datasets.values(),
+    reference_dataset = min(list(datasets.values()),
                             key=lambda x: x.get_resolution_high(),
                             )
     return reference_dataset
@@ -238,6 +238,8 @@ def get_unclustered_datasets(reference_dataset,
 def cluster_datasets(truncated_datasets,
                      residues,
                      ):
+
+    print(truncated_datasets)
     reference_dataset = get_reference_dataset(truncated_datasets)
 
     alignments = get_alignments(residues,
@@ -338,7 +340,7 @@ def main():
                 print("\tGot {} residues".format(len(residues)))
                 residues = {dtag: residue for dtag, residue in residues.items() if residue is not None}
                 print("\tGot {} residues".format(len(residues)))
-                
+
                 clusters = cluster_datasets(truncated_datasets,
                                             residues,
                                             )
