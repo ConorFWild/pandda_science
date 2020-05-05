@@ -111,6 +111,7 @@ def embed(numpy_maps):
 
 def cluster(distances):
     # Perform initial clustering
+    distances = distances.reshape(-1,1)
     clusterer = hdbscan.HDBSCAN(allow_single_cluster=True,
                                 prediction_data=True,
                                 min_cluster_size=5,
