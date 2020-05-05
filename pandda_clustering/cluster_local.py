@@ -57,7 +57,6 @@ class Args:
 
         args = parser.parse_args()
 
-        self.root_path = Path(args.root_dir)
         self.out_dir = Path(args.out_dir)
         self.n_procs = int(args.n_procs)
         self.pdb_regex = str(args.pdb_regex)
