@@ -332,9 +332,9 @@ def visualise_clusters(clusters,
                        path,
                        ):
     fig, axs = plt.subplots(nrows=len(clusters),
-                            ncols=max([len(clust) for clust in clusters]),
+                            ncols=10,
                             figsize=(len(clusters),
-                                     max(len(clust) for clust in clusters),
+                                     10,
                                      )
                             )
 
@@ -343,6 +343,8 @@ def visualise_clusters(clusters,
             print(xmap.shape)
             image = np.mean(xmap, axis=0)
             axs[i, j].imshow(image)
+            if j > 9:
+                break
 
     fig.savefig(str(path))
 
