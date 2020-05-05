@@ -280,6 +280,10 @@ def cluster_datasets(truncated_datasets,
                                                     cluster_distances,
                                                     )
     print("\tGot {} unclustered datasets".format(len(unclustered_datasets)))
+    
+    if len(unclustered_datasets) < 3:
+        print("Less than 3 maps: cannot cluster any more!")
+        return [aligned_maps] + [[x] for x in aligned_maps]
 
     if more_that_one_cluster(cluster_distances):
         return [aligned_maps] + [x for x in cluster_datasets(unclustered_datasets, residues)]
