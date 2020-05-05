@@ -45,7 +45,7 @@ def sample(xmap, parameters):
                          )
     rotation = np.matmul(rotation, scale)
 
-    trans = trans - np.matmul(rotation, np.array(shape, shape, shape)/2)
+    trans = trans - np.matmul(rotation, np.array([shape, shape, shape])/2)
 
     tr.mat.fromlist(rotation.tolist())
     tr.vec.fromlist(trans)
