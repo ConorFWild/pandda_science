@@ -245,7 +245,7 @@ def get_unclustered_datasets(reference_dataset,
     unclustered_datasets = {dtag: truncated_datasets[dtag]
                             for i, dtag
                             in enumerate(truncated_datasets)
-                            if cluster_distances[i] == reference_cluster
+                            if cluster_distances[i] != reference_cluster
                             }
 
     return unclustered_datasets, reference_cluster
