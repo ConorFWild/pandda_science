@@ -301,7 +301,6 @@ def cluster_datasets(truncated_datasets,
                     if cluster_distances[i] != reference_cluster
                     ]
 
-
     if len(unclustered_datasets) < 5:
         print("Less than 5 maps: cannot cluster any more!")
         return cluster_maps + [[x] for x in uncluster_maps]
@@ -339,13 +338,13 @@ def visualise_clusters(clusters,
                                      )
                             )
 
-
     for i, cluster in enumerate(clusters):
         for j, xmap in enumerate(cluster):
             image = np.mean(xmap, axis=0)
             axs[i, j].imshow(image)
 
     fig.savefig(str(path))
+
 
 def try_load(path):
     try:
@@ -399,6 +398,7 @@ def main():
                 clusters = cluster_datasets(truncated_datasets,
                                             residues,
                                             )
+                print("\tGot {} clusters".format(len(clusters)))
 
                 visualise_clusters(clusters,
                                    fs.output_dir / "{}.png".format(residue),
