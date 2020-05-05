@@ -324,7 +324,7 @@ def main():
                         fs.initial_model_dirs,
                         )
     datasets = {dtag: dataset for dtag, dataset in datasets.items() if dataset is not None}
-    datasets = {item[0]: item[1] for i, item in datasets.items() if i < 60}
+    datasets = {item[0]: item[1] for i, item in enumerate(datasets.items()) if i < 60}
     print("\tNumber of datasets is {}".format(len(datasets)))
 
     datasets_res_high = min([x.get_resolution_high() for x in datasets.values()])
