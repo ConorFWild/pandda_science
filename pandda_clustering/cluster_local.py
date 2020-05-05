@@ -152,9 +152,9 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
                             (reference_centre[0],
                              reference_centre[1],
                              reference_centre[2],
-                             0,
-                             0,
-                             0,
+                             np.pi,
+                             np.pi,
+                             np.pi,
                              ),
                             )
 
