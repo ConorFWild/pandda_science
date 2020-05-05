@@ -347,6 +347,7 @@ def visualise_clusters(clusters,
                 break
 
     fig.savefig(str(path))
+    plt.close(fig)
 
 
 def try_load(path):
