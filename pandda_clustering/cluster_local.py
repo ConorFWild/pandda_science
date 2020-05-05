@@ -306,7 +306,7 @@ def cluster_datasets(truncated_datasets,
         return [cluster_maps] + [[x] for x in uncluster_maps]
 
     if more_that_one_cluster(cluster_distances):
-        return [cluster_maps] + [[x] for x in cluster_datasets(unclustered_datasets, residues)]
+        return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, residues)]
     else:
         return [cluster_maps]
 
@@ -346,7 +346,6 @@ def visualise_clusters(clusters,
                 break
 
     fig.savefig(str(path))
-    fig.close()
 
 
 def try_load(path):
