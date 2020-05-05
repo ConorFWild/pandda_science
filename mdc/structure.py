@@ -6,5 +6,5 @@ class PanDDAStructure:
 
     @staticmethod
     def from_file(path):
-        structure = gemmi.read_structure(path)
-        return PanDDAStructure(str(structure))
+        structure = gemmi.read_structure(str(path))
+        return PanDDAStructure(structure)
