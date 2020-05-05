@@ -165,6 +165,9 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
                                     maxiter=20,
                                     )
 
+    print("\t\tResult parameters: {}".format(result.x))
+    print("\t\tResult parameters: {}".format(result.fun))
+
     aligned_map = sample(moving_xmap,
                          result.x,
                          )
