@@ -289,8 +289,8 @@ def cluster_datasets(truncated_datasets,
                     ]
 
 
-    if len(unclustered_datasets) < 3:
-        print("Less than 3 maps: cannot cluster any more!")
+    if len(unclustered_datasets) < 5:
+        print("Less than 5 maps: cannot cluster any more!")
         return [[x] for x in cluster_maps]
 
     if more_that_one_cluster(cluster_distances):
