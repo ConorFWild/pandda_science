@@ -320,7 +320,7 @@ def main():
     reference_dataset = get_reference_dataset(datasets)
     print("\tReference dataset name is {}".format(reference_dataset.id))
 
-    truncated_datasets = map_dict(lambda x: x.mtz.truncate_reflections(datasets_res_high),
+    truncated_datasets = map_dict(lambda x: x.reflections.truncate_reflections(datasets_res_high),
                                   datasets,
                                   )
 
