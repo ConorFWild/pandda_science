@@ -282,17 +282,21 @@ def cluster_datasets(truncated_datasets,
     print("\tGot {} unclustered datasets".format(len(unclustered_datasets)))
 
 
-    cluster_maps = [aligned_map for i, aligned_map in aligned_maps if cluster_distances[i] == reference_cluster]
+    cluster_maps = [aligned_map
+                    for i, aligned_map
+                    in enumerate(aligned_maps)
+                    if cluster_distances[i] == reference_cluster
+                    ]
 
 
     if len(unclustered_datasets) < 3:
         print("Less than 3 maps: cannot cluster any more!")
-        return [aligned_maps] + [[x] for x in aligned_maps]
+        return [[x] for x in cluster_maps]
 
     if more_that_one_cluster(cluster_distances):
-        return [aligned_maps] + [x for x in cluster_datasets(unclustered_datasets, residues)]
+        return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, residues)]
     else:
-        return [aligned_maps]
+        return [cluster_maps]
 
 
 def get_comparable_residues(datasets,
