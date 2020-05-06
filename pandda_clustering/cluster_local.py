@@ -7,6 +7,7 @@ import pandas as pd
 from scipy.optimize import differential_evolution, shgo
 
 import hdbscan
+from sklearn.mixture import BayesianGaussianMixture
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
@@ -64,7 +65,6 @@ class Args:
         self.data_dirs = Path(args.data_dirs)
 
 
-
 class ClusterFSModel:
     def __init__(self,
                  input_dir,
@@ -111,7 +111,7 @@ def embed(numpy_maps):
 
 def cluster(distances):
     # Perform initial clustering
-    distances = np.array(distances).reshape(-1,1)
+    distances = np.array(distances).reshape(-1, 1)
     clusterer = hdbscan.HDBSCAN(allow_single_cluster=True,
                                 prediction_data=True,
                                 min_cluster_size=5,
@@ -128,8 +128,8 @@ def sample_and_measure(reference_sample_map,
                        parameters,
                        ):
     sample_map = sample(moving_xmap,
-                  parameters,
-                  )
+                        parameters,
+                        )
     distance = np.mean(np.abs(reference_sample_map - sample_map))
 
     return distance
@@ -149,14 +149,14 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
     moving_xmap = PanDDAXMap.from_dataset(moving_dataset)
 
     reference_sample_map = sample(reference_xmap,
-                            (reference_centre[0],
-                             reference_centre[1],
-                             reference_centre[2],
-                             np.pi,
-                             np.pi,
-                             np.pi,
-                             ),
-                            )
+                                  (reference_centre[0],
+                                   reference_centre[1],
+                                   reference_centre[2],
+                                   np.pi,
+                                   np.pi,
+                                   np.pi,
+                                   ),
+                                  )
 
     # result = differential_evolution(lambda x: sample_and_measure(reference_sample_map,
     #                                                              moving_xmap,
@@ -166,11 +166,11 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
     #                                 maxiter=20,
     #                                 )
     result = shgo(lambda x: sample_and_measure(reference_sample_map,
-                                                                 moving_xmap,
-                                                                 x,
-                                                                 ),
-                                    bounds,
-                                    )
+                                               moving_xmap,
+                                               x,
+                                               ),
+                  bounds,
+                  )
 
     print("\t\tResult parameters: {}".format(result.x))
     print("\t\tResult parameters: {}".format(result.fun))
@@ -252,10 +252,18 @@ def get_unclustered_datasets(reference_dataset,
     return unclustered_datasets, reference_cluster
 
 
+def cluster_maps_hdbscan(aligned_maps):
+    flatmaps = np.vstack([aligned_map.flatten() for aligned_map in aligned_maps])
+    clusterer = hdbscan.HDBSCAN(allow_single_cluster=True)
+
+    clusterer.fit(flatmaps.astype(np.float64))
+
+    return clusterer.labels_
+
+
 def cluster_datasets(truncated_datasets,
                      residues,
                      ):
-
     print("\tClustering {} datasets".format(len(truncated_datasets)))
 
     reference_dataset = get_reference_dataset(truncated_datasets)
@@ -273,38 +281,38 @@ def cluster_datasets(truncated_datasets,
 
     # cluster_distances = cluster(distances)
     cluster_distances = []
-    for distance in distances:
-        if distance< 0.1:
-            cluster_distances.append(0)
-        else:
-            cluster_distances.append(1)
-    cluster_distances = np.array(cluster_distances)
+    # for distance in distances:
+    #     if distance< 0.1:
+    #         cluster_distances.append(0)
+    #     else:
+    #         cluster_distances.append(1)
+    # cluster_distances = np.array(cluster_distances)
+    cluster_distances = cluster_maps_hdbscan(aligned_maps)
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
                                                              return_counts=True,
                                                              )))
 
     unclustered_datasets, reference_cluster = get_unclustered_datasets(reference_dataset,
-                                                    truncated_datasets,
-                                                    cluster_distances,
-                                                    )
+                                                                       truncated_datasets,
+                                                                       cluster_distances,
+                                                                       )
     print("\tGot {} unclustered datasets".format(len(unclustered_datasets)))
 
-
-    cluster_maps = [aligned_map
-                    for i, aligned_map
-                    in enumerate(aligned_maps)
+    cluster_maps = {dtag: aligned_maps[i]
+                    for i, dtag
+                    in enumerate(list(residues.keys))
                     if cluster_distances[i] == reference_cluster
-                    ]
+                    }
 
-    uncluster_maps = [aligned_map
-                    for i, aligned_map
-                    in enumerate(aligned_maps)
-                    if cluster_distances[i] != reference_cluster
-                    ]
+    uncluster_maps = {dtag: aligned_maps[i]
+                      for i, dtag
+                      in enumerate(list(residues.keys()))
+                      if cluster_distances[i] != reference_cluster
+                      }
 
     if len(unclustered_datasets) < 5:
         print("Less than 5 maps: cannot cluster any more!")
-        return [cluster_maps] + [[x] for x in uncluster_maps]
+        return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
     if more_that_one_cluster(cluster_distances):
         return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, residues)]
@@ -335,12 +343,12 @@ def visualise_clusters(clusters,
     fig, axs = plt.subplots(nrows=len(clusters),
                             ncols=10,
                             figsize=(10,
-                                     len(clusters) ,
+                                     len(clusters),
                                      )
                             )
 
     for i, cluster in enumerate(clusters):
-        for j, xmap in enumerate(cluster):
+        for j, xmap in enumerate(cluster.values()):
             image = np.mean(xmap, axis=0)
             axs[i, j].imshow(image)
             if j == 9:
@@ -357,6 +365,23 @@ def try_load(path):
     except Exception as e:
         print(e)
         return None
+
+
+def output_csv(clusters,
+               path,
+               ):
+    records = []
+    for i, cluster in enumerate(clusters):
+        for dtag, xmap in cluster.items():
+            record = {}
+            record["dtag"] = dtag
+            record["cluster"] = i
+
+    table = pd.DataFrame(records)
+
+    table.to_csv(str(path))
+
+    return table
 
 
 def main():
@@ -380,15 +405,15 @@ def main():
     print("\tReference dataset name is {}".format(reference_dataset.id))
 
     map_dict(lambda x: x.reflections.truncate_reflections(datasets_res_high),
-                                  datasets,
-                                  )
+             datasets,
+             )
     truncated_datasets = datasets
     print("\tAfter truncation {} datasets".format(len(truncated_datasets)))
 
+    tables = {}
     for model in reference_dataset.structure.structure:
         for chain in model:
             for residue in chain:
-
                 residue_id = (model.name, chain.name, residue.seqid.num)
                 print("\tWorking on dataset: {}".format(residue_id))
 
@@ -404,9 +429,25 @@ def main():
                                             )
                 print("\tGot {} clusters".format(len(clusters)))
 
-                visualise_clusters(clusters,
-                                   fs.output_dir / "{}.png".format(residue),
+                table = output_csv(clusters,
+                                   fs.output_dir / "{}_{}_{}.csv".format(residue_id[0],
+                                                                         residue_id[1],
+                                                                         residue_id[2], ),
                                    )
+                tables[residue_id] = table
+
+                visualise_clusters(clusters,
+                                   fs.output_dir / "{}_{}_{}.png".format(residue_id[0],
+                                                                         residue_id[1],
+                                                                         residue_id[2], ),
+                                   )
+    for resid, table in tables.items():
+        table["model"] = resid[0]
+        table["chain"] = resid[1]
+        table["num"] = resid[2]
+
+    all_tables = pd.concat(list(tables.values()))
+    all_tables.to_csv(str(fs.output_dir / "all_tables.csv"))
 
 
 if __name__ == "__main__":
