@@ -305,6 +305,7 @@ def cluster_datasets(truncated_datasets,
                                                                        cluster_distances,
                                                                        )
     print("\tGot {} unclustered datasets".format(len(unclustered_datasets)))
+    print("\tReference cluster is {}".format(reference_cluster))
 
     cluster_maps = {dtag: aligned_maps[i]
                     for i, dtag
