@@ -242,12 +242,19 @@ def get_unclustered_datasets(reference_dataset,
     arg = np.argwhere(key_array == reference_id)
 
     reference_cluster = cluster_distances[arg]
-
-    unclustered_datasets = {dtag: truncated_datasets[dtag]
+    if reference_cluster == -1:
+        unclustered_datasets = {dtag: truncated_datasets[dtag]
                             for i, dtag
                             in enumerate(truncated_datasets)
-                            if cluster_distances[i] != reference_cluster
+                            if dtag != reference_id
                             }
+
+    else:
+        unclustered_datasets = {dtag: truncated_datasets[dtag]
+                                for i, dtag
+                                in enumerate(truncated_datasets)
+                                if cluster_distances[i] != reference_cluster
+                                }
 
     return unclustered_datasets, reference_cluster
 
