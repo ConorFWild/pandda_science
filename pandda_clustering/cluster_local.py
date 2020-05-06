@@ -243,6 +243,7 @@ def get_unclustered_datasets(reference_dataset,
 
     reference_cluster = cluster_distances[arg]
     if reference_cluster == -1:
+        print("\t\tReference dataset is on its own!")
         unclustered_datasets = {dtag: truncated_datasets[dtag]
                             for i, dtag
                             in enumerate(truncated_datasets)
