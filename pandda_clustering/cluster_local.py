@@ -308,7 +308,7 @@ def cluster_datasets(truncated_datasets,
 
     cluster_maps = {dtag: aligned_maps[i]
                     for i, dtag
-                    in enumerate(list(residues.keys))
+                    in enumerate(list(residues.keys()))
                     if cluster_distances[i] == reference_cluster
                     }
 
