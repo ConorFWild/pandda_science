@@ -94,7 +94,7 @@ def truncate_dataset():
 
 def embed(numpy_maps):
     # Convert to sample by feature
-    sample_by_feature = np.vstack(numpy_maps)
+    sample_by_feature = np.vstack([xmap.flatten() for xmap in numpy_maps])
 
     # Reduce dimension by PCA
     pca = PCA(n_components=min(50, len(numpy_maps)))
@@ -245,10 +245,10 @@ def get_unclustered_datasets(reference_dataset,
     if reference_cluster == -1:
         print("\t\tReference dataset is on its own!")
         unclustered_datasets = {dtag: truncated_datasets[dtag]
-                            for i, dtag
-                            in enumerate(truncated_datasets)
-                            if dtag != reference_id
-                            }
+                                for i, dtag
+                                in enumerate(truncated_datasets)
+                                if dtag != reference_id
+                                }
 
     else:
         unclustered_datasets = {dtag: truncated_datasets[dtag]
@@ -269,8 +269,24 @@ def cluster_maps_hdbscan(aligned_maps):
     return clusterer.labels_
 
 
+def plot(aligned_maps,
+         cluster_distances,
+         path,
+         ):
+    embeding = embed(aligned_maps)
+
+    fig, ax = plt.subplots()
+    ax.scatter(embeding[:, 0],
+               embeding[:, 1],
+               c=cluster_distances,
+               )
+    fig.savefig(str(path))
+    plt.close(fig)
+
+
 def cluster_datasets(truncated_datasets,
                      residues,
+                     out_dir,
                      ):
     print("\tClustering {} datasets".format(len(truncated_datasets)))
 
@@ -318,6 +334,11 @@ def cluster_datasets(truncated_datasets,
                       in enumerate(list(residues.keys()))
                       if cluster_distances[i] != reference_cluster
                       }
+
+    plot(aligned_maps,
+         cluster_distances,
+         out_dir / "{}.png".format(reference_dataset),
+         )
 
     if len(unclustered_datasets) < 5:
         print("Less than 5 maps: cannot cluster any more!")
