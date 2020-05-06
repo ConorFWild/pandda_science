@@ -283,6 +283,7 @@ def plot(aligned_maps,
     fig.savefig(str(path))
     plt.close(fig)
 
+
 def cluster_embedded_maps_hdbscan(aligned_maps):
     embeding = embed(aligned_maps)
     clusterer = hdbscan.HDBSCAN(allow_single_cluster=True)
