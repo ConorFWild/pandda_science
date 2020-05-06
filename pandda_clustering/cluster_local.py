@@ -349,7 +349,7 @@ def cluster_datasets(truncated_datasets,
 
     plot(aligned_maps,
          cluster_distances,
-         out_dir / "{}.png".format(reference_dataset),
+         out_dir / "{}.png".format(reference_dataset.id),
          )
 
     if len(unclustered_datasets) < 5:
