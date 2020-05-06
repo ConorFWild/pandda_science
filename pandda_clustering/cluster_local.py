@@ -184,10 +184,10 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
 
 def align_maps(reference_dataset, datasets, alignments):
     results = []
-    for dtag, dataset in datasets.items():
+    for dtag, alignment in alignments.items():
         print("\t\tAligning map {}".format(dtag))
         result = align_map(reference_dataset,
-                           dataset,
+                           datasets[dtag],
                            alignments[reference_dataset.id],
                            alignments[dtag],
                            )
