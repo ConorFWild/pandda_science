@@ -334,6 +334,7 @@ def cluster_datasets(truncated_datasets,
                       in enumerate(list(residues.keys()))
                       if cluster_distances[i] != reference_cluster
                       }
+    unclustered_residues = {dtag: residues[dtag] for dtag in unclustered_datasets}
 
     plot(aligned_maps,
          cluster_distances,
@@ -345,7 +346,7 @@ def cluster_datasets(truncated_datasets,
         return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
     if more_that_one_cluster(cluster_distances):
-        return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, residues)]
+        return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, unclustered_residues, out_dir)]
     else:
         return [cluster_maps]
 
@@ -456,6 +457,7 @@ def main():
 
                 clusters = cluster_datasets(truncated_datasets,
                                             residues,
+                                            fs.output_dir,
                                             )
                 print("\tGot {} clusters".format(len(clusters)))
 
