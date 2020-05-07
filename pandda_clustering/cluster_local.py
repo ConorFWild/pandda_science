@@ -293,9 +293,10 @@ def cluster_embedded_maps_hdbscan(aligned_maps):
     return clusterer.labels_
 
 def cluster_vbgm(aligned_maps):
-    sample_by_features = np.vstack([xmap.flatten() for xmap in aligned_maps])
+    # sample_by_features = np.vstack([xmap.flatten() for xmap in aligned_maps])
+    embedding = embed(aligned_maps)
     clusterer = BayesianGaussianMixture(n_components=10)
-    return clusterer.fit_predict(sample_by_features)
+    return clusterer.fit_predict(embedding)
 
 
 def cluster_datasets(truncated_datasets,
