@@ -297,10 +297,11 @@ def cluster_embedded_maps_hdbscan(aligned_maps):
 
 
 def cluster_embedded_maps_optics(aligned_maps):
-    embeding = embed(aligned_maps)
+    # embeding = embed(aligned_maps)
+    embedding = np.vstack([xmap.flatten() for xmap in aligned_maps])
     clusterer = OPTICS()
 
-    clusterer.fit(embeding.astype(np.float64))
+    clusterer.fit(embedding.astype(np.float64))
 
     return clusterer.labels_
 
