@@ -10,7 +10,7 @@ import hdbscan
 from sklearn.mixture import BayesianGaussianMixture
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-from sklearn.cluster import OPTICS
+from sklearn.cluster import OPTICS, DBSCAN
 
 import matplotlib.pyplot as plt
 
@@ -295,6 +295,13 @@ def cluster_embedded_maps_hdbscan(aligned_maps):
 
     return clusterer.labels_
 
+def cluster_dbscan(aligned_maps):
+    embedding = np.vstack([xmap.flatten() for xmap in aligned_maps])
+    clusterer = DBSCAN(eps=0.5)
+    clusterer.fit(embedding.astype(np.float64))
+
+    return clusterer.labels_
+
 
 def cluster_embedded_maps_optics(aligned_maps):
     # embeding = embed(aligned_maps)
@@ -340,9 +347,11 @@ def cluster_datasets(truncated_datasets,
     #     else:
     #         cluster_distances.append(1)
     # cluster_distances = np.array(cluster_distances)
-    cluster_distances = cluster_embedded_maps_hdbscan(aligned_maps)
+    # cluster_distances = cluster_embedded_maps_hdbscan(aligned_maps)
     # cluster_distances = cluster_vbgm(aligned_maps)
     # cluster_distances = cluster_embedded_maps_optics(aligned_maps)
+    cluster_distances = cluster_dbscan(aligned_maps)
+
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
                                                              return_counts=True,
                                                              )))
