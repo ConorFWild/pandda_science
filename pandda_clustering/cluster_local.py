@@ -489,6 +489,8 @@ def main():
         for chain in model:
             for residue in chain:
                 residue_id = (model.name, chain.name, residue.seqid.num)
+                if residue_id[2] < 250:
+                    continue
                 print("\tWorking on dataset: {}".format(residue_id))
 
                 residues = get_comparable_residues(datasets,
