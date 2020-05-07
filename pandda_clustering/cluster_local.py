@@ -288,7 +288,7 @@ def plot(aligned_maps,
 def cluster_embedded_maps_hdbscan(aligned_maps):
     embeding = embed(aligned_maps)
     clusterer = hdbscan.HDBSCAN(allow_single_cluster=True,
-                                min_cluster_size=5,
+                                # min_cluster_size=5,
                                 )
 
     clusterer.fit(embeding.astype(np.float64))
@@ -340,9 +340,9 @@ def cluster_datasets(truncated_datasets,
     #     else:
     #         cluster_distances.append(1)
     # cluster_distances = np.array(cluster_distances)
-    # cluster_distances = cluster_embedded_maps_hdbscan(aligned_maps)
+    cluster_distances = cluster_embedded_maps_hdbscan(aligned_maps)
     # cluster_distances = cluster_vbgm(aligned_maps)
-    cluster_distances = cluster_embedded_maps_optics(aligned_maps)
+    # cluster_distances = cluster_embedded_maps_optics(aligned_maps)
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
                                                              return_counts=True,
                                                              )))
