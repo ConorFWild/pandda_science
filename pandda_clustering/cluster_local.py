@@ -447,6 +447,7 @@ def output_csv(clusters,
             record = {}
             record["dtag"] = dtag
             record["cluster"] = i
+            records.append(record)
 
     table = pd.DataFrame(records)
     print(table.head())
