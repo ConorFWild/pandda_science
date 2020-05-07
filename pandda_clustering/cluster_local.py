@@ -215,11 +215,11 @@ def get_reference_dataset(datasets):
 
 def more_that_one_cluster(clusters):
     clusters_non_negative = clusters[clusters >= 0]
-    if len(np.unique(clusters)) == 0:
+    if len(np.unique(clusters_non_negative)) == 0:
         return False
-    if len(np.unique(clusters)) == 1:
+    if len(np.unique(clusters_non_negative)) == 1:
         return False
-    if len(np.unique(clusters)) > 1:
+    if len(np.unique(clusters_non_negative)) > 1:
         return True
 
 
