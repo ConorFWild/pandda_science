@@ -388,7 +388,7 @@ def cluster_datasets(truncated_datasets,
     if more_that_one_cluster(cluster_distances):
         return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, unclustered_residues, out_dir)]
     else:
-        return [cluster_maps]
+        return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
 
 def get_comparable_residues(datasets,
