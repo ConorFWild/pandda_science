@@ -426,6 +426,7 @@ def output_csv(clusters,
             record["cluster"] = i
 
     table = pd.DataFrame(records)
+    print(table.head())
 
     table.to_csv(str(path))
 
