@@ -292,7 +292,10 @@ def cluster_embedded_maps_hdbscan(aligned_maps):
 
     return clusterer.labels_
 
-
+def cluster_vbgm(aligned_maps):
+    sample_by_features = np.vstack([xmap.flatten() for xmap in aligned_maps])
+    clusterer = BayesianGaussianMixture(n_components=10)
+    return clusterer.fit_predict(sample_by_features)
 
 
 def cluster_datasets(truncated_datasets,
@@ -323,6 +326,8 @@ def cluster_datasets(truncated_datasets,
     #         cluster_distances.append(1)
     # cluster_distances = np.array(cluster_distances)
     cluster_distances = cluster_embedded_maps_hdbscan(aligned_maps)
+    cluster_distances = cluster_vbgm(aligned_maps)
+
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
                                                              return_counts=True,
                                                              )))
