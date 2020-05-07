@@ -297,7 +297,7 @@ def cluster_embedded_maps_hdbscan(aligned_maps):
 
 def cluster_dbscan(aligned_maps):
     embedding = np.vstack([xmap.flatten() for xmap in aligned_maps])
-    clusterer = DBSCAN(eps=0.5)
+    clusterer = DBSCAN(eps=5)
     clusterer.fit(embedding.astype(np.float64))
 
     return clusterer.labels_
