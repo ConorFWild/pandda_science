@@ -419,9 +419,10 @@ def visualise_clusters(clusters,
                             )
 
     for i, cluster in enumerate(clusters):
-        for j, xmap in enumerate(cluster.values()):
-            image = np.mean(xmap, axis=0)
+        for j, dtag in enumerate(cluster.keys()):
+            image = np.mean(cluster[dtag], axis=0)
             axs[i, j].imshow(image)
+            axs[i, j].set_title(str(dtag))
             if j == 9:
                 break
 
