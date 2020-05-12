@@ -438,7 +438,7 @@ def visualise_clusters(clusters,
     plt.close(fig)
 
 
-def try_load(path, mtz_regex="dimple_twin.mtz", pdb_regex="dimple_twin.mtz"):
+def try_load(path, mtz_regex="dimple_twin.mtz", pdb_regex="dimple_twin.pdb"):
     try:
         dataset = PanDDADataset.from_dir(path,
                                          mtz_regex=mtz_regex,
