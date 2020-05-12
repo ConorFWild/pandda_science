@@ -319,6 +319,15 @@ def cluster_vbgm(aligned_maps):
     clusterer = BayesianGaussianMixture(n_components=10)
     return clusterer.fit_predict(embedding)
 
+def cluster_cutoff(aligned_maps, distances, cutoff=0.1):
+    clusters = []
+    for distance in distances:
+        if distance < cutoff:
+            clusters.append(1)
+        else:
+            clusters.append(0)
+
+    return clusters
 
 def cluster_datasets(truncated_datasets,
                      residues,
@@ -350,7 +359,11 @@ def cluster_datasets(truncated_datasets,
     # cluster_distances = cluster_embedded_maps_hdbscan(aligned_maps)
     # cluster_distances = cluster_vbgm(aligned_maps)
     # cluster_distances = cluster_embedded_maps_optics(aligned_maps)
-    cluster_distances = cluster_dbscan(aligned_maps)
+    # cluster_distances = cluster_dbscan(aligned_maps)
+    cluster_distances = cluster_cutoff(aligned_maps,
+                                       distances,
+                                       )
+
 
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
                                                              return_counts=True,
