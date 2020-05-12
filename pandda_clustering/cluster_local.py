@@ -242,6 +242,10 @@ def get_unclustered_datasets(reference_dataset,
 
     arg = np.argwhere(key_array == reference_id)
 
+    print(cluster_distances)
+
+    print(arg)
+
     reference_cluster = cluster_distances[arg]
     if reference_cluster == -1:
         print("\t\tReference dataset is on its own!")
