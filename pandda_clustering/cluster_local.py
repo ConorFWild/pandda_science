@@ -307,6 +307,17 @@ def cluster_dbscan(aligned_maps):
     return clusterer.labels_
 
 
+def cluster_hdbscan(aligned_maps):
+    embedding = np.vstack([xmap.flatten() for xmap in aligned_maps])
+    clusterer = hdbscan.HDBSCAN(allow_single_cluster=True,
+                                # min_cluster_size=5,
+                                )
+
+    clusterer.fit(embedding.astype(np.float64))
+
+    return clusterer.labels_
+
+
 def cluster_embedded_maps_optics(aligned_maps):
     # embeding = embed(aligned_maps)
     embedding = np.vstack([xmap.flatten() for xmap in aligned_maps])
@@ -365,9 +376,10 @@ def cluster_datasets(truncated_datasets,
     # cluster_distances = cluster_vbgm(aligned_maps)
     # cluster_distances = cluster_embedded_maps_optics(aligned_maps)
     # cluster_distances = cluster_dbscan(aligned_maps)
-    cluster_distances = cluster_cutoff(aligned_maps,
-                                       distances,
-                                       )
+    # cluster_distances = cluster_cutoff(aligned_maps,
+    #                                    distances,
+    #                                    )
+    cluster_distances = cluster_hdbscan(aligned_maps)
 
 
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
@@ -404,6 +416,9 @@ def cluster_datasets(truncated_datasets,
         return [{reference_dataset.id: reference_map}] + [x for x in cluster_datasets(unclustered_datasets,
                                                                                       unclustered_residues,
                                                                                       out_dir)]
+
+    # if single is True:
+    #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
     if more_that_one_cluster(cluster_distances):
         return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, unclustered_residues, out_dir)]
