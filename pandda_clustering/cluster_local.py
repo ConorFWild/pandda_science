@@ -327,7 +327,8 @@ def cluster_cutoff(aligned_maps, distances, cutoff=0.1):
         else:
             clusters.append(0)
 
-    return clusters
+    return np.array(clusters)
+
 
 def cluster_datasets(truncated_datasets,
                      residues,
