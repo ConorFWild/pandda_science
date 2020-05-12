@@ -381,14 +381,22 @@ def cluster_datasets(truncated_datasets,
          out_dir / "{}.png".format(reference_dataset.id),
          )
 
-    if len(unclustered_datasets) < 5:
-        print("Less than 5 maps: cannot cluster any more!")
-        return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
+    if reference_cluster == -1:
+        reference_map = aligned_maps[list(residues.keys()).index(reference_dataset.id)]
+        return [{reference_dataset.id: reference_map}] + [x for x in cluster_datasets(unclustered_datasets,
+                                                                                      unclustered_residues,
+                                                                                      out_dir)]
 
     if more_that_one_cluster(cluster_distances):
         return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, unclustered_residues, out_dir)]
     else:
         return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
+    #
+    # if len(unclustered_datasets) < 5:
+    #     print("Less than 5 maps: cannot cluster any more!")
+    #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
+
+
 
 
 def get_comparable_residues(datasets,
