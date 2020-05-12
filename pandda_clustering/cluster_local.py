@@ -323,7 +323,7 @@ def cluster_vbgm(aligned_maps):
     clusterer = BayesianGaussianMixture(n_components=10)
     return clusterer.fit_predict(embedding)
 
-def cluster_cutoff(aligned_maps, distances, cutoff=0.1):
+def cluster_cutoff(aligned_maps, distances, cutoff=0.15):
     clusters = []
     for distance in distances:
         if distance < cutoff:
@@ -331,7 +331,7 @@ def cluster_cutoff(aligned_maps, distances, cutoff=0.1):
         else:
             clusters.append(0)
 
-    return np.array(clusters)
+    return np.array(clusters, dtype=np.int)
 
 
 def cluster_datasets(truncated_datasets,
