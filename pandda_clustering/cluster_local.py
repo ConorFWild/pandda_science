@@ -345,6 +345,33 @@ def cluster_cutoff(aligned_maps, distances, cutoff=0.15):
     return np.array(clusters, dtype=np.int)
 
 
+def cluster_angles(aligned_maps, reference_idx, cutoff=32*32*32*0.1):
+
+    reference_xmap = aligned_maps[reference_idx]
+
+
+    clusters = []
+    for xmap in aligned_maps:
+        mask_less = xmap < reference_xmap
+        mask_equals = xmap == reference_xmap
+        mask_greater = xmap > reference_xmap
+
+        diff = sum(mask_less) - sum(mask_greater)
+
+        print(diff)
+
+        if diff > cutoff:
+            clusters.append(1)
+
+        elif diff < -1*cutoff:
+            clusters.append(1)
+
+        else:
+            clusters.append(0)
+
+    return np.array(clusters, dtype=np.int)
+
+
 def cluster_datasets(truncated_datasets,
                      residues,
                      out_dir,
@@ -379,8 +406,10 @@ def cluster_datasets(truncated_datasets,
     # cluster_distances = cluster_cutoff(aligned_maps,
     #                                    distances,
     #                                    )
-    cluster_distances = cluster_hdbscan(aligned_maps)
-
+    # cluster_distances = cluster_hdbscan(aligned_maps)
+    cluster_distances = cluster_angles(aligned_maps,
+                                       list(residues.keys()).index(reference_dataset.id),
+                                       )
 
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
                                                              return_counts=True,
