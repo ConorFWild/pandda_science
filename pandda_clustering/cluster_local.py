@@ -357,6 +357,7 @@ def cluster_angles(aligned_maps, reference_idx, cutoff=32*32*32*0.1):
         mask_greater = np.greater(xmap, reference_xmap)
         print(mask_less.shape)
         print(np.less(xmap, reference_xmap).shape)
+        print(np.sum(np.less(xmap, reference_xmap)).shape)
 
         diff = sum(mask_less) - sum(mask_greater)
 
