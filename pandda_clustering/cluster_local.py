@@ -413,7 +413,7 @@ def get_extrema(aligned_maps, p=0.05):
 
     return extrema
 
-def cluster_datasets(truncated_datasets,
+def cluster_datasets_dep(truncated_datasets,
                      residues,
                      out_dir,
                      ):
@@ -506,6 +506,52 @@ def cluster_datasets(truncated_datasets,
     # #     print("Less than 5 maps: cannot cluster any more!")
     # #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
+def gaussian_distance(samples, model):
+    return np.array([np.linalg.norm(sample) for sample in samples])
+
+
+def sample_outlier_distance(model):
+    samples = model.sample(20000)
+    distances = gaussian_distance(samples, model)
+    sorted_distances = np.sort(distances)
+    outlier_distance = np.quantile(sorted_distances, 0.95)
+    return outlier_distance
+
+
+def cluster_datasets_dep(truncated_datasets,
+                     residues,
+                     out_dir,
+                     ):
+    print("\tClustering {} datasets".format(len(truncated_datasets)))
+
+    reference_dataset = get_reference_dataset(truncated_datasets)
+
+    alignments = get_alignments(residues,
+                                )
+
+    aligned_maps, distances = align_maps(reference_dataset,
+                                         truncated_datasets,
+                                         alignments,
+                                         )
+    print("\tRange of distances is {} {}".format(min(distances),
+                                                 max(distances),
+                                                 ))
+
+    model = BayesianGaussianMixture(n_components=1)
+    model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
+    outlier_distance = sample_outlier_distance(model)
+    print(outlier_distance)
+    outliers = []
+    for xmap in aligned_maps:
+        distance = gaussian_distance(xmap.flatten(), model)
+        print(distance)
+        if distance > outlier_distance:
+            outliers.append(1)
+        else:
+            outliers.append(0)
+
+
+    return [{dtag: aligned_maps[i] for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 0}] + [{dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 1]
 
 
 
