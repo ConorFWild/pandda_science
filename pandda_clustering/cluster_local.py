@@ -406,8 +406,11 @@ def get_extrema(aligned_maps, p=0.05):
         low = np.count_nonzero(img < num_maps*(p))
         outliers = high + low
         print(high, low, outliers)
-        extrema.append(outliers)
-        
+        if high > 1700:
+            extrema.append(1)
+        else:
+            extrema.append(0)
+
     return extrema
 
 def cluster_datasets(truncated_datasets,
@@ -448,58 +451,60 @@ def cluster_datasets(truncated_datasets,
     # cluster_distances = cluster_angles(aligned_maps,
     #                                    list(residues.keys()).index(reference_dataset.id),
     #                                    )
-    get_extrema(aligned_maps)
+    extrema = get_extrema(aligned_maps)
 
-    plot_distributions(aligned_maps,
-                       out_dir,
-                       )
+    return [{dtag: aligned_maps[i] for i, dtag in enumerate(list(residues.keys())) if extrema[i] == 0}] + [{dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if extrema[i] == 1]
 
-    print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
-                                                             return_counts=True,
-                                                             )))
-
-    unclustered_datasets, reference_cluster = get_unclustered_datasets(reference_dataset,
-                                                                       truncated_datasets,
-                                                                       cluster_distances,
-                                                                       )
-    print("\tGot {} unclustered datasets".format(len(unclustered_datasets)))
-    print("\tReference cluster is {}".format(reference_cluster))
-
-    cluster_maps = {dtag: aligned_maps[i]
-                    for i, dtag
-                    in enumerate(list(residues.keys()))
-                    if cluster_distances[i] == reference_cluster
-                    }
-
-    uncluster_maps = {dtag: aligned_maps[i]
-                      for i, dtag
-                      in enumerate(list(residues.keys()))
-                      if cluster_distances[i] != reference_cluster
-                      }
-    unclustered_residues = {dtag: residues[dtag] for dtag in unclustered_datasets}
-
-    plot(aligned_maps,
-         cluster_distances,
-         out_dir / "{}.png".format(reference_dataset.id),
-         )
-
-    if reference_cluster == -1:
-        reference_map = aligned_maps[list(residues.keys()).index(reference_dataset.id)]
-        return [{reference_dataset.id: reference_map}] + [x for x in cluster_datasets(unclustered_datasets,
-                                                                                      unclustered_residues,
-                                                                                      out_dir)]
-
-    # if single is True:
-    #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
-
-    if more_that_one_cluster(cluster_distances):
-        return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, unclustered_residues, out_dir)]
-    else:
-        return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
+    # plot_distributions(aligned_maps,
+    #                    out_dir,
+    #                    )
     #
-    # if len(unclustered_datasets) < 5:
-    #     print("Less than 5 maps: cannot cluster any more!")
+    # print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
+    #                                                          return_counts=True,
+    #                                                          )))
+
+    # unclustered_datasets, reference_cluster = get_unclustered_datasets(reference_dataset,
+    #                                                                    truncated_datasets,
+    #                                                                    cluster_distances,
+    #                                                                    )
+    # print("\tGot {} unclustered datasets".format(len(unclustered_datasets)))
+    # print("\tReference cluster is {}".format(reference_cluster))
+    #
+    # cluster_maps = {dtag: aligned_maps[i]
+    #                 for i, dtag
+    #                 in enumerate(list(residues.keys()))
+    #                 if cluster_distances[i] == reference_cluster
+    #                 }
+    #
+    # uncluster_maps = {dtag: aligned_maps[i]
+    #                   for i, dtag
+    #                   in enumerate(list(residues.keys()))
+    #                   if cluster_distances[i] != reference_cluster
+    #                   }
+    # unclustered_residues = {dtag: residues[dtag] for dtag in unclustered_datasets}
+    #
+    # plot(aligned_maps,
+    #      cluster_distances,
+    #      out_dir / "{}.png".format(reference_dataset.id),
+    #      )
+    #
+    # if reference_cluster == -1:
+    #     reference_map = aligned_maps[list(residues.keys()).index(reference_dataset.id)]
+    #     return [{reference_dataset.id: reference_map}] + [x for x in cluster_datasets(unclustered_datasets,
+    #                                                                                   unclustered_residues,
+    #                                                                                   out_dir)]
+    #
+    # # if single is True:
+    # #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
+    #
+    # if more_that_one_cluster(cluster_distances):
+    #     return [cluster_maps] + [x for x in cluster_datasets(unclustered_datasets, unclustered_residues, out_dir)]
+    # else:
     #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
+    # #
+    # # if len(unclustered_datasets) < 5:
+    # #     print("Less than 5 maps: cannot cluster any more!")
+    # #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
 
 
