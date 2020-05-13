@@ -345,34 +345,54 @@ def cluster_cutoff(aligned_maps, distances, cutoff=0.15):
     return np.array(clusters, dtype=np.int)
 
 
-def cluster_angles(aligned_maps, reference_idx, cutoff=32*32*32*0.1):
+# def cluster_angles(aligned_maps, reference_idx, cutoff=32*32*32*0.1):
+#
+#     reference_xmap = aligned_maps[reference_idx]
+#
+#
+#     clusters = []
+#     for xmap in aligned_maps:
+#         mask_less = np.less(xmap, reference_xmap)
+#         mask_equals = np.equal(xmap, reference_xmap)
+#         mask_greater = np.greater(xmap, reference_xmap)
+#         print(mask_less.shape)
+#         print(np.less(xmap, reference_xmap).shape)
+#         print(np.sum(np.less(xmap, reference_xmap)).shape)
+#
+#         diff = sum(mask_less) - sum(mask_greater)
+#
+#         print(diff)
+#
+#         if diff > cutoff:
+#             clusters.append(1)
+#
+#         elif diff < -1*cutoff:
+#             clusters.append(1)
+#
+#         else:
+#             clusters.append(0)
+#
+#     return np.array(clusters, dtype=np.int)
 
-    reference_xmap = aligned_maps[reference_idx]
+def plot_distributions(aligned_maps, out_dir):
+    fig, axs = plt.subplots(nrows=10,
+                            ncols=10,
+                            figsize=(10,
+                                     10,
+                                     )
+                            )
 
+    for i in range(10):
+        for j in range(10):
+            xyz = (np.random.randint(0, 32), np.random.randint(0, 32), np.random.randint(0, 32))
+            dist = [aligned_map[xyz[0], xyz[1], xyz[2]] for aligned_map in aligned_maps]
+            axs[i, j].hist(dist)
+            # axs[i, j].set_title(str(dtag))
+            # if j == 9:
+            #     break
 
-    clusters = []
-    for xmap in aligned_maps:
-        mask_less = np.less(xmap, reference_xmap)
-        mask_equals = np.equal(xmap, reference_xmap)
-        mask_greater = np.greater(xmap, reference_xmap)
-        print(mask_less.shape)
-        print(np.less(xmap, reference_xmap).shape)
-        print(np.sum(np.less(xmap, reference_xmap)).shape)
-
-        diff = sum(mask_less) - sum(mask_greater)
-
-        print(diff)
-
-        if diff > cutoff:
-            clusters.append(1)
-
-        elif diff < -1*cutoff:
-            clusters.append(1)
-
-        else:
-            clusters.append(0)
-
-    return np.array(clusters, dtype=np.int)
+    fig.savefig(str(out_dir / "dists.png"))
+    plt.close(fig)
 
 
 def cluster_datasets(truncated_datasets,
@@ -409,10 +429,14 @@ def cluster_datasets(truncated_datasets,
     # cluster_distances = cluster_cutoff(aligned_maps,
     #                                    distances,
     #                                    )
-    # cluster_distances = cluster_hdbscan(aligned_maps)
-    cluster_distances = cluster_angles(aligned_maps,
-                                       list(residues.keys()).index(reference_dataset.id),
-                                       )
+    cluster_distances = cluster_hdbscan(aligned_maps)
+    # cluster_distances = cluster_angles(aligned_maps,
+    #                                    list(residues.keys()).index(reference_dataset.id),
+    #                                    )
+
+    plot_distributions(aligned_maps,
+                       out_dir,
+                       )
 
     print("\tDiscovered {} unique clusters".format(np.unique(cluster_distances,
                                                              return_counts=True,
