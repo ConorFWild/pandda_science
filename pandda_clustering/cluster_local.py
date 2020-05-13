@@ -518,7 +518,7 @@ def sample_outlier_distance(model):
     return outlier_distance
 
 
-def cluster_datasets_dep(truncated_datasets,
+def cluster_datasets(truncated_datasets,
                      residues,
                      out_dir,
                      ):
