@@ -513,10 +513,17 @@ def gaussian_distance(sample, model):
 
 
 def sample_outlier_distance(model):
-    samples = model.sample(10000)
-    distances = [gaussian_distance(sample, model) for sample in samples]
-    sorted_distances = np.sort(distances)
-    outlier_distance = np.quantile(sorted_distances, 0.95)
+    outlier_distances = []
+    for i in range(50):
+        samples = model.sample(1000)
+        distances = [gaussian_distance(sample, model) for sample in samples]
+        sorted_distances = np.sort(distances)
+        outlier_distance = np.quantile(sorted_distances, 0.95)
+        print(outlier_distance)
+        outlier_distances.append(outlier_distance)
+
+    outlier_distance = np.mean(outlier_distances)
+
     return outlier_distance
 
 
@@ -539,7 +546,7 @@ def cluster_datasets(truncated_datasets,
                                                  max(distances),
                                                  ))
 
-    model = BayesianGaussianMixture(n_components=1)
+    model = BayesianGaussianMixture(n_components=1, covariance_type="full", verbose=2)
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
     outlier_distance = sample_outlier_distance(model)
     print(outlier_distance)
