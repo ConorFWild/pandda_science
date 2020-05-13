@@ -511,7 +511,7 @@ def gaussian_distance(samples, model):
 
 
 def sample_outlier_distance(model):
-    samples = model.sample(20000)
+    samples = model.sample(10000)
     distances = gaussian_distance(samples, model)
     sorted_distances = np.sort(distances)
     outlier_distance = np.quantile(sorted_distances, 0.95)
