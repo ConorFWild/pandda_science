@@ -395,6 +395,21 @@ def plot_distributions(aligned_maps, out_dir):
     plt.close(fig)
 
 
+def get_extrema(aligned_maps, p=0.05):
+    extrema = []
+    num_maps = len(aligned_maps)
+    ndarray = np.stack(aligned_maps, axis=0)
+    sorted_array = np.argsort(ndarray, axis=0)
+    for i in range(len(aligned_maps)):
+        img = sorted_array[i, :, :, :]
+        high = np.count_nonzero(img > num_maps*(1-p))
+        low = np.count_nonzero(img < num_maps*(p))
+        outliers = high + low
+        print(high, low, outliers)
+        extrema.append(outliers)
+        
+    return extrema
+
 def cluster_datasets(truncated_datasets,
                      residues,
                      out_dir,
@@ -429,10 +444,11 @@ def cluster_datasets(truncated_datasets,
     # cluster_distances = cluster_cutoff(aligned_maps,
     #                                    distances,
     #                                    )
-    cluster_distances = cluster_hdbscan(aligned_maps)
+    # cluster_distances = cluster_hdbscan(aligned_maps)
     # cluster_distances = cluster_angles(aligned_maps,
     #                                    list(residues.keys()).index(reference_dataset.id),
     #                                    )
+    get_extrema(aligned_maps)
 
     plot_distributions(aligned_maps,
                        out_dir,
