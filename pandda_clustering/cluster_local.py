@@ -516,7 +516,7 @@ def sample_outlier_distance(model):
     outlier_distances = []
     for i in range(50):
         samples = model.sample(1000)
-        distances = [gaussian_distance(sample, model) for sample in samples]
+        distances = [gaussian_distance(samples[i,:], model) for i in range(len(samples))]
         sorted_distances = np.sort(distances)
         outlier_distance = np.quantile(sorted_distances, 0.95)
         print(outlier_distance)
