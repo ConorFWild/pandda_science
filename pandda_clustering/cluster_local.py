@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from scipy.optimize import differential_evolution, shgo
+from scipy.spatial.distance import mahalanobis
 
 import hdbscan
 from sklearn.mixture import BayesianGaussianMixture
@@ -506,13 +507,14 @@ def cluster_datasets_dep(truncated_datasets,
     # #     print("Less than 5 maps: cannot cluster any more!")
     # #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
-def gaussian_distance(samples, model):
-    return np.array([np.linalg.norm(sample) for sample in samples])
+def gaussian_distance(sample, model):
+    # return np.array([np.linalg.norm(sample) for sample in samples])
+    return mahalanobis(sample, model.means_[0,:,:], model.precisions_[0,:,:])
 
 
 def sample_outlier_distance(model):
     samples = model.sample(10000)
-    distances = gaussian_distance(samples, model)
+    distances = [gaussian_distance(sample, model) for sample in samples]
     sorted_distances = np.sort(distances)
     outlier_distance = np.quantile(sorted_distances, 0.95)
     return outlier_distance
