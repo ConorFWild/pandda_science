@@ -509,7 +509,7 @@ def cluster_datasets_dep(truncated_datasets,
 
 def gaussian_distance(sample, model):
     # return np.array([np.linalg.norm(sample) for sample in samples])
-    return mahalanobis(sample, model.means_[:,:], model.precisions_[:,:])
+    return mahalanobis(sample, model.means_[0,:], np.diag(model.precisions_[0,:]))
 
 
 def sample_outlier_distance(model):
