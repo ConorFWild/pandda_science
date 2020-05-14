@@ -511,17 +511,21 @@ def gaussian_distance(sample, model):
     # return np.array([np.linalg.norm(sample) for sample in samples])
     return mahalanobis(sample.flatten(), model.means_[0,:].flatten(), np.diag(model.precisions_[0,:]))
 
+def probability_distance(samples, model):
+    return model.score_samples(samples)
+
 
 def sample_outlier_distance(model):
     outlier_distances = []
     for i in range(50):
         samples = model.sample(1000)
         print(samples[0].shape)
-        distances = []
-        for i in range(samples[0].shape[0]):
-            distance = gaussian_distance(samples[0][i, :], model)
-            print(distance)
-            distances.append(distance)
+        # distances = []
+        # for i in range(samples[0].shape[0]):
+        #     distance = gaussian_distance(samples[0][i, :], model)
+        #     print(distance)
+        #     distances.append(distance)
+        distances = model.score_samples(samples[0])
         sorted_distances = np.sort(distances)
         outlier_distance = np.quantile(sorted_distances, 0.95)
         print(outlier_distance)
@@ -557,7 +561,8 @@ def cluster_datasets(truncated_datasets,
     print(outlier_distance)
     outliers = []
     for xmap in aligned_maps:
-        distance = gaussian_distance(xmap.flatten(), model)
+        # distance = gaussian_distance(xmap.flatten(), model)
+        distance = probability_distance(xmap.reshape(1,-1), model)
         print(distance)
         if distance > outlier_distance:
             outliers.append(1)
