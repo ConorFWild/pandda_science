@@ -553,7 +553,7 @@ def cluster_datasets(truncated_datasets,
 
     model = BayesianGaussianMixture(n_components=1, covariance_type="diag", verbose=2)
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
-    outlier_distance = sample_outlier_distance(model)
+    outlier_distance = 182  # sample_outlier_distance(model)
     print(outlier_distance)
     outliers = []
     for xmap in aligned_maps:
