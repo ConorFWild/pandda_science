@@ -570,7 +570,7 @@ def cluster_datasets(truncated_datasets,
         # distance = gaussian_distance(xmap.flatten(), model)
         distance = probability_distance(xmap.reshape(1,-1), model)
         print(distance)
-        if distance > outlier_distance:
+        if distance < outlier_distance:
             outliers.append(1)
         else:
             outliers.append(0)
