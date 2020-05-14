@@ -527,7 +527,7 @@ def sample_outlier_distance(model):
         #     distances.append(distance)
         distances = model.score_samples(samples[0])
         sorted_distances = np.sort(distances)
-        outlier_distance = np.quantile(sorted_distances, 0.95)
+        outlier_distance = np.quantile(sorted_distances, 0.05)
         print(outlier_distance)
         outlier_distances.append(outlier_distance)
 
