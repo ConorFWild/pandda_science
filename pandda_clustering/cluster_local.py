@@ -517,7 +517,7 @@ def probability_distance(samples, model):
 
 def sample_outlier_distance(model):
     outlier_distances = []
-    for i in range(10):
+    for i in range(50):
         samples = model.sample(1000)
         print(len(samples))
         print(samples[0].shape)
@@ -532,7 +532,7 @@ def sample_outlier_distance(model):
         sorted_distances = np.sort(distances)
         print(sorted_distances.shape)
         print(sorted_distances)
-        outlier_distance = np.quantile(sorted_distances, 0.05)
+        outlier_distance = np.quantile(sorted_distances, 0.02)
         # print(outlier_distance.shape)
         print(outlier_distance)
         outlier_distances.append(outlier_distance)
