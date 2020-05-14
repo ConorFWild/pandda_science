@@ -8,7 +8,7 @@ from scipy.optimize import differential_evolution, shgo
 from scipy.spatial.distance import mahalanobis
 
 import hdbscan
-from sklearn.mixture import BayesianGaussianMixture
+from sklearn.mixture import BayesianGaussianMixture, GaussianMixture
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.cluster import OPTICS, DBSCAN
@@ -519,6 +519,7 @@ def sample_outlier_distance(model):
     outlier_distances = []
     for i in range(10):
         samples = model.sample(1000)
+        print(len(samples))
         print(samples[0].shape)
         # distances = []
         # for i in range(samples[0].shape[0]):
@@ -560,7 +561,7 @@ def cluster_datasets(truncated_datasets,
                                                  max(distances),
                                                  ))
 
-    model = BayesianGaussianMixture(n_components=1, covariance_type="diag", verbose=2)
+    model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
     outlier_distance = sample_outlier_distance(model)
     print(outlier_distance)
