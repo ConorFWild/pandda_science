@@ -22,13 +22,13 @@ def parse_args():
     # IO
     parser.add_argument("-i", "--event_table",
                         type=str,
-                        help="The directory OF THE ROOT OF THE XCHEM DATABASE",
+                        help="The path to the table of pandda events",
                         required=True
                         )
 
     parser.add_argument("-r", "--rscc_table",
                         type=str,
-                        help="The directory OF THE ROOT OF THE XCHEM DATABASE",
+                        help="The path to the table of rsccs",
                         required=True
                         )
 
