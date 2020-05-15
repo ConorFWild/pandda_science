@@ -517,7 +517,7 @@ def probability_distance(samples, model):
 
 def sample_outlier_distance(model):
     outlier_distances = []
-    for i in range(50):
+    for i in range(10):
         samples = model.sample(1000)
         print(len(samples))
         print(samples[0].shape)
@@ -563,7 +563,7 @@ def cluster_datasets(truncated_datasets,
 
     model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
-    outlier_distance = sample_outlier_distance(model)
+    outlier_distance = 20000 # sample_outlier_distance(model)
     print(outlier_distance)
     outliers = []
     for xmap in aligned_maps:
