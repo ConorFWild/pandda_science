@@ -794,10 +794,10 @@ def main():
         for chain in model:
             for residue in chain:
                 residue_id = (model.name, chain.name, residue.seqid.num)
-                if residue_id[2] < 288:
+                if residue_id[2] < 332:
                     continue
 
-                if residue_id[2] > 295:
+                if residue_id[2] > 336:
                     continue
                 print("\tWorking on dataset: {}".format(residue_id))
 
@@ -832,7 +832,7 @@ def main():
     joint_table.to_csv(str(fs.output_dir / "joint_table.csv"))
 
     # Make stackplot
-    stackplot(joint_table,
+    stackplot(tables,
               fs.output_dir / "stackplot.png",
               )
 
