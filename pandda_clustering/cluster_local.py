@@ -682,6 +682,24 @@ def output_csv(clusters,
 
     return table
 
+def make_joint_table(tables):
+    for resid, table in tables.items():
+        table["model"] = resid[0]
+        table["chain"] = resid[1]
+        table["num"] = resid[2]
+
+    joint_tables = pd.concat(list(tables.values()))
+
+    return joint_tables
+
+
+def stackplot():
+    pass
+
+
+def make_outlier_table():
+    pass
+
 
 def main():
     args = Args()
@@ -743,14 +761,19 @@ def main():
                                                                          residue_id[1],
                                                                          residue_id[2], ),
                                    )
-    for resid, table in tables.items():
-        table["model"] = resid[0]
-        table["chain"] = resid[1]
-        table["num"] = resid[2]
 
-    all_tables = pd.concat(list(tables.values()))
-    all_tables.to_csv(str(fs.output_dir / "all_tables.csv"))
+    # Make joint table
+    joint_table = make_joint_table(tables)
+    joint_table.to_csv(str(fs.output_dir / "joint_table.csv"))
 
+    # Make stackplot
+    stackplot(joint_table,
+              fs.output_dir / "stackplot.png",
+              )
+
+    # Make outlier table
+    outlier_table = make_outlier_table(joint_table)
+    outlier_table.to_csv(fs.output_dir / "stackplot.png",)
 
 if __name__ == "__main__":
     main()
