@@ -6,6 +6,7 @@ import pandas as pd
 
 from scipy.optimize import differential_evolution, shgo
 from scipy.spatial.distance import mahalanobis
+from scipy.stats import chi2
 
 import hdbscan
 from sklearn.mixture import BayesianGaussianMixture, GaussianMixture
@@ -563,7 +564,8 @@ def cluster_datasets(truncated_datasets,
 
     model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
-    outlier_distance = sample_outlier_distance(model)
+    # outlier_distance = sample_outlier_distance(model)
+    outlier_distance = np.sqrt(chi2.ppf(0.95, model.means_.size))
     print(outlier_distance)
     outliers = []
     for xmap in aligned_maps:
