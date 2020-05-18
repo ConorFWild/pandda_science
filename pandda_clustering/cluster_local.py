@@ -6,6 +6,12 @@ import pandas as pd
 
 import joblib
 
+import plotly.graph_objects as go
+import plotly.express as px
+from plotly.subplots import make_subplots
+
+
+
 from scipy.optimize import differential_evolution, shgo
 from scipy.spatial.distance import mahalanobis
 from scipy.stats import chi2
@@ -562,9 +568,9 @@ def classify_distance(xmap, outlier_distance, means, precs):
     # distance = probability_distance(xmap.reshape(1,-1), model)
     print(distance)
     if distance < outlier_distance:
-        return 1
-    else:
         return 0
+    else:
+        return 1
 
 
 def cluster_datasets(truncated_datasets,
@@ -631,7 +637,7 @@ def get_comparable_residues(datasets,
 def visualise_clusters(clusters,
                        path,
                        ):
-    fig, axs = plt.subplots(nrows=len(clusters),
+    fig, axs = plt.subplots(nrows=min(50, len(clusters)),
                             ncols=10,
                             figsize=(10,
                                      min(len(clusters), 50),
@@ -650,6 +656,22 @@ def visualise_clusters(clusters,
 
     fig.savefig(str(path))
     plt.close(fig)
+
+    # fig = make_subplots(rows=min(50, len(clusters)),
+    #                     cols=10,
+    #                     )
+    #
+    # fig.add_trace(
+    #     go.Scatter(x=[1, 2, 3], y=[4, 5, 6]),
+    #     row=1, col=1
+    # )
+    #
+    # fig.add_trace(
+    #     go.Scatter(x=[20, 30, 40], y=[50, 60, 70]),
+    #     row=1, col=2
+    # )
+    #
+    # fig.update_layout(height=600, width=800, title_text="Side By Side Subplots")
 
 
 def try_load(path, mtz_regex="dimple_twin.mtz", pdb_regex="dimple_twin.pdb"):
@@ -693,12 +715,47 @@ def make_joint_table(tables):
     return joint_tables
 
 
-def stackplot():
-    pass
+def stackplot(tables,
+              path,
+              ):
+    # One bar per cluster, one x per residue
+    core = []
+    outliers = []
+    resids = []
+    for resid, table in tables.items():
+        core.append(len(table[table["cluster"] == 0]))
+        outliers.append(len(table[table["cluster" != 0]]))
+        resids.append(str(resid))
+
+    fig = go.Figure(data=[
+        go.Bar(name='core', x=resids, y=core),
+        go.Bar(name='outliers', x=resids, y=outliers)
+    ])
+    # Change the bar mode
+    fig.update_layout(barmode='stack')
+    fig.write_image(str(path))
 
 
-def make_outlier_table():
-    pass
+def make_outlier_table(joint_table):
+    dtags = joint_table["dtag"].unique()
+
+    records = []
+    outlier_counts = {}
+    for dtag in dtags:
+        dtag_table = joint_table[joint_table["dtag"] == dtag]
+        num_outliers = len(dtag_table[dtag_table["cluster"]!=0])
+        num_residues = len(dtag_table)
+        outlier_counts[dtag] = float(num_outliers) / float(num_residues)
+        if outlier_counts[dtag] > 0.1:
+            record = {}
+            record["dtag"] = dtag
+            record["outlier"] = True
+        else:
+            record = {}
+            record["dtag"] = dtag
+            record["outlier"] = False
+
+    return pd.DataFrame(records)
 
 
 def main():
@@ -734,6 +791,9 @@ def main():
                 residue_id = (model.name, chain.name, residue.seqid.num)
                 if residue_id[2] < 288:
                     continue
+
+                if residue_id[2] > 295:
+                    continue
                 print("\tWorking on dataset: {}".format(residue_id))
 
                 residues = get_comparable_residues(datasets,
@@ -756,11 +816,11 @@ def main():
                                    )
                 tables[residue_id] = table
 
-                visualise_clusters(clusters,
-                                   fs.output_dir / "{}_{}_{}.png".format(residue_id[0],
-                                                                         residue_id[1],
-                                                                         residue_id[2], ),
-                                   )
+                # visualise_clusters(clusters,
+                #                    fs.output_dir / "{}_{}_{}.png".format(residue_id[0],
+                #                                                          residue_id[1],
+                #                                                          residue_id[2], ),
+                #                    )
 
     # Make joint table
     joint_table = make_joint_table(tables)
@@ -773,7 +833,8 @@ def main():
 
     # Make outlier table
     outlier_table = make_outlier_table(joint_table)
-    outlier_table.to_csv(fs.output_dir / "stackplot.png",)
+    outlier_table.to_csv(fs.output_dir / "outliers.csv",)
+
 
 if __name__ == "__main__":
     main()
