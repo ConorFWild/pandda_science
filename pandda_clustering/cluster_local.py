@@ -563,12 +563,12 @@ def cluster_datasets(truncated_datasets,
 
     model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
-    outlier_distance = 20000 # sample_outlier_distance(model)
+    outlier_distance = sample_outlier_distance(model)
     print(outlier_distance)
     outliers = []
     for xmap in aligned_maps:
-        # distance = gaussian_distance(xmap.flatten(), model)
-        distance = probability_distance(xmap.reshape(1,-1), model)
+        distance = gaussian_distance(xmap, model)
+        # distance = probability_distance(xmap.reshape(1,-1), model)
         print(distance)
         if distance < outlier_distance:
             outliers.append(1)
