@@ -645,6 +645,8 @@ def visualise_clusters(clusters,
             axs[i, j].set_title(str(dtag))
             if j == 9:
                 break
+        if i == min(49, len(clusters)-1):
+            break
 
     fig.savefig(str(path))
     plt.close(fig)
