@@ -10,8 +10,6 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 
-
-
 from scipy.optimize import differential_evolution, shgo
 from scipy.spatial.distance import mahalanobis
 from scipy.stats import chi2
@@ -309,6 +307,7 @@ def cluster_embedded_maps_hdbscan(aligned_maps):
 
     return clusterer.labels_
 
+
 def cluster_dbscan(aligned_maps):
     embedding = np.vstack([xmap.flatten() for xmap in aligned_maps])
     clusterer = DBSCAN(eps=15)
@@ -343,6 +342,7 @@ def cluster_vbgm(aligned_maps):
     embedding = embed(aligned_maps)
     clusterer = BayesianGaussianMixture(n_components=10)
     return clusterer.fit_predict(embedding)
+
 
 def cluster_cutoff(aligned_maps, distances, cutoff=0.15):
     clusters = []
@@ -412,8 +412,8 @@ def get_extrema(aligned_maps, p=0.05):
     sorted_array = np.argsort(ndarray, axis=0)
     for i in range(len(aligned_maps)):
         img = sorted_array[i, :, :, :]
-        high = np.count_nonzero(img > num_maps*(1-p))
-        low = np.count_nonzero(img < num_maps*(p))
+        high = np.count_nonzero(img > num_maps * (1 - p))
+        low = np.count_nonzero(img < num_maps * (p))
         outliers = high + low
         print(high, low, outliers)
         if high > 1700:
@@ -423,10 +423,11 @@ def get_extrema(aligned_maps, p=0.05):
 
     return extrema
 
+
 def cluster_datasets_dep(truncated_datasets,
-                     residues,
-                     out_dir,
-                     ):
+                         residues,
+                         out_dir,
+                         ):
     print("\tClustering {} datasets".format(len(truncated_datasets)))
 
     reference_dataset = get_reference_dataset(truncated_datasets)
@@ -463,7 +464,8 @@ def cluster_datasets_dep(truncated_datasets,
     #                                    )
     extrema = get_extrema(aligned_maps)
 
-    return [{dtag: aligned_maps[i] for i, dtag in enumerate(list(residues.keys())) if extrema[i] == 0}] + [{dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if extrema[i] == 1]
+    return [{dtag: aligned_maps[i] for i, dtag in enumerate(list(residues.keys())) if extrema[i] == 0}] + [
+        {dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if extrema[i] == 1]
 
     # plot_distributions(aligned_maps,
     #                    out_dir,
@@ -516,9 +518,11 @@ def cluster_datasets_dep(truncated_datasets,
     # #     print("Less than 5 maps: cannot cluster any more!")
     # #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
+
 def gaussian_distance(sample, means, precs):
     # return np.array([np.linalg.norm(sample) for sample in samples])
     return mahalanobis(sample.flatten(), means, precs)
+
 
 def probability_distance(samples, model):
     return model.score_samples(samples)
@@ -549,6 +553,7 @@ def sample_outlier_distance(model):
     outlier_distance = np.mean(outlier_distances)
 
     return outlier_distance
+
 
 def map_list(func, lst):
     results = []
@@ -597,11 +602,11 @@ def cluster_datasets(truncated_datasets,
     # outlier_distance = sample_outlier_distance(model)
     outlier_distance = np.sqrt(chi2.ppf(0.999, model.means_.size))
     print("Outlier distance: {}".format(outlier_distance))
-    precs = np.diag(model.precisions_[0,:])
-    means = model.means_[0,:].flatten()
+    precs = np.diag(model.precisions_[0, :])
+    means = model.means_[0, :].flatten()
     outliers = map_list(lambda x: classify_distance(x, outlier_distance, means, precs),
-                                 aligned_maps,
-                                 )
+                        aligned_maps,
+                        )
     # outliers = []
     # for xmap in aligned_maps:
     #     distance = gaussian_distance(xmap, model)
@@ -612,9 +617,8 @@ def cluster_datasets(truncated_datasets,
     #     else:
     #         outliers.append(0)
 
-
-    return [{dtag: aligned_maps[i] for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 0}] + [{dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 1]
-
+    return [{dtag: aligned_maps[i] for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 0}] + [
+        {dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 1]
 
 
 def get_comparable_residues(datasets,
@@ -651,7 +655,7 @@ def visualise_clusters(clusters,
             axs[i, j].set_title(str(dtag))
             if j == 9:
                 break
-        if i == min(49, len(clusters)-1):
+        if i == min(49, len(clusters) - 1):
             break
 
     fig.savefig(str(path))
@@ -704,6 +708,7 @@ def output_csv(clusters,
 
     return table
 
+
 def make_joint_table(tables):
     for resid, table in tables.items():
         table["model"] = resid[0]
@@ -743,7 +748,7 @@ def make_outlier_table(joint_table):
     outlier_counts = {}
     for dtag in dtags:
         dtag_table = joint_table[joint_table["dtag"] == dtag]
-        num_outliers = len(dtag_table[dtag_table["cluster"]!=0])
+        num_outliers = len(dtag_table[dtag_table["cluster"] != 0])
         num_residues = len(dtag_table)
         outlier_counts[dtag] = float(num_outliers) / float(num_residues)
         if outlier_counts[dtag] > 0.1:
@@ -769,7 +774,7 @@ def main():
                         fs.initial_model_dirs,
                         )
     datasets = {dtag: dataset for dtag, dataset in datasets.items() if dataset is not None}
-    # datasets = {item[0]: item[1] for i, item in enumerate(datasets.items()) if i < 60}
+    datasets = {item[0]: item[1] for i, item in enumerate(datasets.items()) if i < 100}
     print("\tNumber of datasets is {}".format(len(datasets)))
 
     datasets_res_high = min([x.get_resolution_high() for x in datasets.values()])
@@ -816,11 +821,11 @@ def main():
                                    )
                 tables[residue_id] = table
 
-                # visualise_clusters(clusters,
-                #                    fs.output_dir / "{}_{}_{}.png".format(residue_id[0],
-                #                                                          residue_id[1],
-                #                                                          residue_id[2], ),
-                #                    )
+                visualise_clusters(clusters,
+                                   fs.output_dir / "{}_{}_{}.png".format(residue_id[0],
+                                                                         residue_id[1],
+                                                                         residue_id[2], ),
+                                   )
 
     # Make joint table
     joint_table = make_joint_table(tables)
@@ -833,7 +838,7 @@ def main():
 
     # Make outlier table
     outlier_table = make_outlier_table(joint_table)
-    outlier_table.to_csv(fs.output_dir / "outliers.csv",)
+    outlier_table.to_csv(fs.output_dir / "outliers.csv", )
 
 
 if __name__ == "__main__":
