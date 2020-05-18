@@ -729,7 +729,7 @@ def stackplot(tables,
     resids = []
     for resid, table in tables.items():
         core.append(len(table[table["cluster"] == 0]))
-        outliers.append(len(table[table["cluster" != 0]]))
+        outliers.append(len(table[table["cluster"] != 0]))
         resids.append(str(resid))
 
     fig = go.Figure(data=[
