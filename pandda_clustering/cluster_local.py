@@ -580,7 +580,7 @@ def cluster_datasets(truncated_datasets,
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
     # outlier_distance = sample_outlier_distance(model)
     outlier_distance = np.sqrt(chi2.ppf(0.99, model.means_.size))
-    print(outlier_distance)
+    print("Outlier distance: {}".format(outlier_distance))
     precs = np.diag(model.precisions_[0,:])
     means = model.means_[0,:].flatten()
     outliers = map_list_parallel(lambda x: classify_distance(x, outlier_distance, means, precs),
