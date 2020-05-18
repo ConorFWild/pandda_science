@@ -4,6 +4,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import joblib
+
 from scipy.optimize import differential_evolution, shgo
 from scipy.spatial.distance import mahalanobis
 from scipy.stats import chi2
@@ -508,9 +510,9 @@ def cluster_datasets_dep(truncated_datasets,
     # #     print("Less than 5 maps: cannot cluster any more!")
     # #     return [cluster_maps] + [{dtag: xmap} for dtag, xmap in uncluster_maps.items()]
 
-def gaussian_distance(sample, model):
+def gaussian_distance(sample, means, precs):
     # return np.array([np.linalg.norm(sample) for sample in samples])
-    return mahalanobis(sample.flatten(), model.means_[0,:].flatten(), np.diag(model.precisions_[0,:]))
+    return mahalanobis(sample.flatten(), means, precs)
 
 def probability_distance(samples, model):
     return model.score_samples(samples)
@@ -542,6 +544,18 @@ def sample_outlier_distance(model):
 
     return outlier_distance
 
+def map_list_parallel(func, lst):
+    return joblib.Parallel(n_jobs=20, verbose=10)(joblib.delayed(func)(x) for x in lst)
+
+def classify_distance(xmap, outlier_distance, means, precs):
+    distance = gaussian_distance(xmap, means, precs)
+    # distance = probability_distance(xmap.reshape(1,-1), model)
+    print(distance)
+    if distance < outlier_distance:
+        return 1
+    else:
+        return 0
+
 
 def cluster_datasets(truncated_datasets,
                      residues,
@@ -565,17 +579,22 @@ def cluster_datasets(truncated_datasets,
     model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
     # outlier_distance = sample_outlier_distance(model)
-    outlier_distance = np.sqrt(chi2.ppf(0.95, model.means_.size))
+    outlier_distance = np.sqrt(chi2.ppf(0.98, model.means_.size))
     print(outlier_distance)
-    outliers = []
-    for xmap in aligned_maps:
-        distance = gaussian_distance(xmap, model)
-        # distance = probability_distance(xmap.reshape(1,-1), model)
-        print(distance)
-        if distance < outlier_distance:
-            outliers.append(1)
-        else:
-            outliers.append(0)
+    precs = np.diag(model.precisions_[0,:])
+    means = np.diag(model.means_[0,:])
+    outliers = map_list_parallel(lambda x: classify_distance(x, outlier_distance, means, precs),
+                                 aligned_maps,
+                                 )
+    # outliers = []
+    # for xmap in aligned_maps:
+    #     distance = gaussian_distance(xmap, model)
+    #     # distance = probability_distance(xmap.reshape(1,-1), model)
+    #     print(distance)
+    #     if distance < outlier_distance:
+    #         outliers.append(1)
+    #     else:
+    #         outliers.append(0)
 
 
     return [{dtag: aligned_maps[i] for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 0}] + [{dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 1]
@@ -683,7 +702,7 @@ def main():
         for chain in model:
             for residue in chain:
                 residue_id = (model.name, chain.name, residue.seqid.num)
-                if residue_id[2] < 256:
+                if residue_id[2] < 288:
                     continue
                 print("\tWorking on dataset: {}".format(residue_id))
 
