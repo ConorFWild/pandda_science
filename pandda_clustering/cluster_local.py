@@ -544,8 +544,18 @@ def sample_outlier_distance(model):
 
     return outlier_distance
 
+def map_list(func, lst):
+    results = []
+    for x in lst:
+        result = func(x)
+        print(result)
+        results.append(result)
+    return results
+
+
 def map_list_parallel(func, lst):
     return joblib.Parallel(n_jobs=20, verbose=10)(joblib.delayed(func)(x) for x in lst)
+
 
 def classify_distance(xmap, outlier_distance, means, precs):
     distance = gaussian_distance(xmap, means, precs)
@@ -579,11 +589,11 @@ def cluster_datasets(truncated_datasets,
     model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
     model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
     # outlier_distance = sample_outlier_distance(model)
-    outlier_distance = np.sqrt(chi2.ppf(0.99, model.means_.size))
+    outlier_distance = np.sqrt(chi2.ppf(0.999, model.means_.size))
     print("Outlier distance: {}".format(outlier_distance))
     precs = np.diag(model.precisions_[0,:])
     means = model.means_[0,:].flatten()
-    outliers = map_list_parallel(lambda x: classify_distance(x, outlier_distance, means, precs),
+    outliers = map_list(lambda x: classify_distance(x, outlier_distance, means, precs),
                                  aligned_maps,
                                  )
     # outliers = []
