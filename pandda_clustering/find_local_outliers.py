@@ -788,6 +788,8 @@ def main():
     for model in reference_dataset.structure.structure:
         for chain in model:
             for residue in chain:
+                if residue.het_flag != "A":
+                    continue
                 residue_id = (model.name, chain.name, residue.seqid.num)
                 all_residues[residue_id] = residue
 
