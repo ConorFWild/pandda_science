@@ -809,9 +809,11 @@ def main():
                                            residue_id,
                                            )
         print("\tGot {} residues".format(len(residues)))
+        print(residues)
 
         residues = {dtag: res for dtag, res in residues.items() if res is not None}
         print("\tGot {} residues".format(len(residues)))
+        print(residues)
 
         clusters = cluster_datasets(truncated_datasets,
                                     residues,
