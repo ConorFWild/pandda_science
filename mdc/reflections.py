@@ -21,7 +21,7 @@ class PanDDAReflections:
     def __getstate__(self):
         spacegroup = self.mtz.spacegroup.number
 
-        unit_cell_gemmi = self.mtz.unit_cell
+        unit_cell_gemmi = self.mtz.cell
         unit_cell = (unit_cell_gemmi.a,
                      unit_cell_gemmi.b,
                      unit_cell_gemmi.c,
