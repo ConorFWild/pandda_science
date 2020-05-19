@@ -207,22 +207,22 @@ def align_maps(reference_dataset, datasets, alignments):
                            alignments[dtag],]
                      )
 
-        # result = align_map(reference_xmap,
-        #                    moving_xmap,
-        #                    alignments[reference_dataset.id],
-        #                    alignments[dtag],
-        #                    )
-        #
-        # results.append(result)
+        result = align_map(reference_xmap,
+                           moving_xmap,
+                           alignments[reference_dataset.id],
+                           alignments[dtag],
+                           )
 
-    results = pool(joblib.delayed(align_map)(arg[0],
-                                            arg[1],
-                                            arg[2],
-                                            arg[3],
-                                            )
-                                  for arg
-                                  in tasks
-                                  )
+        results.append(result)
+
+    # results = pool(joblib.delayed(align_map)(arg[0],
+    #                                         arg[1],
+    #                                         arg[2],
+    #                                         arg[3],
+    #                                         )
+    #                               for arg
+    #                               in tasks
+    #                               )
 
 
         # map_dict(lambda x: align_map(reference_dataset, x),
@@ -791,7 +791,7 @@ def main():
                         fs.initial_model_dirs,
                         )
     datasets = {dtag: dataset for dtag, dataset in datasets.items() if dataset is not None}
-    datasets = {item[0]: item[1] for i, item in enumerate(datasets.items()) if i < 100}
+    # datasets = {item[0]: item[1] for i, item in enumerate(datasets.items()) if i < 100}
     print("\tNumber of datasets is {}".format(len(datasets)))
 
     datasets_res_high = min([x.get_resolution_high() for x in datasets.values()])
@@ -819,7 +819,7 @@ def main():
                         for i
                         in range(len(all_residues))
                         if i in np.random.choice(range(len(all_residues)),
-                                                     20,
+                                                     50,
                                                      replace=False,
                                                      )
                         }
