@@ -784,17 +784,17 @@ def main():
     truncated_datasets = datasets
     print("\tAfter truncation {} datasets".format(len(truncated_datasets)))
 
-    residues = {}
+    all_residues = {}
     for model in reference_dataset.structure.structure:
         for chain in model:
             for residue in chain:
                 residue_id = (model.name, chain.name, residue.seqid.num)
-                residues[residue_id] = residue
+                all_residues[residue_id] = residue
 
-    sampled_residues = {list(residues.keys())[i]: list(residues.values())[i]
+    sampled_residues = {list(all_residues.keys())[i]: list(all_residues.values())[i]
                         for i
-                        in range(len(residues))
-                        if i in np.random.choice(range(len(residues)),
+                        in range(len(all_residues))
+                        if i in np.random.choice(range(len(all_residues)),
                                                      20,
                                                      replace=False,
                                                      )
@@ -809,7 +809,8 @@ def main():
                                            residue_id,
                                            )
         print("\tGot {} residues".format(len(residues)))
-        residues = {dtag: residue for dtag, residue in residues.items() if residue is not None}
+
+        residues = {dtag: res for dtag, res in residues.items() if res is not None}
         print("\tGot {} residues".format(len(residues)))
 
         clusters = cluster_datasets(truncated_datasets,
