@@ -215,15 +215,15 @@ def align_maps(reference_dataset, datasets, alignments):
         #
         # results.append(result)
 
-    results = pool(joblib.delayed(align_map(arg[0],
-                                            arg[0],
-                                            arg[0],
-                                            arg[0],
+    results = pool(joblib.delayed(align_map)(arg[0],
+                                            arg[1],
+                                            arg[2],
+                                            arg[3],
                                             )
                                   for arg
                                   in tasks
                                   )
-                   )
+
 
         # map_dict(lambda x: align_map(reference_dataset, x),
         #                datasets,
