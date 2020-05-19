@@ -40,8 +40,8 @@ class PanDDAReflections:
                 columns[column.dataset_id] = {}
                 columns[column.dataset_id][column.label] = column.type
 
-        datasets = {i: dataset.dataset_name for i, dataset in self.mtz.datasets}
-        
+        datasets = {i: self.mtz.dataset(i).dataset_name for i in columns}
+        print(datasets)
 
         state = {"spacegroup": spacegroup,
                  "unit_cell": unit_cell,
