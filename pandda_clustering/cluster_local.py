@@ -751,14 +751,9 @@ def make_outlier_table(joint_table):
         num_outliers = len(dtag_table[dtag_table["cluster"] != 0])
         num_residues = len(dtag_table)
         outlier_counts[dtag] = float(num_outliers) / float(num_residues)
-        if outlier_counts[dtag] > 0.1:
-            record = {}
-            record["dtag"] = dtag
-            record["outlier"] = True
-        else:
-            record = {}
-            record["dtag"] = dtag
-            record["outlier"] = False
+        record = {}
+        record["dtag"] = dtag
+        record["outlier_fraction"] = outlier_counts[dtag]
 
     return pd.DataFrame(records)
 
