@@ -47,6 +47,8 @@ class PanDDAXMap:
                                              unit_cell[5],
                                              )
 
+        self.grid[:, :, :] = data[:, :, :]
+
     @staticmethod
     def from_dataset(dataset, f="FWT", phi="PHWT", sample_rate=2.6):
         grid = dataset.reflections.mtz.transform_f_phi_to_map(f,
