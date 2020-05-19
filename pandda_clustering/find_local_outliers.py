@@ -628,7 +628,7 @@ def get_comparable_residues(datasets,
 
     for dtag, dataset in datasets.items():
         try:
-            residue = dataset.structure.structure[residue_id[0]][residue_id[1]][residue_id[2]]
+            residue = dataset.structure.structure[residue_id[0]][residue_id[1]][str(residue_id[2])]
         except Exception as e:
             print(e)
             residue = None
