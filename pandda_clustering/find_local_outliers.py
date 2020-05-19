@@ -790,7 +790,9 @@ def make_outlier_table(joint_table):
         outlier_counts[dtag] = float(num_outliers) / float(num_residues)
         record = {}
         record["dtag"] = dtag
+        record["num_outliers"] = num_outliers
         record["outlier_fraction"] = outlier_counts[dtag]
+        records.append(record)
 
     return pd.DataFrame(records)
 
