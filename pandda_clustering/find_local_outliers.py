@@ -183,12 +183,10 @@ def align_map(reference_reflections, moving_reflections, reference_centre, movin
                   )
 
     del reference_xmap
-    del moving_xmap
     del reference_reflections
     del moving_reflections
     del reference_centre
     del moving_centre
-    gc.collect()
 
     print("\t\tResult parameters: {}".format(result.x))
     print("\t\tResult parameters: {}".format(result.fun))
@@ -196,6 +194,10 @@ def align_map(reference_reflections, moving_reflections, reference_centre, movin
     aligned_map = sample(moving_xmap,
                          result.x,
                          )
+
+    del moving_xmap
+
+    gc.collect()
 
     return aligned_map, result.fun
 
