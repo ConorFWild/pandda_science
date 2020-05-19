@@ -791,10 +791,10 @@ def main():
                 residue_id = (model.name, chain.name, residue.seqid.num)
                 residues[residue_id] = residue
 
-    sampled_residues = {resid: residue
-                        for resid, residue
-                        in residues.items()
-                        if resid in np.random.choice(np.array(list(residues.keys())),
+    sampled_residues = {list(residues.keys())[i]: list(residues.values())[i]
+                        for i
+                        in range(len(residues))
+                        if i in np.random.choice(range(len(residues)),
                                                      20,
                                                      replace=False,
                                                      )
