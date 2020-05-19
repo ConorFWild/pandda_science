@@ -144,7 +144,7 @@ def sample_and_measure(reference_sample_map,
     return distance
 
 
-def align_map(reference_xmap, moving_xmap, reference_centre, moving_centre, delta=3):
+def align_map(reference_reflections, moving_reflections, reference_centre, moving_centre, delta=3):
     bounds = ((moving_centre[0] - delta, moving_centre[0] + delta),
               (moving_centre[1] - delta, moving_centre[1] + delta),
               (moving_centre[2] - delta, moving_centre[2] + delta),
@@ -153,7 +153,9 @@ def align_map(reference_xmap, moving_xmap, reference_centre, moving_centre, delt
               (0, 2 * np.pi),
               )
 
+    reference_xmap = PanDDAXMap.from_reflections(reference_reflections)
 
+    moving_xmap = PanDDAXMap.from_reflections(moving_reflections)
 
     reference_sample_map = sample(reference_xmap,
                                   (reference_centre[0],
@@ -192,37 +194,38 @@ def align_map(reference_xmap, moving_xmap, reference_centre, moving_centre, delt
 def align_maps(reference_dataset, datasets, alignments):
     results = []
 
-    # pool = joblib.Parallel(n_jobs=20, verbose=10)
+    pool = joblib.Parallel(n_jobs=20, verbose=10)
 
     tasks = []
     for dtag, alignment in alignments.items():
         print("\t\tAligning map {}".format(dtag))
-        reference_xmap = PanDDAXMap.from_dataset(reference_dataset)
 
-        moving_xmap = PanDDAXMap.from_dataset(datasets[dtag])
+        reference_reflections = reference_dataset.reflections
+        moving_reflections = datasets[dtag].reflections
 
-        # tasks.append([reference_xmap,
-        #                    moving_xmap,
-        #                    alignments[reference_dataset.id],
-        #                    alignments[dtag],]
-        #              )
-
-        result = align_map(reference_xmap,
-                           moving_xmap,
+        tasks.append([reference_reflections,
+                           moving_reflections,
                            alignments[reference_dataset.id],
-                           alignments[dtag],
-                           )
+                           alignments[dtag],]
+                     )
 
-        results.append(result)
 
-    # results = pool(joblib.delayed(align_map)(arg[0],
-    #                                         arg[1],
-    #                                         arg[2],
-    #                                         arg[3],
-    #                                         )
-    #                               for arg
-    #                               in tasks
-    #                               )
+        # result = align_map(reference_reflections,
+        #                    moving_reflections,
+        #                    alignments[reference_dataset.id],
+        #                    alignments[dtag],
+        #                    )
+
+        # results.append(result)
+
+    results = pool(joblib.delayed(align_map)(arg[0],
+                                            arg[1],
+                                            arg[2],
+                                            arg[3],
+                                            )
+                                  for arg
+                                  in tasks
+                                  )
 
 
         # map_dict(lambda x: align_map(reference_dataset, x),

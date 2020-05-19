@@ -19,9 +19,9 @@ class PanDDAReflections:
         return self.mtz.resolution_high()
 
     def __getstate__(self):
-        spacegroup = self.grid.spacegroup.number
+        spacegroup = self.mtz.spacegroup.number
 
-        unit_cell_gemmi = self.grid.unit_cell
+        unit_cell_gemmi = self.mtz.unit_cell
         unit_cell = (unit_cell_gemmi.a,
                      unit_cell_gemmi.b,
                      unit_cell_gemmi.c,
@@ -30,11 +30,24 @@ class PanDDAReflections:
                      unit_cell_gemmi.gamma,
                      )
 
-        data = numpy.array(self.grid)
+        data = numpy.array(self.mtz)
+
+        columns = {}
+        for column in self.mtz.columns:
+            if column.dataset_id in columns:
+                columns[column.dataset_id][column.label] = column.type
+            else:
+                columns[column.dataset_id] = {}
+                columns[column.dataset_id][column.label] = column.type
+
+        datasets = {i: dataset.dataset_name for i, dataset in self.mtz.add_datasets}
+        
 
         state = {"spacegroup": spacegroup,
                  "unit_cell": unit_cell,
                  "data": data,
+                 "datasets": datasets,
+                 "columns": columns,
                  }
 
         return state
@@ -58,10 +71,14 @@ class PanDDAReflections:
                                              unit_cell[5],)
 
 
-        for dataset_name, dataset in datasets.items():
-            mtz.add_dataset(dataset_name)
-            for column_name, column in dataset.items():
-                mtz.add_column(column_name, column)
+        datasets = state["datasets"]
+        columns = state["columns"]
+
+        for dataset_id, dataset_label in datasets.items():
+            mtz.add_dataset(dataset_label)
+            dataset_columns = columns[dataset_id]
+            for column_name, column_type in dataset_columns.items():
+                mtz.add_column(column_name, column_type)
 
         mtz.set_data(data)
 
