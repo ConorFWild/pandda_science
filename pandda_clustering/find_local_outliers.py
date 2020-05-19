@@ -811,7 +811,7 @@ def main():
         print("\tGot {} residues".format(len(residues)))
         print(residues)
 
-        residues = {dtag: res for dtag, res in residues.items() if res is not None}
+        residues = {dtag: res[0] for dtag, res in residues.items() if res is not None}
         print("\tGot {} residues".format(len(residues)))
         print(residues)
 
