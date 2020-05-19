@@ -686,7 +686,8 @@ def visualise_clusters(clusters,
 
     for i, cluster in enumerate(clusters):
         for j, dtag in enumerate(cluster.keys()):
-            image = np.mean(cluster[dtag], axis=0)
+            # image = np.mean(cluster[dtag], axis=0)
+            image = cluster[dtag][:, :, 15]
             axs[i, j].imshow(image)
             axs[i, j].set_title(str(dtag))
             if j == 9:
