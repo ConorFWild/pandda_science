@@ -47,7 +47,8 @@ class PanDDAXMap:
                                              unit_cell[5],
                                              )
 
-        self.grid[:, :, :] = data[:, :, :]
+        for index, val in np.ndenumerate(data):
+            self.grid.set_value(index[0], index[1], index[2], data[index])
 
     @staticmethod
     def from_dataset(dataset, f="FWT", phi="PHWT", sample_rate=2.6):
