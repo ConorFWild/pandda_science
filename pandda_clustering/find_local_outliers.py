@@ -191,19 +191,39 @@ def align_map(reference_xmap, moving_xmap, reference_centre, moving_centre, delt
 
 def align_maps(reference_dataset, datasets, alignments):
     results = []
+
+    pool = joblib.Parallel(n_jobs=20, verbose=10)
+
+    tasks = []
     for dtag, alignment in alignments.items():
         print("\t\tAligning map {}".format(dtag))
         reference_xmap = PanDDAXMap.from_dataset(reference_dataset)
 
         moving_xmap = PanDDAXMap.from_dataset(datasets[dtag])
 
-        result = align_map(reference_xmap,
+        tasks.append([reference_xmap,
                            moving_xmap,
                            alignments[reference_dataset.id],
-                           alignments[dtag],
-                           )
+                           alignments[dtag],]
+                     )
 
-        results.append(result)
+        # result = align_map(reference_xmap,
+        #                    moving_xmap,
+        #                    alignments[reference_dataset.id],
+        #                    alignments[dtag],
+        #                    )
+        #
+        # results.append(result)
+
+    results = pool(joblib.delayed(align_map(arg[0],
+                                            arg[0],
+                                            arg[0],
+                                            arg[0],
+                                            )
+                                  for arg
+                                  in tasks
+                                  )
+                   )
 
         # map_dict(lambda x: align_map(reference_dataset, x),
         #                datasets,
