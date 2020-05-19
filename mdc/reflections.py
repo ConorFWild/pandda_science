@@ -54,10 +54,7 @@ class PanDDAReflections:
 
     def __setstate__(self, state):
         data = state["data"]
-        self.grid = gemmi.FloatGrid(data.shape[0],
-                                    data.shape[1],
-                                    data.shape[2],
-                                    )
+
         spacegroup = state["spacegroup"]
         unit_cell = state["unit_cell"]
 
@@ -81,6 +78,8 @@ class PanDDAReflections:
                 mtz.add_column(column_name, column_type)
 
         mtz.set_data(data)
+
+        self.mtz = mtz
 
 
 
