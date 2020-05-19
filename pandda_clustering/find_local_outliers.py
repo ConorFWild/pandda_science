@@ -793,7 +793,7 @@ def main():
 
     sampled_residues = {resid: residue
                         for resid, residue
-                        in residues
+                        in residues.items()
                         if resid in np.random.choice(list(residues.keys()),
                                                      20,
                                                      replace=False,
