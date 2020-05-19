@@ -58,6 +58,14 @@ class PanDDAXMap:
                                                   )
         return PanDDAXMap(grid)
 
+    @staticmethod
+    def from_reflections(reflections, f="FWT", phi="PHWT", sample_rate=2.6):
+        grid = reflections.mtz.transform_f_phi_to_map(f,
+                                                  phi,
+                                                  sample_rate=sample_rate,
+                                                  )
+        return PanDDAXMap(grid)
+
 
 def sample(xmap, parameters):
     shape = 32

@@ -10,6 +10,7 @@ class PanDDADataset:
         self.reflections = reflections
         self.structure = structure
 
+
     @staticmethod
     def from_paths(id, reflections_path, structure_path):
         reflections = PanDDAReflections.from_file(reflections_path)
