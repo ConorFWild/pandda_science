@@ -830,37 +830,39 @@ def main():
 
     tables = {}
     for residue_id, residue in sampled_residues.items():
-        print("\tWorking on dataset: {}".format(residue_id))
-
-        residues = get_comparable_residues(datasets,
-                                           residue_id,
-                                           )
-        print("\tGot {} residues".format(len(residues)))
-        print(residues)
-
-        residues = {dtag: res[0] for dtag, res in residues.items() if res is not None}
-        print("\tGot {} residues".format(len(residues)))
-        print(residues)
-
-        clusters = cluster_datasets(truncated_datasets,
-                                    residues,
-                                    fs.output_dir,
-                                    )
-        print("\tGot {} clusters".format(len(clusters)))
-
-        table = output_csv(clusters,
-                           fs.output_dir / "{}_{}_{}.csv".format(residue_id[0],
-                                                                 residue_id[1],
-                                                                 residue_id[2], ),
-                           )
-        tables[residue_id] = table
-
-        visualise_clusters(clusters,
-                           fs.output_dir / "{}_{}_{}.png".format(residue_id[0],
-                                                                 residue_id[1],
-                                                                 residue_id[2], ),
-                           )
-
+        try:
+            print("\tWorking on dataset: {}".format(residue_id))
+    
+            residues = get_comparable_residues(datasets,
+                                               residue_id,
+                                               )
+            print("\tGot {} residues".format(len(residues)))
+            print(residues)
+    
+            residues = {dtag: res[0] for dtag, res in residues.items() if res is not None}
+            print("\tGot {} residues".format(len(residues)))
+            print(residues)
+    
+            clusters = cluster_datasets(truncated_datasets,
+                                        residues,
+                                        fs.output_dir,
+                                        )
+            print("\tGot {} clusters".format(len(clusters)))
+    
+            table = output_csv(clusters,
+                               fs.output_dir / "{}_{}_{}.csv".format(residue_id[0],
+                                                                     residue_id[1],
+                                                                     residue_id[2], ),
+                               )
+            tables[residue_id] = table
+    
+            visualise_clusters(clusters,
+                               fs.output_dir / "{}_{}_{}.png".format(residue_id[0],
+                                                                     residue_id[1],
+                                                                     residue_id[2], ),
+                               )
+        except Exception as e:
+            print(e)
     # Make joint table
     joint_table = make_joint_table(tables)
     joint_table.to_csv(str(fs.output_dir / "joint_table.csv"))
