@@ -144,7 +144,7 @@ def sample_and_measure(reference_sample_map,
     return distance
 
 
-def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre, delta=3):
+def align_map(reference_xmap, moving_xmap, reference_centre, moving_centre, delta=3):
     bounds = ((moving_centre[0] - delta, moving_centre[0] + delta),
               (moving_centre[1] - delta, moving_centre[1] + delta),
               (moving_centre[2] - delta, moving_centre[2] + delta),
@@ -153,9 +153,7 @@ def align_map(reference_dataset, moving_dataset, reference_centre, moving_centre
               (0, 2 * np.pi),
               )
 
-    reference_xmap = PanDDAXMap.from_dataset(reference_dataset)
 
-    moving_xmap = PanDDAXMap.from_dataset(moving_dataset)
 
     reference_sample_map = sample(reference_xmap,
                                   (reference_centre[0],
@@ -195,8 +193,12 @@ def align_maps(reference_dataset, datasets, alignments):
     results = []
     for dtag, alignment in alignments.items():
         print("\t\tAligning map {}".format(dtag))
-        result = align_map(reference_dataset,
-                           datasets[dtag],
+        reference_xmap = PanDDAXMap.from_dataset(reference_dataset)
+
+        moving_xmap = PanDDAXMap.from_dataset(datasets[dtag])
+
+        result = align_map(reference_xmap,
+                           moving_xmap,
                            alignments[reference_dataset.id],
                            alignments[dtag],
                            )

@@ -8,6 +8,45 @@ class PanDDAXMap:
     def __init__(self, grid):
         self.grid = grid
 
+    def __getstate__(self):
+
+        spacegroup = self.grid.spacegroup.number
+
+        unit_cell_gemmi = self.grid.unit_cell
+        unit_cell = (unit_cell_gemmi.a,
+                     unit_cell_gemmi.b,
+                     unit_cell_gemmi.c,
+                     unit_cell_gemmi.alpha,
+                     unit_cell_gemmi.beta,
+                     unit_cell_gemmi.gamma,
+                     )
+
+        data = np.array(self.grid)
+
+        state = {"spacegroup": spacegroup,
+                 "unit_cell": unit_cell,
+                 "data": data,
+                 }
+
+        return state
+
+    def __setstate__(self, state):
+        data = state["data"]
+        self.grid = gemmi.FloatGrid(data.shape[0],
+                               data.shape[1],
+                               data.shape[2],
+                               )
+        spacegroup = state["spacegroup"]
+        self.grid.spacegroup = gemmi.SpaceGroup(spacegroup)
+        unit_cell = state["unit_cell"]
+        self.grid.unit_cell = gemmi.UnitCell(unit_cell[0],
+                                             unit_cell[1],
+                                             unit_cell[2],
+                                             unit_cell[3],
+                                             unit_cell[4],
+                                             unit_cell[5],
+                                             )
+
     @staticmethod
     def from_dataset(dataset, f="FWT", phi="PHWT", sample_rate=2.6):
         grid = dataset.reflections.mtz.transform_f_phi_to_map(f,
