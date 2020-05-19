@@ -1,3 +1,4 @@
+import gc
 import argparse
 from pathlib import Path
 
@@ -180,6 +181,14 @@ def align_map(reference_reflections, moving_reflections, reference_centre, movin
                                                ),
                   bounds,
                   )
+
+    del reference_xmap
+    del moving_xmap
+    del reference_reflections
+    del moving_reflections
+    del reference_centre
+    del moving_centre
+    gc.collect()
 
     print("\t\tResult parameters: {}".format(result.x))
     print("\t\tResult parameters: {}".format(result.fun))
