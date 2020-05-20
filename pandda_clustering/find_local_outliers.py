@@ -778,20 +778,46 @@ def stackplot(tables,
     fig.write_image(str(path))
 
 
-def make_outlier_table(joint_table):
-    dtags = joint_table["dtag"].unique()
+# def make_outlier_table(joint_table):
+#     dtags = joint_table["dtag"].unique()
+#
+#     records = []
+#     outlier_counts = {}
+#     for dtag in dtags:
+#         dtag_table = joint_table[joint_table["dtag"] == dtag]
+#         num_outliers = len(dtag_table[dtag_table["cluster"] != 0])
+#         num_residues = len(dtag_table)
+#         outlier_counts[dtag] = float(num_outliers) / float(num_residues)
+#         record = {}
+#         record["dtag"] = dtag
+#         record["num_outliers"] = num_outliers
+#         record["outlier_fraction"] = outlier_counts[dtag]
+#         records.append(record)
+#
+#     return pd.DataFrame(records)
+
+def make_outlier_table(tables,
+                       datasets,
+                       ):
+
+    outlier_counts = {}
+    for resid, table in tables.items():
+        for idx, row in table.iterrows():
+            dtag = row["dtag"]
+            cluster = row["cluster"]
+            if dtag in outlier_counts:
+                outlier_counts[dtag] += cluster
+            else:
+                outlier_counts[dtag] = cluster
 
     records = []
-    outlier_counts = {}
-    for dtag in dtags:
-        dtag_table = joint_table[joint_table["dtag"] == dtag]
-        num_outliers = len(dtag_table[dtag_table["cluster"] != 0])
-        num_residues = len(dtag_table)
-        outlier_counts[dtag] = float(num_outliers) / float(num_residues)
+    for dtag, count in outlier_counts.items():
+        outlier_fraction = float(count) / float(len(tables))
         record = {}
         record["dtag"] = dtag
-        record["num_outliers"] = num_outliers
-        record["outlier_fraction"] = outlier_counts[dtag]
+        record["num_outliers"] = count
+        record["outlier_fraction"] = outlier_fraction
+        record["resolution"] = datasets[dtag].get_resolution_high()
         records.append(record)
 
     return pd.DataFrame(records)
