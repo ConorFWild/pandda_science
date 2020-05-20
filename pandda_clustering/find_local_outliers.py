@@ -805,10 +805,11 @@ def make_outlier_table(tables,
         for idx, row in table.iterrows():
             dtag = row["dtag"]
             cluster = row["cluster"]
-            if dtag in outlier_counts:
-                outlier_counts[dtag] += cluster
-            else:
-                outlier_counts[dtag] = cluster
+            if cluster != 0:
+                if dtag in outlier_counts:
+                    outlier_counts[dtag] += 1
+                else:
+                    outlier_counts[dtag] = 1
 
     records = []
     for dtag, count in outlier_counts.items():
