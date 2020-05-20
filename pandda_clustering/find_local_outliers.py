@@ -913,7 +913,9 @@ def main():
               )
 
     # Make outlier table
-    outlier_table = make_outlier_table(joint_table)
+    outlier_table = make_outlier_table(joint_table,
+                                       datasets,
+                                       )
     outlier_table.to_csv(fs.output_dir / "outliers.csv", )
 
 
