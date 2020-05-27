@@ -114,7 +114,7 @@ def autobuild_event(event):
                      event.analysed_resolution,
                      )
     if not event_mtz_path.exists():
-        raise Exception("Could not find event mtz after attempting generation")
+        raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
 
     out_dir_path = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
 
