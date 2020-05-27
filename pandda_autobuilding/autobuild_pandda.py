@@ -101,9 +101,9 @@ def event_map_to_mtz(event_map_path: Path,
 def write_autobuild_log(stdout, stderr, autobuilding_log_path):
     with open(str(autobuilding_log_path), "w") as f:
         f.write("===Stdout===\n")
-        f.write(stdout)
+        f.write(str(stdout))
         f.write("===Stderr===\n")
-        f.write(stderr)
+        f.write(str(stderr))
 
 
 
