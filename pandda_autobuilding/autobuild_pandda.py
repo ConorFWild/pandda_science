@@ -11,6 +11,7 @@ import joblib
 
 from biopandas.pdb import PandasPdb
 
+
 # class Dataset:
 #     def __init__(self, dataset_dir, data_path, model_path, compound_path, event_map_paths):
 #         self.dataset_dir = dataset_dir
@@ -97,6 +98,14 @@ def event_map_to_mtz(event_map_path: Path,
     return output_path
 
 
+def write_autobuild_log(stdout, stderr, autobuilding_log_path):
+    with open(str(autobuilding_log_path), "w") as f:
+        f.write("===Stdout===\n")
+        f.write(stdout)
+        f.write("===Stderr===\n")
+        f.write(stderr)
+
+
 def autobuild_event(event):
     event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
 
@@ -104,6 +113,8 @@ def autobuild_event(event):
                      event_mtz_path,
                      event.analysed_resolution,
                      )
+    if not event_mtz_path.exists():
+        raise Exception("Could not find event mtz after attempting generation")
 
     out_dir_path = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
 
@@ -122,6 +133,9 @@ def autobuild_event(event):
                                                )
 
     stdout, stderr = execute(autobuilding_command)
+
+    autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
+    write_autobuild_log(stdout, stderr, autobuilding_log_path)
 
     result = AutobuildingResult(event,
                                 stdout,
