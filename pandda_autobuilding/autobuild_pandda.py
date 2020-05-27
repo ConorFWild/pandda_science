@@ -263,20 +263,29 @@ def get_ligand_path(pandda_event_dir):
     # print("\t\t{}".format(pandda_event_dir))
 
     event_dir = pandda_event_dir
+    #
+    # ligands = list((event_dir / "ligand_files").glob("*.pdb"))
+    # ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
+    #
+    # if len(ligand_strings) == 0:
+    #     return None
+    #
+    # ligand_pdb_path: Path = Path(min(ligand_strings,
+    #                                  key=len,
+    #                                  )
+    #                              )
+    # return ligand_pdb_path
 
-    ligands = list((event_dir / "ligand_files").glob("*.pdb"))
-    ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.pdb"]
+    ligands = list((event_dir / "ligand_files").glob("*.smiles"))
+    ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.smiles"]
 
     if len(ligand_strings) == 0:
         return None
 
-    ligand_pdb_path: Path = Path(min(ligand_strings,
+    ligand_smiles_path: Path = Path(min(ligand_strings,
                                      key=len,
                                      )
                                  )
-    # return ligand_pdb_path
-
-    ligand_smiles_path = ligand_pdb_path.parent / "{}.smiles".format(ligand_pdb_path.stem)
 
     return ligand_smiles_path
 
