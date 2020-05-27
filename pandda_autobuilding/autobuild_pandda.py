@@ -95,7 +95,7 @@ def event_map_to_mtz(event_map_path: Path,
 
     stdout, stderr = p.communicate()
 
-    return output_path
+    return stdout, stderr
 
 
 def write_autobuild_log(stdout, stderr, autobuilding_log_path):
@@ -106,13 +106,17 @@ def write_autobuild_log(stdout, stderr, autobuilding_log_path):
         f.write(stderr)
 
 
+
 def autobuild_event(event):
     event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
 
-    event_map_to_mtz(event.event_map_path,
+    stdout, stderr = event_map_to_mtz(event.event_map_path,
                      event_mtz_path,
                      event.analysed_resolution,
                      )
+    event_mtz_log = event.pandda_event_dir / "event_mtz_log.txt"
+    write_autobuild_log(stdout, stderr, event_mtz_log)
+
     if not event_mtz_path.exists():
         raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
 
