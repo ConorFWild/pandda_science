@@ -41,7 +41,7 @@ class AutobuildingCommand:
                  ):
         env = "module load phenix"
         ligand_fit_command = "phenix.ligandfit"
-        ligand_fit_args = "data={mtz} ligand={ligand} model={receptor} search_center=[{x},{y},{z}] search_dist=6"
+        ligand_fit_args = "data=\"{mtz}\" ligand=\"{ligand}\" model=\"{receptor}\" search_center=[{x},{y},{z}] search_dist=6"
         ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz_path,
                                                            ligand=ligand_path,
                                                            receptor=receptor_path,
