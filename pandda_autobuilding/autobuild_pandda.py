@@ -246,10 +246,12 @@ def get_event_table(path):
 
 
 def get_event_map_path(pandda_event_dir, dtag, event_idx, occupancy):
+    # PanDDA 1
     # event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.native.ccp4".format(dtag,
     #                                                                                   event_idx,
     #                                                                                   occupancy,
     #                                                                                   )
+    # PanDDA 2
     event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.ccp4".format(dtag,
                                                                                       event_idx,
                                                                                       occupancy,
@@ -272,7 +274,11 @@ def get_ligand_path(pandda_event_dir):
                                      key=len,
                                      )
                                  )
-    return ligand_pdb_path
+    # return ligand_pdb_path
+
+    ligand_smiles_path = ligand_pdb_path.parent / "{}.smiles".format(ligand_pdb_path.stem)
+
+    return ligand_smiles_path
 
 
 def get_receptor_path(pandda_event_dir, dtag):
