@@ -67,7 +67,7 @@ def execute(command):
                                    stderr=subprocess.PIPE,
                                    )
     stdout, stderr = submit_proc.communicate()
-    return stdout, stderr
+    return str(command), stdout, stderr
 
 
 def event_map_to_mtz(event_map_path: Path,
@@ -95,27 +95,28 @@ def event_map_to_mtz(event_map_path: Path,
 
     stdout, stderr = p.communicate()
 
-    return stdout, stderr
+    return formatted_command, stdout, stderr
 
 
-def write_autobuild_log(stdout, stderr, autobuilding_log_path):
+def write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path):
     with open(str(autobuilding_log_path), "w") as f:
+        f.write("===Command===")
+        f.write(formatted_command)
         f.write("===Stdout===\n")
         f.write(str(stdout))
         f.write("===Stderr===\n")
         f.write(str(stderr))
 
 
-
 def autobuild_event(event):
     event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
 
-    stdout, stderr = event_map_to_mtz(event.event_map_path,
-                     event_mtz_path,
-                     event.analysed_resolution,
-                     )
+    formatted_command, stdout, stderr = event_map_to_mtz(event.event_map_path,
+                                                         event_mtz_path,
+                                                         event.analysed_resolution,
+                                                         )
     event_mtz_log = event.pandda_event_dir / "event_mtz_log.txt"
-    write_autobuild_log(stdout, stderr, event_mtz_log)
+    write_autobuild_log(formatted_command, stdout, stderr, event_mtz_log)
 
     if not event_mtz_path.exists():
         raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
@@ -136,10 +137,10 @@ def autobuild_event(event):
                                                coord=event.coords,
                                                )
 
-    stdout, stderr = execute(autobuilding_command)
+    formatted_command, stdout, stderr = execute(autobuilding_command)
 
     autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
-    write_autobuild_log(stdout, stderr, autobuilding_log_path)
+    write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
 
     result = AutobuildingResult(event,
                                 stdout,
