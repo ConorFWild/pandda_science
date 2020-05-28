@@ -9,6 +9,7 @@ import pandas as pd
 
 import joblib
 
+import gemmi
 from biopandas.pdb import PandasPdb
 
 
@@ -423,11 +424,37 @@ def copy_event_to_processed_models(event: Event, fs):
 
     renumber(initial_model.df["HETATM"])
 
-    initial_model.to_pdb(str(pandda_inspect_model_path))
     #
     # shutil.copyfile(str(event_build_path),
     #                 str(pandda_inspect_model_path),
     #                 )
+
+
+def save_event_model(event_model, path):
+    event_model.write_pdb(str(path))
+
+
+def merge_model(event, fs):
+    event_autobuilding_dir = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
+    event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
+    event_build_path = event_ligandfit_dir / "ligand_fit_1.pdb"
+
+    initial_model_path = event_autobuilding_dir / "{}-pandda-input.pdb".format(event.dtag)
+
+
+    # initial_model = PandasPdb().read_pdb(str(initial_model_path))
+    # best_autobuild_model = PandasPdb().read_psb(str(event_build_path))
+
+    initial_model = gemmi.read_structure(str(initial_model_path))
+    best_autobuild_model = gemmi.read_structure(str(event_build_path))
+
+    # initial_model.df["HETATM"] = initial_model.df["HETATM"].append(best_autobuild_model.df["HETATM"])
+
+    print("\tBefore adding lig there are {} chains".format(len(initial_model[0])))
+    initial_model[0].add_chain(best_autobuild_model[0][0])
+    print("\tAfter adding lig there are {} chains".format(len(initial_model[0])))
+
+    return initial_model
 
 
 def merge_models(events,
@@ -441,7 +468,14 @@ def merge_models(events,
     print("\t\tAfter filetering duplicate events got {} events".format(len(highest_rscc_events)))
 
     for event in highest_rscc_events:
-        merge_model(event, fs)
+        final_model = merge_model(event, fs)
+
+        pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
+        pandda_inspect_model_path = pandda_inspect_model_dir / "{}-pandda-model.pdb".format(event.dtag)
+
+        save_event_model(final_model,
+                         pandda_inspect_model_path,
+                         )
 
 
 def main():
