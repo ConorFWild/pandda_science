@@ -669,7 +669,7 @@ def cluster_datasets(truncated_datasets,
         means = model.means_[i, :].flatten()
         precs = np.diag(model.precisions_[i, :].flatten())
 
-        outlier_distance = np.sqrt(chi2.ppf(0.95, means))
+        outlier_distance = np.sqrt(chi2.ppf(0.95, means.size))
         print("Outlier distance: {}".format(outlier_distance))
         cluster_maps = {dtag: aligned_maps[j]
                         for j, dtag
