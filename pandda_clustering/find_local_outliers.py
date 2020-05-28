@@ -657,10 +657,20 @@ def cluster_datasets(truncated_datasets,
                                                  max(distances),
                                                  ))
 
+    data = np.vstack([aligned_map.flatten() for aligned_map in aligned_maps])
+    model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
+    classes = model.fit_predict(data)
+    print(model.bic(data))
+
     # model = BayesianGaussianMixture(n_components=2, covariance_type="diag", verbose=2)
     model = GaussianMixture(n_components=2, covariance_type="diag", verbose=2)
+    classes = model.fit_predict(data)
+    print(model.bic(data))
 
-    classes = model.fit_predict(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
+    model = GaussianMixture(n_components=3, covariance_type="diag", verbose=2)
+    classes = model.fit_predict(data)
+    print(model.bic(data))
+
     # outlier_distance = sample_outlier_distance(model)
     outliers = {}
     clusters = []
