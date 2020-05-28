@@ -142,10 +142,13 @@ def autobuild_event(event):
     autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
     write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
 
-    result = AutobuildingResult(event,
-                                stdout,
-                                stderr,
-                                )
+    try:
+        result = AutobuildingResult.from_output(event,
+                                    stdout,
+                                    stderr,
+                                    )
+    except:
+        result= AutobuildingResult.null_result(event)
 
     return result
 
@@ -335,7 +338,25 @@ def get_events(event_table, fs):
 
 
 class AutobuildingResult:
-    def __init__(self, event: Event, stdout, stderr):
+    def __init__(self, dtag, event_idx, rscc_string, stdout, stderr):
+
+        self.dtag = dtag
+        self.event_idx = event_idx
+        self.rscc = float(rscc_string)
+        self.stdout = stdout
+        self.stderr = stderr
+
+    @staticmethod
+    def null_result(event):
+        return AutobuildingResult(event.dtag,
+                                  event.event_idx,
+                                  "0",
+                                  "",
+                                  "",
+                                  )
+
+    @staticmethod
+    def from_output(event: Event, stdout, stderr):
         event_autobuilding_dir = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
         event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
         autobuilding_results_file = event_ligandfit_dir / "LigandFit_summary.dat"
@@ -346,11 +367,7 @@ class AutobuildingResult:
         rscc_regex = "[\s]+1[\s]+[0-9\.]+[\s]+([0-9\.]+)"
         match = re.findall(rscc_regex, result_string)
         rscc_string = match[0]
-        self.dtag = event.dtag
-        self.event_idx = event.event_idx
-        self.rscc = float(rscc_string)
-        self.stdout = stdout
-        self.stderr = stderr
+        return AutobuildingResult(event.dtag, event.event_idx, rscc_string, stdout, stderr)
 
 
 class ResultsTable:
