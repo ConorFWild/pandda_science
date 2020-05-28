@@ -662,7 +662,7 @@ def cluster_datasets(truncated_datasets,
     try:
         for i in range(10):
             model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
-
+            model.fit(data)
             models[i] = model
 
     except:
@@ -673,7 +673,7 @@ def cluster_datasets(truncated_datasets,
     model = min(list(bics.items()), key=lambda x: x[1])
     print("Best model is {}".format(model))
     model = models[model[0]]
-    classes = model.fit_predict(data)
+    classes = model.predict(data)
 
     # outlier_distance = sample_outlier_distance(model)
     outliers = {}
