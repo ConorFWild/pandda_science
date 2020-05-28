@@ -658,18 +658,23 @@ def cluster_datasets(truncated_datasets,
                                                  ))
 
     data = np.vstack([aligned_map.flatten() for aligned_map in aligned_maps])
-    model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
-    classes = model.fit_predict(data)
-    print(model.bic(data))
+    try:
+        models = {}
+        for i in
+            model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
 
-    # model = BayesianGaussianMixture(n_components=2, covariance_type="diag", verbose=2)
-    model = GaussianMixture(n_components=2, covariance_type="diag", verbose=2)
-    classes = model.fit_predict(data)
-    print(model.bic(data))
 
-    model = GaussianMixture(n_components=3, covariance_type="diag", verbose=2)
+            models[i] = model
+
+    except:
+        print("Model became undefined!")
+
+    bics = {model_num: model.bic(data) for model_num, model in models.items()}
+    print(bics)
+    model = min(list(bics.items()), key=lambda x: x[1])
+    print("Best model is {}".format(model))
+    model = models[model[0]]
     classes = model.fit_predict(data)
-    print(model.bic(data))
 
     # outlier_distance = sample_outlier_distance(model)
     outliers = {}
