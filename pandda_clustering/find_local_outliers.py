@@ -660,7 +660,7 @@ def cluster_datasets(truncated_datasets,
     data = np.vstack([aligned_map.flatten() for aligned_map in aligned_maps])
     models = {}
     try:
-        for i in range(10):
+        for i in range(1, 10):
             print(i)
             model = GaussianMixture(n_components=i, covariance_type="diag", verbose=2)
             model.fit(data)
