@@ -661,11 +661,13 @@ def cluster_datasets(truncated_datasets,
     models = {}
     try:
         for i in range(10):
+            print(i)
             model = GaussianMixture(n_components=i, covariance_type="diag", verbose=2)
             model.fit(data)
             models[i] = model
 
-    except:
+    except Exception as e:
+        print(e)
         print("Model became undefined!")
 
     bics = {model_num: model.bic(data) for model_num, model in models.items()}
