@@ -661,7 +661,7 @@ def cluster_datasets(truncated_datasets,
     models = {}
     try:
         for i in range(10):
-            model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
+            model = GaussianMixture(n_components=i, covariance_type="diag", verbose=2)
             model.fit(data)
             models[i] = model
 
