@@ -657,16 +657,38 @@ def cluster_datasets(truncated_datasets,
                                                  max(distances),
                                                  ))
 
-    model = GaussianMixture(n_components=1, covariance_type="diag", verbose=2)
-    model.fit(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
+    model = GaussianMixture(n_components=2, covariance_type="diag", verbose=2)
+    classes = model.fit_predict(np.vstack([aligned_map.flatten() for aligned_map in aligned_maps]))
     # outlier_distance = sample_outlier_distance(model)
-    outlier_distance = np.sqrt(chi2.ppf(0.95, model.means_.size))
-    print("Outlier distance: {}".format(outlier_distance))
-    precs = np.diag(model.precisions_[0, :])
-    means = model.means_[0, :].flatten()
-    outliers = map_list(lambda x: classify_distance(x, outlier_distance, means, precs),
-                        aligned_maps,
-                        )
+    outliers = {}
+    clusters = []
+    for i in range(model.means_.shape[0]):
+        print("\tProcessing component: {}".format(i))
+        means = model.means_[i, :].flatten()
+        precs = np.diag(model.precisions_[i, :])
+
+        outlier_distance = np.sqrt(chi2.ppf(0.95, means))
+        print("Outlier distance: {}".format(outlier_distance))
+        cluster_maps = {dtag: aligned_maps[j]
+                        for j, dtag
+                        in enumerate(list(residues.keys()))
+                        if classes[j] == i
+                        }
+
+
+        cluster_outliers = map_list(lambda x: classify_distance(x, outlier_distance, means, precs),
+                            cluster_maps.values(),
+                            )
+        for j, dtag in enumerate(list(cluster_maps.keys())):
+            if cluster_outliers[j] == 1:
+                outliers[dtag] = 1
+            else:
+                outliers[dtag] = 0
+
+        inliers = {dtag: aligned_maps[i] for i, dtag in enumerate(list(cluster_maps.keys())) if outliers[dtag] == 0}
+        clusters.append(inliers)
+
+
     # outliers = []
     # for xmap in aligned_maps:
     #     distance = gaussian_distance(xmap, model)
@@ -677,8 +699,9 @@ def cluster_datasets(truncated_datasets,
     #     else:
     #         outliers.append(0)
 
-    return [{dtag: aligned_maps[i] for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 0}] + [
-        {dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if outliers[i] == 1]
+    individual_outliers = [{dtag: aligned_maps[i]} for i, dtag in enumerate(list(residues.keys())) if outliers[dtag] == 1]
+
+    return clusters + individual_outliers
 
 
 def get_comparable_residues(datasets,
