@@ -84,7 +84,7 @@ class Args:
         self.structure_factors = str(args.structure_factors)
         self.data_dirs = Path(args.data_dirs)
         self.f = str(args.f)
-        self.phi = set(args.phi)
+        self.phi = str(args.phi)
 
 
 class ClusterFSModel:
