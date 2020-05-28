@@ -65,6 +65,16 @@ class Args:
                             help="Number of processes to start",
                             default="FWT,PHWT",
                             )
+        parser.add_argument("--f",
+                            type=str,
+                            help="Number of processes to start",
+                            default="FWT",
+                            )
+        parser.add_argument("--phi",
+                            type=str,
+                            help="Number of processes to start",
+                            default="PHWT",
+                            )
 
         args = parser.parse_args()
 
@@ -73,6 +83,8 @@ class Args:
         self.mtz_regex = str(args.mtz_regex)
         self.structure_factors = str(args.structure_factors)
         self.data_dirs = Path(args.data_dirs)
+        self.f = str(args.f)
+        self.phi = set(args.phi)
 
 
 class ClusterFSModel:
@@ -145,7 +157,7 @@ def sample_and_measure(reference_sample_map,
     return distance
 
 
-def align_map(reference_reflections, moving_reflections, reference_centre, moving_centre, delta=3):
+def align_map(reference_reflections, moving_reflections, reference_centre, moving_centre, delta=3, f="FWT", phi="PHWT"):
     bounds = ((moving_centre[0] - delta, moving_centre[0] + delta),
               (moving_centre[1] - delta, moving_centre[1] + delta),
               (moving_centre[2] - delta, moving_centre[2] + delta),
@@ -154,9 +166,15 @@ def align_map(reference_reflections, moving_reflections, reference_centre, movin
               (0, 2 * np.pi),
               )
 
-    reference_xmap = PanDDAXMap.from_reflections(reference_reflections)
+    reference_xmap = PanDDAXMap.from_reflections(reference_reflections,
+                                                 f=f,
+                                                 phi=phi,
+                                                 )
 
-    moving_xmap = PanDDAXMap.from_reflections(moving_reflections)
+    moving_xmap = PanDDAXMap.from_reflections(moving_reflections,
+                                              f=f,
+                                              phi=phi,
+                                              )
 
     reference_sample_map = sample(reference_xmap,
                                   (reference_centre[0],
@@ -202,7 +220,7 @@ def align_map(reference_reflections, moving_reflections, reference_centre, movin
     return aligned_map, result.fun
 
 
-def align_maps(reference_dataset, datasets, alignments):
+def align_maps(reference_dataset, datasets, alignments, f, phi):
     results = []
 
     pool = joblib.Parallel(n_jobs=20, verbose=10)
@@ -233,6 +251,8 @@ def align_maps(reference_dataset, datasets, alignments):
                                             arg[1],
                                             arg[2],
                                             arg[3],
+                                             f=f,
+                                             phi=phi,
                                             )
                                   for arg
                                   in tasks
@@ -617,6 +637,8 @@ def classify_distance(xmap, outlier_distance, means, precs):
 def cluster_datasets(truncated_datasets,
                      residues,
                      out_dir,
+                     f,
+                     phi,
                      ):
     print("\tClustering {} datasets".format(len(truncated_datasets)))
 
@@ -628,6 +650,8 @@ def cluster_datasets(truncated_datasets,
     aligned_maps, distances = align_maps(reference_dataset,
                                          truncated_datasets,
                                          alignments,
+                                         f,
+                                         phi,
                                          )
     print("\tRange of distances is {} {}".format(min(distances),
                                                  max(distances),
@@ -891,6 +915,8 @@ def main():
             clusters = cluster_datasets(truncated_datasets,
                                         residues,
                                         fs.output_dir,
+                                        args.f,
+                                        args.phi,
                                         )
             print("\tGot {} clusters".format(len(clusters)))
     
