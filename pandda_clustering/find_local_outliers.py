@@ -717,9 +717,13 @@ def visualise_clusters(clusters,
 
 def try_load(path, mtz_regex="dimple_twin.mtz", pdb_regex="dimple_twin.pdb"):
     try:
-        dataset = PanDDADataset.from_dir(path,
-                                         mtz_regex=mtz_regex,
-                                         pdb_regex=pdb_regex,
+        dataset_id = path.name
+        pdb_path = next(path.glob(pdb_regex))
+        mtz_path= next(path.glob(mtz_regex))
+
+        dataset = PanDDADataset.from_paths(dataset_id,
+                                           mtz_path,
+                                           pdb_path,
                                          )
         return dataset
     except Exception as e:
