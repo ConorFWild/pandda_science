@@ -831,7 +831,7 @@ def main():
                         args.out_dir,
                         )
 
-    datasets = map_dict(try_load,
+    datasets = map_dict(lambda x: try_load(x, pdb_regex=args.pdb_regex, mtz_regex=args.mtz_regex),
                         fs.initial_model_dirs,
                         )
     datasets = {dtag: dataset for dtag, dataset in datasets.items() if dataset is not None}
