@@ -439,7 +439,7 @@ def merge_model(event, fs):
     event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
     event_build_path = event_ligandfit_dir / "ligand_fit_1.pdb"
 
-    initial_model_path = event_autobuilding_dir / "{}-pandda-input.pdb".format(event.dtag)
+    initial_model_path = event.pandda_event_dir / "{}-pandda-input.pdb".format(event.dtag)
 
 
     # initial_model = PandasPdb().read_pdb(str(initial_model_path))
