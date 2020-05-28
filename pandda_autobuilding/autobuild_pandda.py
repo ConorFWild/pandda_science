@@ -458,9 +458,12 @@ def merge_model(event, fs):
 
 
 def merge_models(events,
+                autobuilding_results,
                  results_table,
                  fs,
                  ):
+    results_dict = {(result.dtag, result.event_idx): result for result in autobuilding_results}
+
     highest_rscc_events = get_highest_rscc_events(events,
                                                   results_table,
                                                   )
@@ -468,6 +471,9 @@ def merge_models(events,
     print("\t\tAfter filetering duplicate events got {} events".format(len(highest_rscc_events)))
 
     for event in highest_rscc_events:
+        if results_dict[(event.dtag, event.event_idx)].rscc == 0:
+            print("\tNo build for event! Skipping!")
+            continue
         final_model = merge_model(event, fs)
 
         pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
@@ -508,6 +514,7 @@ def main():
 
     print("Merging best models")
     merge_models(events,
+                 autobuilding_results,
                  results_table.table,
                  fs,
                  )
