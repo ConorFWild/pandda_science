@@ -662,10 +662,12 @@ def cluster_datasets(truncated_datasets,
     # outlier_distance = sample_outlier_distance(model)
     outliers = {}
     clusters = []
+    print(model.means_.shape)
+    print(classes)
     for i in range(model.means_.shape[0]):
         print("\tProcessing component: {}".format(i))
         means = model.means_[i, :].flatten()
-        precs = np.diag(model.precisions_[i, :])
+        precs = np.diag(model.precisions_[i, :].flatten())
 
         outlier_distance = np.sqrt(chi2.ppf(0.95, means))
         print("Outlier distance: {}".format(outlier_distance))
