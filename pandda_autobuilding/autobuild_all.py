@@ -638,8 +638,8 @@ def prepare_event(event, output_dir):
     ligand_smiles_path = event.ligand_smiles_path
     ligand_cif_path = autobuilding_dir / "ligand.cif"
     if not ligand_cif_path.exists():
-        stdout, stderr = elbow(ligand_smiles_path,
-              ligand_cif_path,
+        stdout, stderr = elbow(autobuilding_dir,
+                         ligand_smiles_path,
               )
         print(stdout)
         print(stderr)
