@@ -651,14 +651,15 @@ def prepare_event(event, output_dir):
                          event.analysed_resolution,
                          )
 
-def prepare_data(events, output_dir):
 
+def prepare_data(events, output_dir):
     joblib.Parallel(n_jobs=20,
                     verbose=10,
-                    )(joblib.delayed(prepare_event(event, output_dir)
-                                     for event
-                                     in events
-                                     )
+                    )(joblib.delayed(prepare_event)(event,
+                                                    output_dir,
+                                                    )
+                      for event
+                      in events
                       )
 
 
