@@ -425,7 +425,7 @@ def event_map_to_mtz(event_map_path: Path,
 
     stdout, stderr = p.communicate()
 
-    return output_path
+    return stdout, stderr
 
 
 def get_autobuilding_task(event, output_dir):
@@ -638,18 +638,22 @@ def prepare_event(event, output_dir):
     ligand_smiles_path = event.ligand_smiles_path
     ligand_cif_path = autobuilding_dir / "ligand.cif"
     if not ligand_cif_path.exists():
-        elbow(ligand_smiles_path,
+        stdout, stderr = elbow(ligand_smiles_path,
               ligand_cif_path,
               )
+        print(stdout)
+        print(stderr)
 
     # Convert event map to mtz
     event_map_path = Path(event.event_map_path)
     event_map_mtz_path = autobuilding_dir / "event.mtz"
     if not event_map_path.exists():
-        event_map_to_mtz(event_map_path,
+        stdout, stderr = event_map_to_mtz(event_map_path,
                          event_map_mtz_path,
                          event.analysed_resolution,
                          )
+        print(stdout)
+        print(stderr)
 
 
 def prepare_data(events, output_dir):
