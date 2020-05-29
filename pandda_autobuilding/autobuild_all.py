@@ -597,7 +597,6 @@ def get_rhofit_normal_tasks(events, output_dir):
                                                           )
         rohfit_normal_dir = autobuilding_dir / "rhofit_normal"
 
-        try_make(autobuilding_dir)
         try_make(rohfit_normal_dir)
 
         task = RhofitNormal(out_dir=rohfit_normal_dir,
@@ -627,31 +626,40 @@ def elbow(autobuilding_dir, ligand_smiles_path):
     return stdout, stderr
 
 
-def prepare_data(events, output_dir):
-    for event in events:
-        autobuilding_dir = output_dir / "{}_{}_{}".format(event.pandda_name,
-                                                          event.dtag,
-                                                          event.event_idx,
-                                                          )
-        rohfit_normal_dir = autobuilding_dir / "rhofit_normal"
+def prepare_event(event, output_dir):
+    autobuilding_dir = output_dir / "{}_{}_{}".format(event.pandda_name,
+                                                      event.dtag,
+                                                      event.event_idx,
+                                                      )
 
-        try_make(autobuilding_dir)
-        try_make(rohfit_normal_dir)
+    try_make(autobuilding_dir)
 
-        # Get ligand restraints
-        ligand_smiles_path = event.ligand_smiles_path
-        ligand_cif_path = autobuilding_dir / "ligand.cif"
+    # Get ligand restraints
+    ligand_smiles_path = event.ligand_smiles_path
+    ligand_cif_path = autobuilding_dir / "ligand.cif"
+    if not ligand_cif_path.exists():
         elbow(ligand_smiles_path,
               ligand_cif_path,
               )
 
-        # Convert event map to mtz
-        event_map_path = event.event_map_path
-        event_map_mtz_path = autobuilding_dir / "event.mtz"
+    # Convert event map to mtz
+    event_map_path = event.event_map_path
+    event_map_mtz_path = autobuilding_dir / "event.mtz"
+    if not event_map_path.exists():
         event_map_to_mtz(event_map_path,
                          event_map_mtz_path,
                          event.analysed_resolution,
                          )
+
+def prepare_data(events, output_dir):
+
+    joblib.Parallel(n_jobs=20,
+                    verbose=10,
+                    )(joblib.delayed(prepare_event(event, output_dir)
+                                     for event
+                                     in events
+                                     )
+                      )
 
 
 if __name__ == "__main__":
@@ -676,6 +684,8 @@ if __name__ == "__main__":
     tasks = get_rhofit_normal_tasks(events,
                                     config.out_dir_path,
                                     )
+    tasks[0].run()
+    exit()
     process_luigi(tasks)
 
     # Buster event
