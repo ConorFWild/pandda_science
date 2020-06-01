@@ -207,14 +207,14 @@ class AutobuildStatusRhofit:
 
         self.rscc = self.parse_rhofit_log(rhofit_results_path)
 
-    def to_json(self):
+    def to_json(self, target_path):
         record = {}
         record["time"] = self.time
         record["success"] = self.success
         record["result_model_path"] = [str(result_path) for result_path in self.result_model_path]
 
         json_string = json.dumps(record)
-        with open(str(self.output_dir / "task_results.json"), "w") as f:
+        with open(str(target_path), "w") as f:
             f.write(json_string)
 
     def parse_rhofit_log(self, rhofit_results_path):
@@ -545,8 +545,8 @@ class RhofitNormal(luigi.Task):
 
         command = self.command(self.out_dir_path,
                                self.mtz_path,
-                               self.ligand,
                                self.ligand_path,
+                               self.model_path,
                                )
 
         start_time = time.time()
@@ -560,7 +560,7 @@ class RhofitNormal(luigi.Task):
         status = AutobuildStatusRhofit(output_dir,
                                        finish_time - start_time,
                                        )
-        status.to_json()
+        status.to_json(target_path)
 
     def command(self,
                 out_dir_path,
