@@ -570,7 +570,7 @@ class RhofitNormal(luigi.Task):
                 ):
         env = "module load buster"
         ligand_fit_command = "rhofit"
-        ligand_fit_args = "-m {mtz} -l {ligand} -p {receptor}"
+        ligand_fit_args = "-m {mtz} -l {ligand} -p {receptor} -allclusters"
         ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz,
                                                            ligand=ligand,
                                                            receptor=receptor,
