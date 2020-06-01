@@ -595,6 +595,7 @@ def get_rhofit_normal_tasks(events, output_dir):
                                                           event.dtag,
                                                           event.event_idx,
                                                           )
+        ligand_path = autobuilding_dir / "ligand.cif"
         rohfit_normal_dir = autobuilding_dir / "rhofit_normal"
 
         try_make(rohfit_normal_dir)
@@ -602,7 +603,7 @@ def get_rhofit_normal_tasks(events, output_dir):
         task = RhofitNormal(out_dir_path=rohfit_normal_dir,
                             mtz_path=event.data_path,
                             model_path=event.initial_model_path,
-                            ligand_path=event.ligand_smiles_path,
+                            ligand_path=ligand_path,
                             )
         tasks.append(task)
 
