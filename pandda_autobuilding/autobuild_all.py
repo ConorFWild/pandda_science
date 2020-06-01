@@ -198,7 +198,7 @@ class AutobuildStatusRhofit:
         rhofit_results_path = rhofit_dir / "results.txt"
         rhofit_model_path = rhofit_dir / "best.pdb"
 
-        if ligand_fit_pdb_path.exists():
+        if rhofit_model_path.exists():
             self.success = True
             self.result_model_path = [rhofit_model_path]
         else:
@@ -539,7 +539,7 @@ class RhofitNormal(luigi.Task):
     model_path = luigi.Parameter()
 
     def run(self):
-        submit_script_path = Path(self.submit_script_path)
+        submit_script_path = self.out_dir_path / "submit_script.sh"
         output_dir = Path(self.out_dir_path)
         target_path = output_dir / "task_results.json"
 
