@@ -648,7 +648,7 @@ def prepare_event(event, output_dir):
     # Convert event map to mtz
     event_map_path = Path(event.event_map_path)
     event_map_mtz_path = autobuilding_dir / "event.mtz"
-    if not event_map_path.exists():
+    if not event_map_mtz_path.exists():
         stdout, stderr = event_map_to_mtz(event_map_path,
                          event_map_mtz_path,
                          event.analysed_resolution,
@@ -702,3 +702,6 @@ if __name__ == "__main__":
 
     # Phenix Event
     print("Autobuilding events from event maps with phenix")
+
+
+
