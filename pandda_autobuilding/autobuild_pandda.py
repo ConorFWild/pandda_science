@@ -285,7 +285,7 @@ def autobuild_event(event):
                                                      ligand_path=event.ligand_path,
                                                      receptor_path=receptor_path,
                                                      )
-
+    print("\t\tCommand: {}".format(str(autobuilding_command)))
     formatted_command, stdout, stderr = execute(autobuilding_command)
 
     print("\tProcessing autobuilding results...")
