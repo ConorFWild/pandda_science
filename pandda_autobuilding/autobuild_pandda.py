@@ -193,7 +193,8 @@ def strip_protein(initial_receptor_path,
                   receptor_path,
                   ):
     # Load protein
-    receptor = gemmi.read_structure(str(initial_receptor_path))[0]
+    structure = gemmi.read_structure(str(initial_receptor_path))
+    receptor = structure[0]
 
     # Strip nearby residues
     remove_ids = []
@@ -215,7 +216,7 @@ def strip_protein(initial_receptor_path,
 
 
     # Save
-    receptor.write_pdb(str(receptor_path))
+    structure.write_pdb(str(receptor_path))
 
 
 def autobuild_event(event):
