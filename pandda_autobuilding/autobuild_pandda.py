@@ -185,7 +185,7 @@ def get_ligand_distance(ligand, coords):
 
 
 def remove_residue(chain, ligand):
-    del chain[str(ligand.seqid)][0]
+    del chain[str(ligand.seqid)]
 
 
 def strip_protein(initial_receptor_path,
@@ -223,17 +223,19 @@ def autobuild_event(event):
     print("\tMaking ligand cif...")
     ligand_path = event.pandda_event_dir / "ligand.cif"
     ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
-    elbow(event.pandda_event_dir,
-          ligand_smiles_path,
-          )
+    if not ligand_path.exists():
+        elbow(event.pandda_event_dir,
+              ligand_smiles_path,
+              )
 
     # Stripped protein
     print("\tStripping ligands near event...")
     receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
-    strip_protein(event.receptor_path,
-                  event.coords,
-                  receptor_path,
-                  )
+    if not receptor_path.exists():
+        strip_protein(event.receptor_path,
+                      event.coords,
+                      receptor_path,
+                      )
 
     if not event_mtz_path.exists():
         raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
