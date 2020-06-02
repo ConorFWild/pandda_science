@@ -258,14 +258,15 @@ def phase_graft(initial_mtz_path,
     array_to_index_map = array_to_index(intial_mtz)
     index_to_array_map = index_to_array(event_mtz)
 
+    initial_mtz_data = np.array(intial_mtz, copy=False)
+    event_mtz_data = np.array(event_mtz, copy=False)
+
     # FWT
     initial_mtz_fwt = intial_mtz.column_with_label('FWT')
     initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
-    initial_mtz_data = np.array(intial_mtz, copy=False)
 
     event_mtz_fwt = event_mtz.column_with_label('FWT')
     event_mtz_fwt_index = event_mtz_fwt.dataset_id
-    event_mtz_data = np.array(event_mtz, copy=False)
 
     print("\t{}, {}".format(initial_mtz_data.shape, event_mtz_data.shape))
     print(list(array_to_index_map.keys())[:10])
@@ -284,23 +285,21 @@ def phase_graft(initial_mtz_path,
     print("\tSkipper {} reflections".format(skipped))
 
     # PHWT
-    initial_mtz_fwt = intial_mtz.column_with_label('PHWT')
-    initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
-    initial_mtz_data = np.array(intial_mtz, copy=False)
+    initial_mtz_phwt = intial_mtz.column_with_label('PHWT')
+    initial_mtz_phwt_index = initial_mtz_phwt.dataset_id
 
-    event_mtz_fwt = event_mtz.column_with_label('PHWT')
-    event_mtz_fwt_index = event_mtz_fwt.dataset_id
-    event_mtz_data = np.array(event_mtz, copy=False)
+    event_mtz_phwt = event_mtz.column_with_label('PHWT')
+    event_mtz_phwt_index = event_mtz_phwt.dataset_id
 
     skipped = 0
     for intial_array in range(initial_mtz_data.shape[0]):
         try:
             index = array_to_index_map[intial_array]
             event_array = index_to_array_map[index]
-            initial_mtz_data[intial_array, initial_mtz_fwt_index] = event_mtz_data[event_array, event_mtz_fwt_index]
+            initial_mtz_data[intial_array, initial_mtz_phwt_index] = event_mtz_data[event_array, event_mtz_phwt_index]
         except Exception as e:
             skipped = skipped + 1
-            initial_mtz_data[intial_array, initial_mtz_fwt_index] = 0
+            initial_mtz_data[intial_array, initial_mtz_phwt_index] = 0
     intial_mtz.set_data(initial_mtz_data)
     print("\tSkipper {} reflections".format(skipped))
 
@@ -311,6 +310,7 @@ def autobuild_event(event):
     # Event map mtz
     print("\tMaking event map mtz...")
     initial_event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
+    os.remove(str(initial_event_mtz_path))
 
     formatted_command, stdout, stderr = event_map_to_mtz(event.event_map_path,
                                                          initial_event_mtz_path,
@@ -338,7 +338,8 @@ def autobuild_event(event):
                       )
 
     # Quick refine
-    event_mtz_path = event.pandda_event_dir / "{}.mtz".format(event.event_idx)
+    event_mtz_path = event.pandda_event_dir / "grafted_{}.mtz".format(event.event_idx)
+    os.remove(str(event_mtz_path))
     if not event_mtz_path.exists():
         phase_graft(event.initial_mtz_path,
                     initial_event_mtz_path,
