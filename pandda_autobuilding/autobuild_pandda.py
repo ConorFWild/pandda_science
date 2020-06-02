@@ -267,7 +267,7 @@ def phase_graft(initial_mtz_path,
     event_mtz_fwt_index = event_mtz_fwt.dataset_id
     event_mtz_data = np.array(event_mtz, copy=False)
 
-    print("\t{}, {}".format(initial_mtz_data.shape, initial_mtz_data.shape))
+    print("\t{}, {}".format(initial_mtz_data.shape, event_mtz_data.shape))
 
     for intial_array in range(initial_mtz_data.shape[0]):
         index = array_to_index_map[intial_array]
