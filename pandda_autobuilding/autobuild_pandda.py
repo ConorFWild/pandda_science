@@ -5,6 +5,7 @@ import subprocess
 import shutil
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 import joblib
@@ -30,6 +31,28 @@ from biopandas.pdb import PandasPdb
 #
 #         dataset = Dataset(dataset_dir, data_path, model_path, compound_path, event_map_paths)
 #         return dataset
+class AutobuildingCommandRhofit:
+    def __init__(self,
+                 out_dir_path=None,
+                 mtz_path=None,
+                 ligand_path=None,
+                 receptor_path=None,
+                 ):
+        env = "module load buster"
+        ligand_fit_command = "rhofit"
+        ligand_fit_args = "-m {mtz} -l {ligand} -p {receptor} -allclusters"
+        ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz_path,
+                                                           ligand=ligand_path,
+                                                           receptor=receptor_path,
+                                                           )
+        self.command = "{env}; cd {out_dir_path}; {ligand_fit_command} {args}".format(env=env,
+                                                                                      out_dir_path=out_dir_path,
+                                                                                      ligand_fit_command=ligand_fit_command,
+                                                                                      args=ligand_fit_args_formatted,
+                                                                                      )
+
+    def __repr__(self):
+        return self.command
 
 
 class AutobuildingCommand:
@@ -109,7 +132,81 @@ def write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path
         f.write("{}\n".format(stderr))
 
 
+def elbow(autobuilding_dir, ligand_smiles_path):
+    command = "module load phenix; cd {autobuilding_dir}; phenix.elbow {ligand_smiles_path} --output=\"{out}\""
+    formatted_command = command.format(autobuilding_dir=autobuilding_dir,
+                                       ligand_smiles_path=ligand_smiles_path,
+                                       out="ligand",
+                                       )
+
+    p = subprocess.Popen(formatted_command,
+                         shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         )
+
+    stdout, stderr = p.communicate()
+
+    return stdout, stderr
+
+def get_ligand_smiles(pandda_event_dir):
+    compound_dir = pandda_event_dir / "ligand_files"
+
+    smiles_paths = compound_dir.glob("*.smiles")
+
+    smiles_paths_list = list(smiles_paths)
+
+    if len(smiles_paths_list) == 0:
+
+        raise Exception("No smiles found! Smiles list is: {}".format(smiles_paths_list))
+
+    else:
+        return smiles_paths_list[0]
+
+def get_ligand_mean_coords(residue):
+    coords = []
+    for atom in residue:
+        pos = atom.pos
+        coords.append([pos.x,pos.y,pos.z])
+
+    coords_array = np.array(coords)
+    mean_coords = np.mean(coords_array,
+                          axis=0,
+                          )
+    return mean_coords
+
+def get_ligand_distance(ligand, coords):
+    ligand_mean_coords = get_ligand_mean_coords(ligand)
+    distance = np.linalg.norm(ligand_mean_coords-coords)
+    return distance
+
+
+def remove_residue(chain, ligand):
+    del chain[ligand.seqid][0]
+
+
+def strip_protein(initial_receptor_path,
+                  coords,
+                  receptor_path,
+                  ):
+    # Load protein
+    receptor = gemmi.read_structure(str(initial_receptor_path))
+
+    # Strip nearby residues
+    for chain in receptor:
+        ligands = chain.get_ligands()
+        for ligand in ligands:
+            if get_ligand_distance(ligand, coords) < 10:
+                remove_residue(chain, ligand)
+
+    # Save
+    receptor.write_pdb(str(receptor_path))
+
+
+
+
 def autobuild_event(event):
+    # Event map mtz
     event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
 
     formatted_command, stdout, stderr = event_map_to_mtz(event.event_map_path,
@@ -119,8 +216,28 @@ def autobuild_event(event):
     event_mtz_log = event.pandda_event_dir / "event_mtz_log.txt"
     write_autobuild_log(formatted_command, stdout, stderr, event_mtz_log)
 
+    # Ligand cif
+    ligand_path = event.pandda_event_dir / "ligand.cif"
+    ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
+    elbow(event.pandda_event_dir,
+          ligand_smiles_path,
+          )
+
+    # Stripped protein
+    receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
+    strip_protein(event.receptor_path,
+                  event.coords,
+                  receptor_path,
+                  )
+
     if not event_mtz_path.exists():
         raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
+
+    if not ligand_path.exists():
+        raise Exception("Could not find ligand cif path after attempting generation: {}".format(event_mtz_path))
+
+    if not receptor_path.exists():
+        raise Exception("Could not find event receptor path after attempting generation: {}".format(event_mtz_path))
 
     out_dir_path = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
 
@@ -134,7 +251,7 @@ def autobuild_event(event):
     autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
                                                mtz_path=event_mtz_path,
                                                ligand_path=event.ligand_path,
-                                               receptor_path=event.receptor_path,
+                                               receptor_path=receptor_path,
                                                coord=event.coords,
                                                )
 
@@ -145,11 +262,11 @@ def autobuild_event(event):
 
     try:
         result = AutobuildingResult.from_output(event,
-                                    stdout,
-                                    stderr,
-                                    )
+                                                stdout,
+                                                stderr,
+                                                )
     except:
-        result= AutobuildingResult.null_result(event)
+        result = AutobuildingResult.null_result(event)
 
     return result
 
@@ -257,9 +374,9 @@ def get_event_map_path(pandda_event_dir, dtag, event_idx, occupancy):
     #                                                                                   )
     # PanDDA 2
     event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.ccp4".format(dtag,
-                                                                                      event_idx,
-                                                                                      occupancy,
-                                                                                      )
+                                                                               event_idx,
+                                                                               occupancy,
+                                                                               )
     return event_map_path
 
 
@@ -287,9 +404,9 @@ def get_ligand_path(pandda_event_dir):
         return None
 
     ligand_smiles_path: Path = Path(min(ligand_strings,
-                                     key=len,
-                                     )
-                                 )
+                                        key=len,
+                                        )
+                                    )
 
     return ligand_smiles_path
 
@@ -340,7 +457,6 @@ def get_events(event_table, fs):
 
 class AutobuildingResult:
     def __init__(self, dtag, event_idx, rscc_string, stdout, stderr):
-
         self.dtag = dtag
         self.event_idx = event_idx
         self.rscc = float(rscc_string)
@@ -406,6 +522,7 @@ def get_highest_rscc_events(events,
 
     return max_events
 
+
 #
 # def copy_event_to_processed_models(event: Event, fs):
 #     event_autobuilding_dir = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
@@ -441,7 +558,6 @@ def merge_model(event, fs):
 
     initial_model_path = event.pandda_event_dir / "{}-pandda-input.pdb".format(event.dtag)
 
-
     # initial_model = PandasPdb().read_pdb(str(initial_model_path))
     # best_autobuild_model = PandasPdb().read_psb(str(event_build_path))
 
@@ -458,7 +574,7 @@ def merge_model(event, fs):
 
 
 def merge_models(events,
-                autobuilding_results,
+                 autobuilding_results,
                  results_table,
                  fs,
                  ):
@@ -478,9 +594,12 @@ def merge_models(events,
 
         pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
         pandda_inspect_model_path = pandda_inspect_model_dir / "{}-pandda-model.pdb".format(event.dtag)
-        save_event_model(final_model,
-                         pandda_inspect_model_path,
-                         )
+        if not pandda_inspect_model_path.exists():
+            save_event_model(final_model,
+                             pandda_inspect_model_path,
+                             )
+        else:
+            print("\tAlready has a model, skipping!")
 
 
 def main():
