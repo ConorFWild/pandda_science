@@ -319,6 +319,7 @@ def autobuild_event(event):
                                                          initial_event_mtz_path,
                                                          event.analysed_resolution,
                                                          )
+    print("\tMtz command: {}".format(formatted_command))
     event_mtz_log = event.pandda_event_dir / "event_mtz_log.txt"
     write_autobuild_log(formatted_command, stdout, stderr, event_mtz_log)
 
