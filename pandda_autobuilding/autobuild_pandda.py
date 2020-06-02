@@ -310,7 +310,10 @@ def autobuild_event(event):
     # Event map mtz
     print("\tMaking event map mtz...")
     initial_event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
-    os.remove(str(initial_event_mtz_path))
+    try:
+        os.remove(str(initial_event_mtz_path))
+    except:
+        pass
 
     formatted_command, stdout, stderr = event_map_to_mtz(event.event_map_path,
                                                          initial_event_mtz_path,
@@ -339,7 +342,10 @@ def autobuild_event(event):
 
     # Quick refine
     event_mtz_path = event.pandda_event_dir / "grafted_{}.mtz".format(event.event_idx)
-    os.remove(str(event_mtz_path))
+    try:
+        os.remove(str(event_mtz_path))
+    except:
+        pass
     if not event_mtz_path.exists():
         phase_graft(event.initial_mtz_path,
                     initial_event_mtz_path,
