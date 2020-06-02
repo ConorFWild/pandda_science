@@ -196,12 +196,23 @@ def strip_protein(initial_receptor_path,
     receptor = gemmi.read_structure(str(initial_receptor_path))[0]
 
     # Strip nearby residues
+    remove_ids = []
     for chain in receptor:
         ligands = chain.get_ligands()
         for ligand in ligands:
-            if get_ligand_distance(ligand, coords) < 10:
-                print("\t\tStripping res {}".format(ligand))
-                remove_residue(chain, ligand)
+            distance = get_ligand_distance(ligand, coords)
+            if distance < 10:
+                print("\t\tWill strip res {}. Distance {} from ligand".format(ligand, distance))
+                remove_ids.append(str(ligand.seqid))
+
+    for chain in receptor:
+        deletions = 0
+        for i, residue in enumerate(chain):
+            if str(residue.seqid) in remove_ids:
+                print("\t\tStripping {}".format(residue))
+                del chain[i-deletions]
+                deletions = deletions + 1
+
 
     # Save
     receptor.write_pdb(str(receptor_path))
