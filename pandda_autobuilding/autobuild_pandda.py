@@ -193,7 +193,7 @@ def strip_protein(initial_receptor_path,
                   receptor_path,
                   ):
     # Load protein
-    receptor = gemmi.read_structure(str(initial_receptor_path))
+    receptor = gemmi.read_structure(str(initial_receptor_path))[0]
 
     # Strip nearby residues
     for chain in receptor:
