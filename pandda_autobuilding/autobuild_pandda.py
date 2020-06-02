@@ -185,7 +185,7 @@ def get_ligand_distance(ligand, coords):
 
 
 def remove_residue(chain, ligand):
-    del chain[ligand.seqid][0]
+    del chain[str(ligand.seqid)][0]
 
 
 def strip_protein(initial_receptor_path,
