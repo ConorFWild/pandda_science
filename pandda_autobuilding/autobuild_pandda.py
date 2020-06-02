@@ -327,18 +327,18 @@ def autobuild_event(event):
     # Stripped protein
     print("\tStripping ligands near event...")
     intial_receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
-    if not intial_receptor_path.exists():
-        strip_protein(event.receptor_path,
-                      event.coords,
-                      intial_receptor_path,
-                      )
+    # if not intial_receptor_path.exists():
+    strip_protein(event.receptor_path,
+                  event.coords,
+                  intial_receptor_path,
+                  )
 
     # Quick refine
     event_mtz_path = event.pandda_event_dir / "{}.mtz".format(event.event_idx)
     if not event_mtz_path.exists():
         phase_graft(event.initial_mtz_path,
                     initial_event_mtz_path,
-                    intial_receptor_path,
+                    event_mtz_path,
                     )
 
     if not event_mtz_path.exists():
