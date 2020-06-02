@@ -149,6 +149,7 @@ def elbow(autobuilding_dir, ligand_smiles_path):
 
     return stdout, stderr
 
+
 def get_ligand_smiles(pandda_event_dir):
     compound_dir = pandda_event_dir / "ligand_files"
 
@@ -163,11 +164,12 @@ def get_ligand_smiles(pandda_event_dir):
     else:
         return smiles_paths_list[0]
 
+
 def get_ligand_mean_coords(residue):
     coords = []
     for atom in residue:
         pos = atom.pos
-        coords.append([pos.x,pos.y,pos.z])
+        coords.append([pos.x, pos.y, pos.z])
 
     coords_array = np.array(coords)
     mean_coords = np.mean(coords_array,
@@ -175,9 +177,10 @@ def get_ligand_mean_coords(residue):
                           )
     return mean_coords
 
+
 def get_ligand_distance(ligand, coords):
     ligand_mean_coords = get_ligand_mean_coords(ligand)
-    distance = np.linalg.norm(ligand_mean_coords-coords)
+    distance = np.linalg.norm(ligand_mean_coords - coords)
     return distance
 
 
@@ -201,8 +204,6 @@ def strip_protein(initial_receptor_path,
 
     # Save
     receptor.write_pdb(str(receptor_path))
-
-
 
 
 def autobuild_event(event):
@@ -239,7 +240,7 @@ def autobuild_event(event):
     if not receptor_path.exists():
         raise Exception("Could not find event receptor path after attempting generation: {}".format(event_mtz_path))
 
-    out_dir_path = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
+    out_dir_path = event.pandda_event_dir / "rhofit_{}".format(event.event_idx)
 
     try:
         shutil.rmtree(str(out_dir_path))
@@ -248,12 +249,23 @@ def autobuild_event(event):
 
     os.mkdir(str(out_dir_path))
 
-    autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
-                                               mtz_path=event_mtz_path,
-                                               ligand_path=event.ligand_path,
-                                               receptor_path=receptor_path,
-                                               coord=event.coords,
-                                               )
+    # autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
+    #                                            mtz_path=event_mtz_path,
+    #                                            ligand_path=event.ligand_path,
+    #                                            receptor_path=receptor_path,
+    #                                            coord=event.coords,
+    #                                            )
+    #
+    # formatted_command, stdout, stderr = execute(autobuilding_command)
+    #
+    # autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
+    # write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
+
+    autobuilding_command = AutobuildingCommandRhofit(out_dir_path=out_dir_path,
+                                                     mtz_path=event_mtz_path,
+                                                     ligand_path=event.ligand_path,
+                                                     receptor_path=receptor_path,
+                                                     )
 
     formatted_command, stdout, stderr = execute(autobuilding_command)
 
@@ -454,6 +466,50 @@ def get_events(event_table, fs):
 
     return events
 
+class AutobuildingResultRhofit:
+    def __init__(self, dtag, event_idx, rscc_string, stdout, stderr):
+        self.dtag = dtag
+        self.event_idx = event_idx
+        self.rscc = float(rscc_string)
+        self.stdout = stdout
+        self.stderr = stderr
+
+    @staticmethod
+    def null_result(event):
+        return AutobuildingResultRhofit(event.dtag,
+                                  event.event_idx,
+                                  "0",
+                                  "",
+                                  "",
+                                  )
+
+    @staticmethod
+    def from_output(event: Event, stdout, stderr):
+        rhofit_dir = event.pandda_event_dir / "rhofit_{}".format(event.event_idx)
+        rhofit_results_path = rhofit_dir / "results.txt"
+
+        rscc_string = str(AutobuildingResultRhofit.parse_rhofit_log(rhofit_results_path))
+        return AutobuildingResultRhofit(event.dtag, event.event_idx, rscc_string, stdout, stderr)
+
+    @staticmethod
+    def parse_rhofit_log(rhofit_results_path):
+
+        regex = "(Hit_[^\s]+)[\s]+[^\s]+[\s]+[^\s]+[\s]+([^\s]+)"
+
+        with open(str(rhofit_results_path), "r") as f:
+            results_string = f.read()
+
+        rscc_matches = re.findall(regex,
+                                  results_string,
+                                  )
+
+        rsccs = {str(match_tuple[0]): float(match_tuple[1]) for match_tuple in rscc_matches}
+
+        max_rscc = max(list(rsccs.values()))
+
+        return max_rscc
+
+
 
 class AutobuildingResult:
     def __init__(self, dtag, event_idx, rscc_string, stdout, stderr):
@@ -552,9 +608,13 @@ def save_event_model(event_model, path):
 
 
 def merge_model(event, fs):
-    event_autobuilding_dir = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
-    event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
-    event_build_path = event_ligandfit_dir / "ligand_fit_1.pdb"
+    # event_autobuilding_dir = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
+    # event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
+    # event_build_path = event_ligandfit_dir / "ligand_fit_1.pdb"
+
+    event_autobuilding_dir = event.pandda_event_dir
+    event_rhofit_dir = event_autobuilding_dir / "rhofit_{}"
+    event_build_path = event_rhofit_dir / "best.pdb"
 
     initial_model_path = event.pandda_event_dir / "{}-pandda-input.pdb".format(event.dtag)
 
