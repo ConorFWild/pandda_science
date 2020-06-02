@@ -208,6 +208,7 @@ def strip_protein(initial_receptor_path,
 
 def autobuild_event(event):
     # Event map mtz
+    print("\tMaking event map mtz...")
     event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
 
     formatted_command, stdout, stderr = event_map_to_mtz(event.event_map_path,
@@ -218,6 +219,7 @@ def autobuild_event(event):
     write_autobuild_log(formatted_command, stdout, stderr, event_mtz_log)
 
     # Ligand cif
+    print("\tMaking ligand cif...")
     ligand_path = event.pandda_event_dir / "ligand.cif"
     ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
     elbow(event.pandda_event_dir,
@@ -225,6 +227,7 @@ def autobuild_event(event):
           )
 
     # Stripped protein
+    print("\tStripping ligands near event...")
     receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
     strip_protein(event.receptor_path,
                   event.coords,
@@ -261,6 +264,7 @@ def autobuild_event(event):
     # autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
     # write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
 
+    print("\tAutobuilding...")
     autobuilding_command = AutobuildingCommandRhofit(out_dir_path=out_dir_path,
                                                      mtz_path=event_mtz_path,
                                                      ligand_path=event.ligand_path,
@@ -269,6 +273,7 @@ def autobuild_event(event):
 
     formatted_command, stdout, stderr = execute(autobuilding_command)
 
+    print("\tProcessing autobuilding results...")
     autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
     write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
 
