@@ -265,10 +265,11 @@ def phase_graft(initial_mtz_path,
 
     # FWT
     initial_mtz_fwt = intial_mtz.column_with_label('FWT')
-    initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
+    # initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
+    initial_mtz_fwt_index = intial_mtz.column_labels().index("FWT")
 
     event_mtz_fwt = event_mtz.column_with_label('FWT')
-    event_mtz_fwt_index = event_mtz_fwt.dataset_id
+    event_mtz_fwt_index = event_mtz.column_labels().index("FWT")
 
     print("\t{}, {}".format(initial_mtz_data.shape, event_mtz_data.shape))
     print(list(array_to_index_map.keys())[:10])
@@ -288,10 +289,14 @@ def phase_graft(initial_mtz_path,
 
     # PHWT
     initial_mtz_phwt = intial_mtz.column_with_label('PHWT')
-    initial_mtz_phwt_index = initial_mtz_phwt.dataset_id
+    # initial_mtz_phwt_index = initial_mtz_phwt.dataset_id
+    initial_mtz_phwt_index = intial_mtz.column_labels().index("PHWT")
+
 
     event_mtz_phwt = event_mtz.column_with_label('PHWT')
-    event_mtz_phwt_index = event_mtz_phwt.dataset_id
+    # event_mtz_phwt_index = event_mtz_phwt.dataset_id
+    event_mtz_phwt_index = event_mtz.column_labels().index("PHWT")
+
 
     skipped = 0
     for intial_array in range(initial_mtz_data.shape[0]):
