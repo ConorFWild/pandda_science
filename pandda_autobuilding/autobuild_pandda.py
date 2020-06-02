@@ -228,9 +228,9 @@ def array_to_index(event_mtz):
     event_data = np.array(event_mtz, copy=False)
     array_to_index_map = {}
     for i in range(event_data.shape[0]):
-        h = event_data[i,0]
-        k = event_data[i, 1]
-        l = event_data[i, 2]
+        h = int(event_data[i, 0])
+        k = int(event_data[i, 1])
+        l = int(event_data[i, 2])
         array_to_index_map[i] = (h, k, l)
 
     return array_to_index_map
@@ -240,9 +240,9 @@ def index_to_array(intial_mtz):
     event_data = np.array(intial_mtz, copy=False)
     index_to_array_map = {}
     for i in range(event_data.shape[0]):
-        h = event_data[i, 0]
-        k = event_data[i, 1]
-        l = event_data[i, 2]
+        h = int(event_data[i, 0])
+        k = int(event_data[i, 1])
+        l = int(event_data[i, 2])
         index_to_array_map[(h, k, l)] = i
 
     return index_to_array_map
@@ -256,7 +256,7 @@ def phase_graft(initial_mtz_path,
     event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
 
     array_to_index_map = array_to_index(event_mtz)
-    index_to_array_map = index_to_array(intial_mtz )
+    index_to_array_map = index_to_array(intial_mtz)
 
     # FWT
     initial_mtz_fwt = intial_mtz.column_with_label('DELFWT')
@@ -325,10 +325,9 @@ def autobuild_event(event):
     event_mtz_path = event.pandda_event_dir / "{}.mtz".format(event.event_idx)
     if not event_mtz_path.exists():
         phase_graft(event.initial_mtz_path,
-        initial_event_mtz_path,
-                     intial_receptor_path,
-
-                     )
+                    initial_event_mtz_path,
+                    intial_receptor_path,
+                    )
 
     if not event_mtz_path.exists():
         raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
