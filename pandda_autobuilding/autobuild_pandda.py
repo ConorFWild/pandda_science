@@ -218,13 +218,86 @@ def strip_protein(initial_receptor_path,
     structure.write_pdb(str(receptor_path))
 
 
+# def quick_refine(initial_event_mtz_path,
+#                      intial_receptor_path,
+#                      ):
+#
+#
+
+def array_to_index(event_mtz):
+    event_data = np.array(event_mtz, copy=False)
+    array_to_index_map = {}
+    for i in range(event_data.shape[0]):
+        h = event_data[i,0]
+        k = event_data[i, 1]
+        l = event_data[i, 2]
+        array_to_index_map[i] = (h, k, l)
+
+    return array_to_index_map
+
+
+def index_to_array(intial_mtz):
+    event_data = np.array(intial_mtz, copy=False)
+    index_to_array_map = {}
+    for i in range(event_data.shape[0]):
+        h = event_data[i, 0]
+        k = event_data[i, 1]
+        l = event_data[i, 2]
+        index_to_array_map[(h, k, l)] = i
+
+    return index_to_array_map
+
+
+def phase_graft(initial_mtz_path,
+                event_mtz_path,
+                out_path,
+                ):
+    intial_mtz = gemmi.read_mtz_file(str(initial_mtz_path))
+    event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
+
+    array_to_index_map = array_to_index(event_mtz)
+    index_to_array_map = index_to_array(intial_mtz )
+
+    # FWT
+    initial_mtz_fwt = intial_mtz.column_with_label('DELFWT')
+    initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
+    initial_mtz_data = np.array(intial_mtz, copy=False)
+
+    event_mtz_fwt = event_mtz.column_with_label('FWT')
+    event_mtz_fwt_index = event_mtz_fwt.dataset_id
+    event_mtz_data = np.array(event_mtz, copy=False)
+
+    for intial_array in range(initial_mtz_data.shape[0]):
+        index = array_to_index_map[intial_array]
+        event_array = index_to_array_map[index]
+        initial_mtz_data[intial_array, initial_mtz_fwt_index] = event_mtz_data[event_array, event_mtz_fwt_index]
+    intial_mtz.set_data(initial_mtz_data)
+
+    # PHWT
+    initial_mtz_fwt = intial_mtz.column_with_label('DELPHWT')
+    initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
+    initial_mtz_data = np.array(intial_mtz, copy=False)
+
+    event_mtz_fwt = event_mtz.column_with_label('PHWT')
+    event_mtz_fwt_index = event_mtz_fwt.dataset_id
+    event_mtz_data = np.array(event_mtz, copy=False)
+
+    for intial_array in range(initial_mtz_data.shape[0]):
+        index = array_to_index_map[intial_array]
+        event_array = index_to_array_map[index]
+        initial_mtz_data[intial_array, initial_mtz_fwt_index] = event_mtz_data[event_array, event_mtz_fwt_index]
+    intial_mtz.set_data(initial_mtz_data)
+
+    intial_mtz.write_to_file(str(out_path))
+
+
 def autobuild_event(event):
     # Event map mtz
     print("\tMaking event map mtz...")
-    event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
+    initial_event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
 
     formatted_command, stdout, stderr = event_map_to_mtz(event.event_map_path,
-                                                         event_mtz_path,
+                                                         initial_event_mtz_path,
                                                          event.analysed_resolution,
                                                          )
     event_mtz_log = event.pandda_event_dir / "event_mtz_log.txt"
@@ -241,12 +314,20 @@ def autobuild_event(event):
 
     # Stripped protein
     print("\tStripping ligands near event...")
-    receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
-    if not receptor_path.exists():
+    intial_receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
+    if not intial_receptor_path.exists():
         strip_protein(event.receptor_path,
                       event.coords,
-                      receptor_path,
+                      intial_receptor_path,
                       )
+
+    # Quick refine
+    event_mtz_path = event.pandda_event_dir / "{}.mtz".format()
+    if not event_mtz_path.exists():
+        phase_graft(event.,
+        initial_event_mtz_path,
+                     intial_receptor_path,
+                     )
 
     if not event_mtz_path.exists():
         raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
@@ -378,6 +459,7 @@ class Event:
                  dtag,
                  event_idx,
                  event_map_path,
+                 initial_mtz_path,
                  ligand_path,
                  receptor_path,
                  coords,
@@ -387,6 +469,7 @@ class Event:
         self.event_idx = event_idx
         self.pandda_event_dir = pandda_event_dir
         self.event_map_path = event_map_path
+        self.initial_mtz_path = initial_mtz_path
         self.ligand_path = ligand_path
         self.receptor_path = receptor_path
         self.coords = coords
@@ -472,10 +555,13 @@ def get_events(event_table, fs):
         coords = get_coords(row)
         analysed_resolution = get_analyed_resolution(row)
 
+        initial_mtz_path = pandda_event_dir / "{}-pandda-input.mtz".format(dtag)
+
         event = Event(pandda_event_dir,
                       dtag,
                       event_idx,
                       event_map_path,
+                      initial_mtz_path,
                       ligand_path,
                       receptor_path,
                       coords,
