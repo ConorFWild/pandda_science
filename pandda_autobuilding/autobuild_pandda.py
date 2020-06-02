@@ -259,7 +259,7 @@ def phase_graft(initial_mtz_path,
     index_to_array_map = index_to_array(event_mtz)
 
     # FWT
-    initial_mtz_fwt = intial_mtz.column_with_label('DELFWT')
+    initial_mtz_fwt = intial_mtz.column_with_label('FOFCWT')
     initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
     initial_mtz_data = np.array(intial_mtz, copy=False)
 
@@ -282,7 +282,7 @@ def phase_graft(initial_mtz_path,
     intial_mtz.set_data(initial_mtz_data)
 
     # PHWT
-    initial_mtz_fwt = intial_mtz.column_with_label('DELPHWT')
+    initial_mtz_fwt = intial_mtz.column_with_label('PHFOFCWT')
     initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
     initial_mtz_data = np.array(intial_mtz, copy=False)
 
