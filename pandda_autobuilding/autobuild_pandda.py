@@ -259,7 +259,7 @@ def phase_graft(initial_mtz_path,
     index_to_array_map = index_to_array(event_mtz)
 
     # FWT
-    initial_mtz_fwt = intial_mtz.column_with_label('DELFWT')
+    initial_mtz_fwt = intial_mtz.column_with_label('FWT')
     initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
     initial_mtz_data = np.array(intial_mtz, copy=False)
 
@@ -282,7 +282,7 @@ def phase_graft(initial_mtz_path,
     intial_mtz.set_data(initial_mtz_data)
 
     # PHWT
-    initial_mtz_fwt = intial_mtz.column_with_label('PHDELWT')
+    initial_mtz_fwt = intial_mtz.column_with_label('PHWT')
     initial_mtz_fwt_index = initial_mtz_fwt.dataset_id
     initial_mtz_data = np.array(intial_mtz, copy=False)
 
@@ -327,11 +327,11 @@ def autobuild_event(event):
     # Stripped protein
     print("\tStripping ligands near event...")
     intial_receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
-    # if not intial_receptor_path.exists():
-    strip_protein(event.receptor_path,
-                  event.coords,
-                  intial_receptor_path,
-                  )
+    if not intial_receptor_path.exists():
+        strip_protein(event.receptor_path,
+                      event.coords,
+                      intial_receptor_path,
+                      )
 
     # Quick refine
     event_mtz_path = event.pandda_event_dir / "{}.mtz".format(event.event_idx)
