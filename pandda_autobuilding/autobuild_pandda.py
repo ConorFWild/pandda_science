@@ -40,7 +40,7 @@ class AutobuildingCommandRhofit:
                  ):
         env = "module load buster"
         ligand_fit_command = "rhofit"
-        ligand_fit_args = "-m {mtz} -l {ligand} -p {receptor} -d {out_dir_path} -allclusters"
+        ligand_fit_args = "-m {mtz} -l {ligand} -p {receptor} -d {out_dir_path} -allclusters -use_2fofc"
         ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz_path,
                                                            ligand=ligand_path,
                                                            receptor=receptor_path,
