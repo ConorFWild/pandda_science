@@ -271,15 +271,17 @@ def phase_graft(initial_mtz_path,
     print(list(array_to_index_map.keys())[:10])
     print(list(index_to_array_map.keys())[:10])
 
+    skipped = 0
     for intial_array in range(initial_mtz_data.shape[0]):
         try:
             index = array_to_index_map[intial_array]
             event_array = index_to_array_map[index]
             initial_mtz_data[intial_array, initial_mtz_fwt_index] = event_mtz_data[event_array, event_mtz_fwt_index]
         except Exception as e:
-            print(e)
+            skipped = skipped + 1
             initial_mtz_data[intial_array, initial_mtz_fwt_index] = 0
     intial_mtz.set_data(initial_mtz_data)
+    print("\tSkipper {} reflections".format(skipped))
 
     # PHWT
     initial_mtz_fwt = intial_mtz.column_with_label('PHWT')
