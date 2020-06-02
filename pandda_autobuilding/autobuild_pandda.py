@@ -40,16 +40,16 @@ class AutobuildingCommandRhofit:
                  ):
         env = "module load buster"
         ligand_fit_command = "rhofit"
-        ligand_fit_args = "-m {mtz} -l {ligand} -p {receptor} -allclusters"
+        ligand_fit_args = "-m {mtz} -l {ligand} -p {receptor} -d {out_dir_path} -allclusters"
         ligand_fit_args_formatted = ligand_fit_args.format(mtz=mtz_path,
                                                            ligand=ligand_path,
                                                            receptor=receptor_path,
+                                                           out_dir_path=out_dir_path,
                                                            )
-        self.command = "{env}; cd {out_dir_path}; {ligand_fit_command} {args}".format(env=env,
-                                                                                      out_dir_path=out_dir_path,
-                                                                                      ligand_fit_command=ligand_fit_command,
-                                                                                      args=ligand_fit_args_formatted,
-                                                                                      )
+        self.command = "{env}; {ligand_fit_command} {args}".format(env=env,
+                                                                   ligand_fit_command=ligand_fit_command,
+                                                                   args=ligand_fit_args_formatted,
+                                                                   )
 
     def __repr__(self):
         return self.command
@@ -211,9 +211,8 @@ def strip_protein(initial_receptor_path,
         for i, residue in enumerate(chain):
             if str(residue.seqid) in remove_ids:
                 print("\t\tStripping {}".format(residue))
-                del chain[i-deletions]
+                del chain[i - deletions]
                 deletions = deletions + 1
-
 
     # Save
     structure.write_pdb(str(receptor_path))
@@ -282,7 +281,7 @@ def autobuild_event(event):
     print("\tAutobuilding...")
     autobuilding_command = AutobuildingCommandRhofit(out_dir_path=out_dir_path,
                                                      mtz_path=event_mtz_path,
-                                                     ligand_path=event.ligand_path,
+                                                     ligand_path=ligand_path,
                                                      receptor_path=receptor_path,
                                                      )
     print("\t\tCommand: {}".format(str(autobuilding_command)))
@@ -294,9 +293,9 @@ def autobuild_event(event):
 
     try:
         result = AutobuildingResultRhofit.from_output(event,
-                                                stdout,
-                                                stderr,
-                                                )
+                                                      stdout,
+                                                      stderr,
+                                                      )
     except:
         result = AutobuildingResultRhofit.null_result(event)
 
@@ -486,6 +485,7 @@ def get_events(event_table, fs):
 
     return events
 
+
 class AutobuildingResultRhofit:
     def __init__(self, dtag, event_idx, rscc_string, stdout, stderr):
         self.dtag = dtag
@@ -497,11 +497,11 @@ class AutobuildingResultRhofit:
     @staticmethod
     def null_result(event):
         return AutobuildingResultRhofit(event.dtag,
-                                  event.event_idx,
-                                  "0",
-                                  "",
-                                  "",
-                                  )
+                                        event.event_idx,
+                                        "0",
+                                        "",
+                                        "",
+                                        )
 
     @staticmethod
     def from_output(event: Event, stdout, stderr):
@@ -513,7 +513,6 @@ class AutobuildingResultRhofit:
 
     @staticmethod
     def parse_rhofit_log(rhofit_results_path):
-
         regex = "(Hit_[^\s]+)[\s]+[^\s]+[\s]+[^\s]+[\s]+([^\s]+)"
 
         with open(str(rhofit_results_path), "r") as f:
@@ -528,7 +527,6 @@ class AutobuildingResultRhofit:
         max_rscc = max(list(rsccs.values()))
 
         return max_rscc
-
 
 
 class AutobuildingResult:
