@@ -293,12 +293,12 @@ def autobuild_event(event):
     write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
 
     try:
-        result = AutobuildingResult.from_output(event,
+        result = AutobuildingResultRhofit.from_output(event,
                                                 stdout,
                                                 stderr,
                                                 )
     except:
-        result = AutobuildingResult.null_result(event)
+        result = AutobuildingResultRhofit.null_result(event)
 
     return result
 
