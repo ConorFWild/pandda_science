@@ -203,7 +203,7 @@ def strip_protein(initial_receptor_path,
         for ligand in ligands:
             distance = get_ligand_distance(ligand, coords)
             if distance < 10:
-                print("\t\tWill strip res {}. Distance {} from ligand".format(ligand, distance))
+                print("\t\tWill strip res {}. Mean distance {} from event!".format(ligand, distance))
                 remove_ids.append(str(ligand.seqid))
 
     for chain in receptor:
@@ -633,7 +633,7 @@ def merge_model(event, fs):
     # event_build_path = event_ligandfit_dir / "ligand_fit_1.pdb"
 
     event_autobuilding_dir = event.pandda_event_dir
-    event_rhofit_dir = event_autobuilding_dir / "rhofit_{}"
+    event_rhofit_dir = event_autobuilding_dir / "rhofit_{}".format(event.event_idx)
     event_build_path = event_rhofit_dir / "best.pdb"
 
     initial_model_path = event.pandda_event_dir / "{}-pandda-input.pdb".format(event.dtag)
