@@ -255,8 +255,8 @@ def phase_graft(initial_mtz_path,
     intial_mtz = gemmi.read_mtz_file(str(initial_mtz_path))
     event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
 
-    array_to_index_map = array_to_index(event_mtz)
-    index_to_array_map = index_to_array(intial_mtz)
+    array_to_index_map = array_to_index(intial_mtz)
+    index_to_array_map = index_to_array(event_mtz)
 
     # FWT
     initial_mtz_fwt = intial_mtz.column_with_label('DELFWT')
