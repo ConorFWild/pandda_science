@@ -335,11 +335,11 @@ def autobuild_event(event):
 
     # Quick refine
     event_mtz_path = event.pandda_event_dir / "{}.mtz".format(event.event_idx)
-    if not event_mtz_path.exists():
-        phase_graft(event.initial_mtz_path,
-                    initial_event_mtz_path,
-                    event_mtz_path,
-                    )
+    # if not event_mtz_path.exists():
+    phase_graft(event.initial_mtz_path,
+                initial_event_mtz_path,
+                event_mtz_path,
+                )
 
     if not event_mtz_path.exists():
         raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
