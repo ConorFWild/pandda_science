@@ -511,7 +511,7 @@ def get_event_map_path(pandda_event_dir, dtag, event_idx, occupancy):
     #                                                                                   occupancy,
     #                                                                                   )
     # PanDDA 2
-    event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.ccp4".format(dtag,
+    event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.native.ccp4".format(dtag,
                                                                                event_idx,
                                                                                occupancy,
                                                                                )
