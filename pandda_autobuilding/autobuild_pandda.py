@@ -322,11 +322,12 @@ def autobuild_event(event):
                       )
 
     # Quick refine
-    event_mtz_path = event.pandda_event_dir / "{}.mtz".format()
+    event_mtz_path = event.pandda_event_dir / "{}.mtz".format(event.event_idx)
     if not event_mtz_path.exists():
-        phase_graft(event.,
+        phase_graft(event.initial_mtz_path,
         initial_event_mtz_path,
                      intial_receptor_path,
+
                      )
 
     if not event_mtz_path.exists():
@@ -335,8 +336,8 @@ def autobuild_event(event):
     if not ligand_path.exists():
         raise Exception("Could not find ligand cif path after attempting generation: {}".format(event_mtz_path))
 
-    if not receptor_path.exists():
-        raise Exception("Could not find event receptor path after attempting generation: {}".format(event_mtz_path))
+    # if not receptor_path.exists():
+    #     raise Exception("Could not find event receptor path after attempting generation: {}".format(event_mtz_path))
 
     out_dir_path = event.pandda_event_dir / "rhofit_{}".format(event.event_idx)
 
@@ -363,7 +364,7 @@ def autobuild_event(event):
     autobuilding_command = AutobuildingCommandRhofit(out_dir_path=out_dir_path,
                                                      mtz_path=event_mtz_path,
                                                      ligand_path=ligand_path,
-                                                     receptor_path=receptor_path,
+                                                     receptor_path=intial_receptor_path,
                                                      )
     print("\t\tCommand: {}".format(str(autobuilding_command)))
     formatted_command, stdout, stderr = execute(autobuilding_command)
