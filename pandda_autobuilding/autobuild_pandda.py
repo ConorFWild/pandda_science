@@ -200,6 +200,7 @@ def strip_protein(initial_receptor_path,
         ligands = chain.get_ligands()
         for ligand in ligands:
             if get_ligand_distance(ligand, coords) < 10:
+                print("\t\tStripping res {}".format(ligand))
                 remove_residue(chain, ligand)
 
     # Save
