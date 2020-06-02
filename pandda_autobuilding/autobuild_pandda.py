@@ -264,7 +264,7 @@ def autobuild_event(event):
     except:
         pass
 
-    os.mkdir(str(out_dir_path))
+    # os.mkdir(str(out_dir_path))
 
     # autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
     #                                            mtz_path=event_mtz_path,
