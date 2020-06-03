@@ -791,12 +791,12 @@ def merge_models(events,
 
         pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
         pandda_inspect_model_path = pandda_inspect_model_dir / "{}-pandda-model.pdb".format(event.dtag)
-        if not pandda_inspect_model_path.exists():
-            save_event_model(final_model,
-                             pandda_inspect_model_path,
-                             )
-        else:
-            print("\tAlready has a model, skipping!")
+        # if not pandda_inspect_model_path.exists():
+        save_event_model(final_model,
+                         pandda_inspect_model_path,
+                         )
+        # else:
+            # print("\tAlready has a model, skipping!")
 
 
 def main():
