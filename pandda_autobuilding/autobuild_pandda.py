@@ -268,8 +268,8 @@ def phase_graft(initial_mtz_path,
 
     initial_mtz_data = np.array(intial_mtz, copy=False)
     event_mtz_data = np.array(event_mtz, copy=False)
-    print(initial_mtz_data.shape)
-    print(event_mtz_data.shape)
+    # print(initial_mtz_data.shape)
+    # print(event_mtz_data.shape)
 
     # FWT
     initial_mtz_fwt = intial_mtz.column_with_label('FWT')
@@ -279,9 +279,9 @@ def phase_graft(initial_mtz_path,
     event_mtz_fwt = event_mtz.column_with_label('FWT')
     event_mtz_fwt_index = event_mtz.column_labels().index("FWT")
 
-    print("\t{}, {}".format(initial_mtz_data.shape, event_mtz_data.shape))
-    print(list(array_to_index_map.keys())[:10])
-    print(list(index_to_array_map.keys())[:10])
+    # print("\t{}, {}".format(initial_mtz_data.shape, event_mtz_data.shape))
+    # print(list(array_to_index_map.keys())[:10])
+    # print(list(index_to_array_map.keys())[:10])
 
     skipped = 0
     for intial_array in range(initial_mtz_data.shape[0]):
@@ -293,7 +293,7 @@ def phase_graft(initial_mtz_path,
             skipped = skipped + 1
             initial_mtz_data[intial_array, initial_mtz_fwt_index] = 0
     intial_mtz.set_data(initial_mtz_data)
-    print("\tSkipper {} reflections".format(skipped))
+    print("\tSkipped {} reflections".format(skipped))
 
     # PHWT
     initial_mtz_phwt = intial_mtz.column_with_label('PHWT')
