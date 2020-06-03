@@ -583,7 +583,11 @@ def get_events(event_table, fs):
                                             )
         ligand_path = get_ligand_path(pandda_event_dir)
         if ligand_path is None:
-            continue
+            print("\tCould not find smiles for {} in directory {}".format(dtag,
+                                                                          pandda_event_dir,
+                                                                          )
+                  )
+            
         receptor_path = get_receptor_path(pandda_event_dir, dtag)
         coords = get_coords(row)
         analysed_resolution = get_analyed_resolution(row)
