@@ -440,11 +440,14 @@ class Option:
 class Config:
     def __init__(self):
         input_pandda_dir = Option("i", "input_pandda_dir", required=True)
-        options = [input_pandda_dir]
+        overwrite = Option("o", "overwrite", required=True)
+
+        options = [input_pandda_dir, overwrite]
 
         args = self.get_args(options)
 
         self.input_pandda_dir = Path(input_pandda_dir(args))
+        self.overwrite = bool(args.overwrite)
 
     def get_args(self, options):
         parser = argparse.ArgumentParser()
@@ -797,6 +800,7 @@ def merge_models(events,
                  autobuilding_results,
                  results_table,
                  fs,
+                 overwrite=False,
                  ):
     results_dict = {(result.dtag, result.event_idx): result for result in autobuilding_results}
 
@@ -814,7 +818,7 @@ def merge_models(events,
 
         pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
         pandda_inspect_model_path = pandda_inspect_model_dir / "{}-pandda-model.pdb".format(event.dtag)
-        if not pandda_inspect_model_path.exists():
+        if (overwrite or (not pandda_inspect_model_path.exists())):
             save_event_model(final_model,
                              pandda_inspect_model_path,
                              )
@@ -855,6 +859,7 @@ def main():
                  autobuilding_results,
                  results_table.table,
                  fs,
+                 overwrite=config.overwrite,
                  )
 
     print("Outputing autobuilding results table...")
