@@ -401,14 +401,14 @@ def autobuild_event(event):
     # write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
 
     print("\tAutobuilding...")
-    if (out_dir_path / "results.txt").exists():
-        autobuilding_command = AutobuildingCommandRhofit(out_dir_path=out_dir_path,
-                                                         mtz_path=event_mtz_path,
-                                                         ligand_path=ligand_path,
-                                                         receptor_path=intial_receptor_path,
-                                                         )
-        print("\t\tCommand: {}".format(str(autobuilding_command)))
-        formatted_command, stdout, stderr = execute(autobuilding_command)
+    # if (out_dir_path / "results.txt").exists():
+    autobuilding_command = AutobuildingCommandRhofit(out_dir_path=out_dir_path,
+                                                     mtz_path=event_mtz_path,
+                                                     ligand_path=ligand_path,
+                                                     receptor_path=intial_receptor_path,
+                                                     )
+    print("\t\tCommand: {}".format(str(autobuilding_command)))
+    formatted_command, stdout, stderr = execute(autobuilding_command)
 
     print("\tProcessing autobuilding results...")
     autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
