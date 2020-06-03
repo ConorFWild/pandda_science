@@ -154,15 +154,23 @@ def get_ligand_smiles(pandda_event_dir):
     compound_dir = pandda_event_dir / "ligand_files"
 
     smiles_paths = compound_dir.glob("*.smiles")
-
     smiles_paths_list = list(smiles_paths)
 
-    if len(smiles_paths_list) == 0:
+    if len(smiles_paths_list) > 0:
+        return smiles_paths_list[0]
 
-        raise Exception("No smiles found! Smiles list is: {}".format(smiles_paths_list))
+    ligand_pdbs = list(compound_dir.glob("*.pdb"))
+    ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
+    if len(ligand_pdb_strings) > 0:
+        shortest_ligand_path = min(ligand_pdb_strings,
+                                   key=len,
+                                   )
+        return Path(shortest_ligand_path)
+
 
     else:
-        return smiles_paths_list[0]
+        raise Exception("No smiles found! Smiles list is: {}".format(smiles_paths_list))
+
 
 
 def get_ligand_mean_coords(residue):
