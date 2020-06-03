@@ -547,15 +547,24 @@ def get_ligand_path(pandda_event_dir):
     ligands = list((event_dir / "ligand_files").glob("*.smiles"))
     ligand_strings = [str(ligand_path) for ligand_path in ligands if ligand_path.name != "tmp.smiles"]
 
-    if len(ligand_strings) == 0:
-        return None
-
-    ligand_smiles_path: Path = Path(min(ligand_strings,
-                                        key=len,
+    if len(ligand_strings) > 0:
+        ligand_smiles_path: Path = Path(min(ligand_strings,
+                                            key=len,
+                                            )
                                         )
-                                    )
 
-    return ligand_smiles_path
+        return ligand_smiles_path
+
+    ligand_pdbs = list((event_dir / "ligand_files").glob("*.pdb"))
+    ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
+    if len(ligand_pdb_strings) > 0:
+        shortest_ligand_path = min(ligand_pdb_strings,
+                                   key=len,
+                                   )
+        return Path(shortest_ligand_path)
+
+    else:
+        return None
 
 
 def get_receptor_path(pandda_event_dir, dtag):
@@ -587,7 +596,7 @@ def get_events(event_table, fs):
                                                                           pandda_event_dir,
                                                                           )
                   )
-            
+
         receptor_path = get_receptor_path(pandda_event_dir, dtag)
         coords = get_coords(row)
         analysed_resolution = get_analyed_resolution(row)
