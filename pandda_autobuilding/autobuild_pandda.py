@@ -157,7 +157,9 @@ def get_ligand_smiles(pandda_event_dir):
     smiles_paths_list = list(smiles_paths)
 
     if len(smiles_paths_list) > 0:
-        return smiles_paths_list[0]
+        return Path(min([str(ligand_path) for ligand_path in smiles_paths_list if ligand_path.name != "tmp.smiles"],
+                        key=len)
+                    )
 
     ligand_pdbs = list(compound_dir.glob("*.pdb"))
     ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
@@ -170,7 +172,6 @@ def get_ligand_smiles(pandda_event_dir):
 
     else:
         raise Exception("No smiles found! Smiles list is: {}".format(smiles_paths_list))
-
 
 
 def get_ligand_mean_coords(residue):
@@ -300,11 +301,9 @@ def phase_graft(initial_mtz_path,
     # initial_mtz_phwt_index = initial_mtz_phwt.dataset_id
     initial_mtz_phwt_index = intial_mtz.column_labels().index("PHWT")
 
-
     event_mtz_phwt = event_mtz.column_with_label('PHWT')
     # event_mtz_phwt_index = event_mtz_phwt.dataset_id
     event_mtz_phwt_index = event_mtz.column_labels().index("PHWT")
-
 
     skipped = 0
     for intial_array in range(initial_mtz_data.shape[0]):
@@ -529,17 +528,17 @@ def get_event_table(path):
 
 def get_event_map_path(pandda_event_dir, dtag, event_idx, occupancy, pandda_version=2):
     # PanDDA 1
-    if pandda_version==2:
+    if pandda_version == 2:
         event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.ccp4".format(dtag,
+                                                                                   event_idx,
+                                                                                   occupancy,
+                                                                                   )
+    # PanDDA 2
+    if pandda_version == 1:
+        event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.native.ccp4".format(dtag,
                                                                                           event_idx,
                                                                                           occupancy,
                                                                                           )
-    # PanDDA 2
-    if pandda_version==1:
-        event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.native.ccp4".format(dtag,
-                                                                                   event_idx,
-                                                                                   occupancy,
-                                                                               )
     return event_map_path
 
 
