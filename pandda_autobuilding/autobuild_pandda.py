@@ -344,10 +344,10 @@ def autobuild_event(event):
     print("\tMaking ligand cif...")
     ligand_path = event.pandda_event_dir / "ligand.cif"
     ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
-    if not ligand_path.exists():
-        elbow(event.pandda_event_dir,
-              ligand_smiles_path,
-              )
+    # if not ligand_path.exists():
+    elbow(event.pandda_event_dir,
+          ligand_smiles_path,
+          )
 
     # Stripped protein
     print("\tStripping ligands near event...")
