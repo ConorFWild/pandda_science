@@ -278,9 +278,11 @@ def select_event(events, rsccs):
     print("getting event!")
     high_rscc_event_keys = list(filter(lambda x: rsccs[x] > 0.7,
                                        rsccs))
-    print("High rscc keys: {}".format(high_rscc_event_keys[0]))
+    print(len(high_rscc_event_keys))
+    print("High rscc keys: {}".format(high_rscc_event_keys[list(rsccs.keys())[0]]))
     actually_built_high_rscc_event_keys = list(filter(lambda x: events[x].actually_built == True,
                                                       high_rscc_event_keys))
+    print(len(actually_built_high_rscc_event_keys))
     print("RSCC keys actually built: {}".format(actually_built_high_rscc_event_keys[0]))
 
     events_near_models = list(filter(lambda x: events[x].distance_to_ligand_model < 10.0,
