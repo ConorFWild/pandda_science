@@ -411,6 +411,8 @@ def main():
     autobuilds = get_autobuilds(config.autobuilds_dir)
 
     while True:
+        print(len(rsccs))
+        print(len(events))
         event, rscc = select_event(events, rsccs)
         autobuild_path = autobuilds["{}_{}_{}".format(event.pandda_name, event.dtag, event.event_idx)]
         if not Path(str(event.event_map_path)).exists():
