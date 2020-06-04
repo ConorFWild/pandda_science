@@ -153,6 +153,14 @@ def elbow(autobuilding_dir, ligand_smiles_path):
 def get_ligand_smiles(pandda_event_dir):
     compound_dir = pandda_event_dir / "ligand_files"
 
+    ligand_pdbs = list(compound_dir.glob("*.pdb"))
+    ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
+    if len(ligand_pdb_strings) > 0:
+        shortest_ligand_path = min(ligand_pdb_strings,
+                                   key=len,
+                                   )
+        return Path(shortest_ligand_path)
+
     smiles_paths = compound_dir.glob("*.smiles")
     smiles_paths_list = list(smiles_paths)
 
@@ -161,13 +169,7 @@ def get_ligand_smiles(pandda_event_dir):
                         key=len)
                     )
 
-    ligand_pdbs = list(compound_dir.glob("*.pdb"))
-    ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
-    if len(ligand_pdb_strings) > 0:
-        shortest_ligand_path = min(ligand_pdb_strings,
-                                   key=len,
-                                   )
-        return Path(shortest_ligand_path)
+
 
 
     else:
@@ -343,6 +345,7 @@ def autobuild_event(event):
     print("\tMaking ligand cif...")
     ligand_path = event.pandda_event_dir / "ligand.cif"
     ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
+    print(ligand_smiles_path)
     # if not ligand_path.exists():
     elbow(event.pandda_event_dir,
           ligand_smiles_path,
