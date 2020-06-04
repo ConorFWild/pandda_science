@@ -324,6 +324,11 @@ def phase_graft(initial_mtz_path,
     intial_mtz.write_to_file(str(out_path))
 
 
+def try_remove(ligand_path):
+    if ligand_path.exists():
+         os.remove(str(ligand_path))
+
+
 def autobuild_event(event):
     # Event map mtz
     print("\tMaking event map mtz...")
@@ -344,6 +349,7 @@ def autobuild_event(event):
     # Ligand cif
     print("\tMaking ligand cif...")
     ligand_path = event.pandda_event_dir / "autobuilding_ligand.cif"
+    try_remove(ligand_path)
     ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
     print(ligand_smiles_path)
     # if not ligand_path.exists():
