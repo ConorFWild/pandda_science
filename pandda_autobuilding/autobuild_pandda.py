@@ -343,7 +343,7 @@ def autobuild_event(event):
 
     # Ligand cif
     print("\tMaking ligand cif...")
-    ligand_path = event.pandda_event_dir / "ligand.cif"
+    ligand_path = event.pandda_event_dir / "autobuilding_ligand.cif"
     ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
     print(ligand_smiles_path)
     # if not ligand_path.exists():
