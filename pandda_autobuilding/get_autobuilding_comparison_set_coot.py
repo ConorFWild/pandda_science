@@ -280,16 +280,20 @@ def select_event(events, rsccs):
     #                                    rsccs))
     high_rscc_event_keys = [key for key in rsccs if rsccs[key] > 0.7]
     print(len(high_rscc_event_keys))
-    print("High rscc keys: {}".format(high_rscc_event_keys[list(rsccs.keys())[0]]))
-    actually_built_high_rscc_event_keys = list(filter(lambda x: events[x].actually_built == True,
-                                                      high_rscc_event_keys))
+    # print("High rscc keys: {}".format(high_rscc_event_keys[list(rsccs.keys())[0]]))
+    # actually_built_high_rscc_event_keys = list(filter(lambda x: events[x].actually_built == True,
+    #                                                   high_rscc_event_keys))
+    actually_built_high_rscc_event_keys = [key for key in high_rscc_event_keys if events[key].actually_built == True]
     print(len(actually_built_high_rscc_event_keys))
-    print("RSCC keys actually built: {}".format(actually_built_high_rscc_event_keys[0]))
+    # print("RSCC keys actually built: {}".format(actually_built_high_rscc_event_keys[0]))
 
     events_near_models = list(filter(lambda x: events[x].distance_to_ligand_model < 10.0,
                                      actually_built_high_rscc_event_keys,
                                      ))
-    print("Events near model: {}".format(events_near_models[0]))
+    events_near_models = [key for key in actually_built_high_rscc_event_keys
+                          if events[key].distance_to_ligand_model < 10.0]
+    print(len(events_near_models))
+    # print("Events near model: {}".format(events_near_models[0]))
 
     event_key = choose_one(events_near_models)
     print(list(events.keys())[0])
