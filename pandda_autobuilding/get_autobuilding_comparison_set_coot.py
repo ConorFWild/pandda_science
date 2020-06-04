@@ -276,8 +276,9 @@ def choose_one(indexed):
 
 def select_event(events, rsccs):
     print("getting event!")
-    high_rscc_event_keys = list(filter(lambda x: rsccs[x] > 0.7,
-                                       rsccs))
+    # high_rscc_event_keys = list(filter(lambda x: rsccs[x] > 0.7,
+    #                                    rsccs))
+    high_rscc_event_keys = [key for key in rsccs if rsccs[key] > 0.7]
     print(len(high_rscc_event_keys))
     print("High rscc keys: {}".format(high_rscc_event_keys[list(rsccs.keys())[0]]))
     actually_built_high_rscc_event_keys = list(filter(lambda x: events[x].actually_built == True,
