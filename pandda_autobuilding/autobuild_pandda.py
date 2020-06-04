@@ -441,13 +441,15 @@ class Config:
     def __init__(self):
         input_pandda_dir = Option("i", "input_pandda_dir", required=True)
         overwrite = Option("o", "overwrite", required=True)
+        pandda_version = Option("p", "pandda_version", required=True)
 
-        options = [input_pandda_dir, overwrite]
+        options = [input_pandda_dir, overwrite, pandda_version]
 
         args = self.get_args(options)
 
         self.input_pandda_dir = Path(input_pandda_dir(args))
         self.overwrite = bool(args.overwrite)
+        self.pandda_version = int(args.pandda_version)
 
     def get_args(self, options):
         parser = argparse.ArgumentParser()
@@ -525,16 +527,18 @@ def get_event_table(path):
     return pd.read_csv(str(path))
 
 
-def get_event_map_path(pandda_event_dir, dtag, event_idx, occupancy):
+def get_event_map_path(pandda_event_dir, dtag, event_idx, occupancy, pandda_version=2):
     # PanDDA 1
-    # event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.native.ccp4".format(dtag,
-    #                                                                                   event_idx,
-    #                                                                                   occupancy,
-    #                                                                                   )
+    if pandda_version==2:
+        event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.ccp4".format(dtag,
+                                                                                          event_idx,
+                                                                                          occupancy,
+                                                                                          )
     # PanDDA 2
-    event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.native.ccp4".format(dtag,
-                                                                               event_idx,
-                                                                               occupancy,
+    if pandda_version==1:
+        event_map_path = pandda_event_dir / "{}-event_{}_1-BDC_{}_map.native.ccp4".format(dtag,
+                                                                                   event_idx,
+                                                                                   occupancy,
                                                                                )
     return event_map_path
 
@@ -592,7 +596,7 @@ def get_analyed_resolution(row):
     return row["analysed_resolution"]
 
 
-def get_events(event_table, fs):
+def get_events(event_table, fs, pandda_version):
     events = []
     for index, row in event_table.iterrows():
         dtag = row["dtag"]
@@ -600,7 +604,8 @@ def get_events(event_table, fs):
         occupancy = row["1-BDC"]
         pandda_event_dir = fs.pandda_processed_datasets_dir / "{}".format(dtag)
         event_map_path = get_event_map_path(pandda_event_dir,
-                                            dtag, event_idx, occupancy
+                                            dtag, event_idx, occupancy,
+                                            pandda_version,
                                             )
         ligand_path = get_ligand_path(pandda_event_dir)
         if ligand_path is None:
@@ -840,6 +845,7 @@ def main():
     print("Getting event models...")
     events = get_events(event_table,
                         fs,
+                        config.pandda_version,
                         )
     print("\tGot models of {} events".format(len(events)))
 
