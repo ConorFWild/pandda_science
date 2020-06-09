@@ -418,11 +418,12 @@ def autobuild_event(event):
     print("\t\tCommand: {}".format(str(autobuilding_command)))
     formatted_command, stdout, stderr = execute(autobuilding_command)
 
-    print("\tProcessing autobuilding results...")
-    autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
-    write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
+
 
     try:
+        print("\tProcessing autobuilding results...")
+        autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
+        write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
         result = AutobuildingResultRhofit.from_output(event,
                                                       stdout,
                                                       stderr,
