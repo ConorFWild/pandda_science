@@ -21,6 +21,7 @@ LIGAND_FILE = "autobuilding_ligand.cif"
 EVENT_MTZ_FILE = "event.mtz"
 GRAFTED_MTZ_FILE = "grafted.mtz"
 RHOFIT_DIR = "rhofit"
+RHOFIT_EVENT_DIR = "rhofit_event"
 RHOFIT_RESULTS_FILE = "results.txt"
 RHOFIT_RESULT_JSON_FILE = "result.json"
 RHOFIT_BEST_MODEL_FILE = "best.pdb"
@@ -149,17 +150,17 @@ class AutobuildRhofitTask(luigi.Task):
                 ]
 
     def run(self):
-        command = Rhofit(out_dir_path=self.out_dir_path,
+        command = Rhofit(out_dir_path=self.out_dir_path / RHOFIT_EVENT_DIR,
                          mtz_path=self.out_dir_path / GRAFTED_MTZ_FILE,
                          ligand_path=self.out_dir_path / LIGAND_FILE,
                          receptor_path=self.out_dir_path / STRIPPED_RECEPTOR_FILE,
                          )
         QSub(str(command),
-             self.out_dir_path,
+             self.out_dir_path / "rhofit_event_command.sh",
              )
 
     def output(self):
-        return luigi.LocalTarget(str(self.out_dir_path / RHOFIT_DIR / RHOFIT_BEST_MODEL_FILE))
+        return luigi.LocalTarget(str(self.out_dir_path / RHOFIT_EVENT_DIR / RHOFIT_BEST_MODEL_FILE))
 
 
 class ParseResultsRhofit(luigi.Task):
