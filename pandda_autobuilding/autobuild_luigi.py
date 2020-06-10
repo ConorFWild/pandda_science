@@ -149,10 +149,10 @@ class AutobuildRhofitTask(luigi.Task):
                 ]
 
     def run(self):
-        command = Rhofit(out_dir_path=self.event.out_dir_path,
-                         mtz_path=self.event.event_mtz_path,
-                         ligand_path=self.event.ligand_path,
-                         receptor_path=self.event.intial_receptor_path,
+        command = Rhofit(out_dir_path=self.out_dir_path,
+                         mtz_path=self.out_dir_path / GRAFTED_MTZ_FILE,
+                         ligand_path=self.out_dir_path / LIGAND_FILE,
+                         receptor_path=self.out_dir_path / STRIPPED_RECEPTOR_FILE,
                          )
         QSub(str(command),
              self.out_dir_path,
