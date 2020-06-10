@@ -251,7 +251,11 @@ def get_events(path):
             pandda_processed_dir = Path(event_row["event_map_path"]).parent
             print(pandda_processed_dir)
             if pandda_processed_dir.exists():
-                event_row["ligand_smiles_path"] = get_ligand_smiles(Path(event_row["event_map_path"]).parent)
+                try:
+                    event_row["ligand_smiles_path"] = get_ligand_smiles(Path(event_row["event_map_path"]).parent)
+                except Exception as e:
+                    print(e)
+                    continue
                 event = Event.from_record(event_row)
                 events.append(event)
         else:
