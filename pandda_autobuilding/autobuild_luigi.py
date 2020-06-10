@@ -58,10 +58,7 @@ class CCP4ToMTZTask(luigi.Task):
 
     def requires(self):
         return DirSetupTask(
-            out_dir_path=self.out_dir_path / BUILD_DIR_PATTERN.format(pandda_name=self.event.pandda_name,
-                                                                      dtag=self.event.dtag,
-                                                                      event_idx=self.event.event_idx,
-                                                                      )
+            out_dir_path=self.out_dir_path
         )
 
     def run(self):
@@ -114,10 +111,7 @@ class StripTask(luigi.Task):
 
     def requires(self):
         return DirSetupTask(
-            out_dir_path=self.out_dir_path / BUILD_DIR_PATTERN.format(pandda_name=self.event.pandda_name,
-                                                                      dtag=self.event.dtag,
-                                                                      event_idx=self.event.event_idx,
-                                                                      )
+            out_dir_path=self.out_dir_path
         )
 
     def run(self):
