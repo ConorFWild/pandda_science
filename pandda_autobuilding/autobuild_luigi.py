@@ -46,7 +46,7 @@ class ElbowTask(luigi.Task):
                         self.event.ligand_smiles_path,
                         )
 
-        QSub(command,
+        QSub(str(command),
              self.out_dir_path / "elbow_command.sh",
              )()
 
@@ -72,7 +72,7 @@ class CCP4ToMTZTask(luigi.Task):
                            self.event.analysed_resolution,
                            )
 
-        QSub(command,
+        QSub(str(command),
              self.out_dir_path / "ccp4_to_mtz_command.sh",
              )()
 
@@ -154,7 +154,7 @@ class AutobuildRhofitTask(luigi.Task):
                          ligand_path=self.event.ligand_path,
                          receptor_path=self.event.intial_receptor_path,
                          )
-        QSub(command,
+        QSub(str(command),
              self.out_dir_path,
              )
 
