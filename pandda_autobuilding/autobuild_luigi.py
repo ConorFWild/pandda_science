@@ -17,7 +17,7 @@ from pandda_types.process import (Rhofit,
                                   )
 
 STRIPPED_RECEPTOR_FILE = "stripped_receptor.pdb"
-LIGAND_FILE = "ligand.cif"
+LIGAND_FILE = "autobuilding_ligand.cif"
 EVENT_MTZ_FILE = "event.mtz"
 GRAFTED_MTZ_FILE = "grafted.mtz"
 RHOFIT_DIR = "rhofit"
