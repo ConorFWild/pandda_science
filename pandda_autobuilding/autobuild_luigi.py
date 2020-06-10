@@ -183,9 +183,9 @@ class ResultsTable(luigi.Task):
     def requires(self):
         return [ParseResultsRhofit(event=event,
                                    out_dir_path=Path(BUILD_DIR_PATTERN.format(pandda_name=event.pandda_name,
-                                                                         dtag=event.dtag,
-                                                                         event_idx=event.event_idx,
-                                                                         )),
+                                                                              dtag=event.dtag,
+                                                                              event_idx=event.event_idx,
+                                                                              )),
                                    )
                 for event
                 in events
@@ -248,11 +248,14 @@ def get_events(path):
             if pandda_processed_dir.exists():
                 try:
                     event_row["ligand_smiles_path"] = get_ligand_smiles(Path(event_row["event_map_path"]).parent)
+                    print("\tLigand smiles path:{}".format(event_row["ligand_smiles_path"]))
+                    event = Event.from_record(event_row)
+                    events.append(event)
+
                 except Exception as e:
                     print(e)
                     continue
-                event = Event.from_record(event_row)
-                events.append(event)
+
         else:
             continue
 
