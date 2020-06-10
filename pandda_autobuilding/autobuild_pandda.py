@@ -169,9 +169,6 @@ def get_ligand_smiles(pandda_event_dir):
                         key=len)
                     )
 
-
-
-
     else:
         raise Exception("No smiles found! Smiles list is: {}".format(smiles_paths_list))
 
