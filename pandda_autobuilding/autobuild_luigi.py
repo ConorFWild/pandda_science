@@ -173,7 +173,7 @@ class ParseResultsRhofit(luigi.Task):
                                    )
 
     def run(self):
-        rhofit_dir = self.out_dir_path / RHOFIT_DIR
+        rhofit_dir = self.out_dir_path / RHOFIT_EVENT_DIR
         result = AutobuildingResultRhofit.from_output(rhofit_dir,
                                                       self.event.pandda_name,
                                                       self.event.dtag,
