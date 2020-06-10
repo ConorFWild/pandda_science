@@ -188,10 +188,10 @@ class ResultsTable(luigi.Task):
 
     def requires(self):
         return [ParseResultsRhofit(event=event,
-                                   out_dir_path=BUILD_DIR_PATTERN.format(pandda_name=event.pandda_name,
+                                   out_dir_path=Path(BUILD_DIR_PATTERN.format(pandda_name=event.pandda_name,
                                                                          dtag=event.dtag,
                                                                          event_idx=event.event_idx,
-                                                                         ),
+                                                                         )),
                                    )
                 for event
                 in events
