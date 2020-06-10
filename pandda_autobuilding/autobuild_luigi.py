@@ -284,7 +284,7 @@ class Config:
         args = parser.parse_args()
 
         self.event_table_path = args.event_table_path
-        self.out_dir_path = args.out_dir_path
+        self.out_dir_path = Path(args.out_dir_path)
 
 
 if __name__ == "__main__":
