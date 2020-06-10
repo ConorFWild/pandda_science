@@ -248,7 +248,9 @@ def get_events(path):
     event_table = pd.read_csv(str(path))
     for idx, event_row in event_table.iterrows():
         if event_row["actually_built"] is True:
-            if Path(event_row["event_map_path"]).exists():
+            pandda_processed_dir = Path(event_row["event_map_path"])
+            print(pandda_processed_dir)
+            if pandda_processed_dir.exists():
                 event_row["ligand_smiles_path"] = get_ligand_smiles(Path(event_row["event_map_path"]).parent)
                 event = Event.from_record(event_row)
                 events.append(event)
