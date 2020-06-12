@@ -22,6 +22,7 @@ EVENT_MTZ_FILE = "event.mtz"
 GRAFTED_MTZ_FILE = "grafted.mtz"
 RHOFIT_DIR = "rhofit"
 RHOFIT_EVENT_DIR = "rhofit_event"
+RHOFIT_NORMAL_DIR = "rhofit_normal"
 RHOFIT_RESULTS_FILE = "results.txt"
 RHOFIT_RESULT_JSON_FILE = "result.json"
 RHOFIT_BEST_MODEL_FILE = "best.pdb"
@@ -154,6 +155,29 @@ class AutobuildRhofitTask(luigi.Task):
         return luigi.LocalTarget(str(self.out_dir_path / RHOFIT_EVENT_DIR / RHOFIT_BEST_MODEL_FILE))
 
 
+class AutobuildRhofitNormalTask(luigi.Task):
+    event = luigi.Parameter()
+    out_dir_path = luigi.Parameter()
+
+    def requires(self):
+        return ElbowTask(event=self.event,
+                         out_dir_path=self.out_dir_path,
+                         )
+
+    def run(self):
+        command = Rhofit(out_dir_path=self.out_dir_path / RHOFIT_NORMAL_DIR,
+                         mtz_path=self.event.data_path,
+                         ligand_path=self.out_dir_path / LIGAND_FILE,
+                         receptor_path=self.event.initial_model_path,
+                         )
+        QSub(str(command),
+             self.out_dir_path / "rhofit_event_command.sh",
+             )()
+
+    def output(self):
+        return luigi.LocalTarget(str(self.out_dir_path / RHOFIT_NORMAL_DIR / RHOFIT_BEST_MODEL_FILE))
+
+
 class ParseResultsRhofit(luigi.Task):
     event = luigi.Parameter()
     out_dir_path = luigi.Parameter()
@@ -176,20 +200,57 @@ class ParseResultsRhofit(luigi.Task):
         return luigi.LocalTarget(self.out_dir_path / RHOFIT_RESULT_JSON_FILE)
 
 
+class ParseResultsRhofitNormal(luigi.Task):
+    event = luigi.Parameter()
+    out_dir_path = luigi.Parameter()
+
+    def requires(self):
+        return AutobuildRhofitNormalTask(event=self.event,
+                                         out_dir_path=self.out_dir_path,
+                                         )
+
+    def run(self):
+        rhofit_dir = self.out_dir_path / RHOFIT_EVENT_DIR
+        result = AutobuildingResultRhofit.from_output(rhofit_dir,
+                                                      self.event.pandda_name,
+                                                      self.event.dtag,
+                                                      self.event.event_idx,
+                                                      )
+        result.to_json(self.out_dir_path / RHOFIT_RESULT_JSON_FILE)
+
+    def output(self):
+        return luigi.LocalTarget(self.out_dir_path / RHOFIT_RESULT_JSON_FILE)
+
+
 class ResultsTable(luigi.Task):
     out_dir_path = luigi.Parameter()
     events = luigi.Parameter()
 
     def requires(self):
-        return [ParseResultsRhofit(event=event,
-                                   out_dir_path=Path(self.out_dir_path) / BUILD_DIR_PATTERN.format(pandda_name=event.pandda_name,
-                                                                              dtag=event.dtag,
-                                                                              event_idx=event.event_idx,
-                                                                              ),
-                                   )
-                for event
-                in events
-                ]
+        event_building_tasks = [ParseResultsRhofit(event=event,
+                                                   out_dir_path=Path(self.out_dir_path) / BUILD_DIR_PATTERN.format(
+                                                       pandda_name=event.pandda_name,
+                                                       dtag=event.dtag,
+                                                       event_idx=event.event_idx,
+                                                       ),
+                                                   )
+                                for event
+                                in events
+                                ]
+
+        normal_building_tasks = [ParseResultsRhofitNormal(event=event,
+                                                          out_dir_path=Path(
+                                                              self.out_dir_path) / BUILD_DIR_PATTERN.format(
+                                                              pandda_name=event.pandda_name,
+                                                              dtag=event.dtag,
+                                                              event_idx=event.event_idx,
+                                                              ),
+                                                          )
+                                 for event
+                                 in events
+                                 ]
+
+        return event_building_tasks + normal_building_tasks
 
     def run(self):
         results_paths = self.out_dir_path.glob("**/result_*.json")
