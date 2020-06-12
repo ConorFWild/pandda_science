@@ -148,7 +148,7 @@ class AutobuildRhofitTask(luigi.Task):
                          )
         QSub(str(command),
              self.out_dir_path / "rhofit_event_command.sh",
-             )
+             )()
 
     def output(self):
         return luigi.LocalTarget(str(self.out_dir_path / RHOFIT_EVENT_DIR / RHOFIT_BEST_MODEL_FILE))
