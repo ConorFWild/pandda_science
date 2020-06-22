@@ -6,6 +6,7 @@ import pandas as pd
 
 import luigi
 
+from pandda_autobuilding.constants import *
 from pandda_types.data import Event
 from pandda_types.process import (Rhofit,
                                   AutobuildingResultRhofit,
@@ -15,21 +16,6 @@ from pandda_types.process import (Rhofit,
                                   Graft,
                                   QSub,
                                   )
-
-STRIPPED_RECEPTOR_FILE = "stripped_receptor.pdb"
-LIGAND_FILE = "autobuilding_ligand.cif"
-EVENT_MTZ_FILE = "event.mtz"
-GRAFTED_MTZ_FILE = "grafted.mtz"
-RHOFIT_DIR = "rhofit"
-RHOFIT_EVENT_DIR = "rhofit_event"
-RHOFIT_NORMAL_DIR = "rhofit_normal"
-RHOFIT_RESULTS_FILE = "results.txt"
-RHOFIT_RESULT_JSON_FILE = "result.json"
-RHOFIT_NORMAL_RESULT_JSON_FILE = "result_normal.json"
-RHOFIT_BEST_MODEL_FILE = "best.pdb"
-RSCC_TABLE_FILE = "rscc_table.csv"
-
-BUILD_DIR_PATTERN = "{pandda_name}_{dtag}_{event_idx}"
 
 
 class ElbowTask(luigi.Task):
