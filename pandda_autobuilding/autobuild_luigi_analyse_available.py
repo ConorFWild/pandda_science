@@ -96,6 +96,7 @@ def load_available_results_events(events, out_dir_path):
                                                        event_idx=event.event_idx,
                                                        ) / RHOFIT_RESULT_JSON_FILE
         if results_normal_path.exists():
+            print("\tLoading result at {}".format(results_normal_path))
             result = AutobuildingResultRhofit.from_json(results_normal_path)
             results[(event.pandda_name, event.dtag, event.event_idx)] = result
         else:
@@ -113,6 +114,7 @@ def load_available_results_normal(events, out_dir_path):
                                                        event_idx=event.event_idx,
                                                        ) / RHOFIT_NORMAL_RESULT_JSON_FILE
         if results_normal_path.exists():
+            print("\tLoading result at {}".format(results_normal_path))
             result = AutobuildingResultRhofit.from_json(results_normal_path)
             results[(event.pandda_name, event.dtag, event.event_idx)] = result
         else:
