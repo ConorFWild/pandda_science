@@ -25,6 +25,7 @@ RHOFIT_EVENT_DIR = "rhofit_event"
 RHOFIT_NORMAL_DIR = "rhofit_normal"
 RHOFIT_RESULTS_FILE = "results.txt"
 RHOFIT_RESULT_JSON_FILE = "result.json"
+RHOFIT_NORMAL_RESULT_JSON_FILE = "result_normal.json"
 RHOFIT_BEST_MODEL_FILE = "best.pdb"
 RSCC_TABLE_FILE = "rscc_table.csv"
 
@@ -171,7 +172,7 @@ class AutobuildRhofitNormalTask(luigi.Task):
                          receptor_path=self.event.initial_model_path,
                          )
         QSub(str(command),
-             self.out_dir_path / "rhofit_event_command.sh",
+             self.out_dir_path / "rhofit_normal_command.sh",
              )()
 
     def output(self):
@@ -210,16 +211,16 @@ class ParseResultsRhofitNormal(luigi.Task):
                                          )
 
     def run(self):
-        rhofit_dir = self.out_dir_path / RHOFIT_EVENT_DIR
+        rhofit_dir = self.out_dir_path / RHOFIT_NORMAL_DIR
         result = AutobuildingResultRhofit.from_output(rhofit_dir,
                                                       self.event.pandda_name,
                                                       self.event.dtag,
                                                       self.event.event_idx,
                                                       )
-        result.to_json(self.out_dir_path / RHOFIT_RESULT_JSON_FILE)
+        result.to_json(self.out_dir_path / RHOFIT_NORMAL_RESULT_JSON_FILE)
 
     def output(self):
-        return luigi.LocalTarget(self.out_dir_path / RHOFIT_RESULT_JSON_FILE)
+        return luigi.LocalTarget(self.out_dir_path / RHOFIT_NORMAL_RESULT_JSON_FILE)
 
 
 class ResultsTable(luigi.Task):
