@@ -259,8 +259,21 @@ class ResultsTable(luigi.Task):
                    in results_paths
                    ]
 
+        results_normal = [AutobuildRhofitNormalTask.from_json(results_path)
+                   for results_path
+                   in results_paths
+                   ]
+
         records = []
         for result in results:
+            record = {}
+            record["pandda_name"] = result.pandda_name
+            record["dtag"] = result.dtag
+            record["event_idx"] = result.event_idx
+            record["rscc"] = result.rscc
+            records.append(record)
+
+        for result in results_normal:
             record = {}
             record["pandda_name"] = result.pandda_name
             record["dtag"] = result.dtag
@@ -356,7 +369,7 @@ if __name__ == "__main__":
 
     tasks = [ResultsTable(out_dir_path=config.out_dir_path,
                           events=events,
-                          )
+                          ),
              ]
 
     luigi.build(tasks,
