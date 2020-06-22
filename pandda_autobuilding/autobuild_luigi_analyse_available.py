@@ -101,6 +101,8 @@ def load_available_results_events(events, out_dir_path):
         else:
             print("\tNo result at {}".format(results_normal_path))
 
+    return results
+
 
 def load_available_results_normal(events, out_dir_path):
     results = {}
@@ -115,6 +117,8 @@ def load_available_results_normal(events, out_dir_path):
             results[(event.pandda_name, event.dtag, event.event_idx)] = result
         else:
             print("\tNo result at {}".format(results_normal_path))
+
+    return results
 
 
 if __name__ == "__main__":
