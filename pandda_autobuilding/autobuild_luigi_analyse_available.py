@@ -101,8 +101,8 @@ def load_available_results_events(events, out_dir_path):
         else:
             print("\tNo result at {}".format(results_normal_path))
 
-            
-def load_available_results_events(events, out_dir_path):
+
+def load_available_results_normal(events, out_dir_path):
     results = {}
     for event in events:
         results_normal_path = Path(out_dir_path) / BUILD_DIR_PATTERN.format(
@@ -125,9 +125,13 @@ if __name__ == "__main__":
     events = get_events(config.event_table_path)
     print("\tGot {} events!".format(len(events)))
 
-    results_event = load_available_results_events(events)
+    results_event = load_available_results_events(events,
+                                                  config.out_dir_path,
+                                                  )
     print("\t {} event results available".format(len(results_event)))
-    results_normal = load_available_results_normal(events)
+    results_normal = load_available_results_normal(events,
+                                                   config.out_dir_path,
+                                                   )
     print("\t {} normal results available".format(results_normal))
 
 
