@@ -142,7 +142,7 @@ def get_num_better(series1, series2):
     return len(series1[series1 > series2])
 
 
-def get_detla_modelable(series1, series2, cutoff=0.7):
+def get_delta_modelable(series1, series2, cutoff=0.7):
     series_1_cutoff = series1[series1 > cutoff]
     series_2_cutoff = series2[series1 > cutoff]
 
@@ -171,16 +171,16 @@ if __name__ == "__main__":
     delta = (table["event_rscc"] - table["normal_rscc"]).mean()
     print("Detal is {}".format(delta))
 
-    num_event_better = get_num_better()
-    print("Event rscc better for {} out of {} builds")
+    num_event_better = get_num_better(table["event_rscc"], table["normal_rscc"])
+    print("Event rscc better for {} out of {} builds".format(num_event_better, len(table)))
 
-    num_normal_better = get_num_better()
-    print("Normal rscc better for {} out of {} builds")
+    num_normal_better = get_num_better(table["normal_rscc"], table["event_rscc"])
+    print("Normal rscc better for {} out of {} builds".format(num_normal_better, len(table)))
 
-    delta_modelable = get_delta_modelable()
-    print("In event {} are modelable that were not")
+    delta_modelable = get_delta_modelable(table["event_rscc"], table["normal_rscc"])
+    print("In event {} are modelable that were not".format(delta_modelable))
 
-    delta_modelable = get_delta_modelable()
-    print("In normal {} are modelable that were not")
+    delta_modelable = get_delta_modelable(table["normal_rscc"], table["event_rscc"])
+    print("In normal {} are modelable that were not".format(delta_modelable))
 
     # plot_rsccs()
