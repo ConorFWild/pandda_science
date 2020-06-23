@@ -138,7 +138,7 @@ if __name__ == "__main__":
     results_normal = load_available_results_normal(events,
                                                    config.out_dir_path,
                                                    )
-    print("\t {} normal results available".format(results_normal))
+    print("\t {} normal results available".format(len(results_normal)))
 
 
 
