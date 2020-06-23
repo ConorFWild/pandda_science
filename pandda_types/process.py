@@ -66,7 +66,12 @@ class AutobuildingResultRhofit:
 
     @staticmethod
     def from_json(path):
-        data = json.loads(str(path))
+        with open(str(path), "r") as f:
+            json_string = f.read()
+
+        print(json_string)
+
+        data = json.load(json_string)
 
         return AutobuildingResultRhofit(pandda_name=data["pandda_name"],
                                         dtag=data["dtag"],
