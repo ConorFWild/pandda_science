@@ -91,10 +91,10 @@ def load_available_results_events(events, out_dir_path):
     results = {}
     for event in events:
         results_normal_path = Path(out_dir_path) / BUILD_DIR_PATTERN.format(
-                                                       pandda_name=event.pandda_name,
-                                                       dtag=event.dtag,
-                                                       event_idx=event.event_idx,
-                                                       ) / RHOFIT_RESULT_JSON_FILE
+            pandda_name=event.pandda_name,
+            dtag=event.dtag,
+            event_idx=event.event_idx,
+        ) / RHOFIT_RESULT_JSON_FILE
         if results_normal_path.exists():
             # print("\tLoading result at {}".format(results_normal_path))
             result = AutobuildingResultRhofit.from_json(results_normal_path)
@@ -109,10 +109,10 @@ def load_available_results_normal(events, out_dir_path):
     results = {}
     for event in events:
         results_normal_path = Path(out_dir_path) / BUILD_DIR_PATTERN.format(
-                                                       pandda_name=event.pandda_name,
-                                                       dtag=event.dtag,
-                                                       event_idx=event.event_idx,
-                                                       ) / RHOFIT_NORMAL_RESULT_JSON_FILE
+            pandda_name=event.pandda_name,
+            dtag=event.dtag,
+            event_idx=event.event_idx,
+        ) / RHOFIT_NORMAL_RESULT_JSON_FILE
         if results_normal_path.exists():
             # print("\tLoading result at {}".format(results_normal_path))
             result = AutobuildingResultRhofit.from_json(results_normal_path)
@@ -121,6 +121,7 @@ def load_available_results_normal(events, out_dir_path):
             print("\tNo result at {}".format(results_normal_path))
 
     return results
+
 
 def get_table(results_event, results_normal):
     records = []
@@ -135,6 +136,18 @@ def get_table(results_event, results_normal):
             records.append(record)
 
     return pd.DataFrame(records)
+
+
+def get_num_better(series1, series2):
+    return len(series1[series1 > series2])
+
+
+def get_detla_modelable(series1, series2, cutoff=0.7):
+    series_1_cutoff = series1[series1 > cutoff]
+    series_2_cutoff = series2[series1 > cutoff]
+
+    return len(series_2_cutoff[series_2_cutoff < cutoff])
+
 
 if __name__ == "__main__":
     print("Geting Config...")
@@ -157,5 +170,17 @@ if __name__ == "__main__":
     print(table.head(20))
     delta = (table["event_rscc"] - table["normal_rscc"]).mean()
     print("Detal is {}".format(delta))
-    
 
+    num_event_better = get_num_better()
+    print("Event rscc better for {} out of {} builds")
+
+    num_normal_better = get_num_better()
+    print("Normal rscc better for {} out of {} builds")
+
+    delta_modelable = get_delta_modelable()
+    print("In event {} are modelable that were not")
+
+    delta_modelable = get_delta_modelable()
+    print("In normal {} are modelable that were not")
+
+    # plot_rsccs()
