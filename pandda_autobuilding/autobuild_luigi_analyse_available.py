@@ -122,6 +122,19 @@ def load_available_results_normal(events, out_dir_path):
 
     return results
 
+def get_table(results_event, results_normal):
+    records = []
+    for key in results_event:
+        if key in results_normal:
+            record = {}
+            record["pandda_name"] = key[0]
+            record["dtag"] = key[1]
+            record["event_idx"] = key[2]
+            record["event_rscc"] = results_event[key].rscc
+            record["normal_rscc"] = results_normal[key].rscc
+            records.append(record)
+
+    return pd.DataFrame(records)
 
 if __name__ == "__main__":
     print("Geting Config...")
@@ -140,5 +153,6 @@ if __name__ == "__main__":
                                                    )
     print("\t {} normal results available".format(len(results_normal)))
 
-
+    table = get_table(results_event, results_normal)
+    print(table.head(20))
 
