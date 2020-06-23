@@ -69,8 +69,6 @@ class AutobuildingResultRhofit:
         with open(str(path), "r") as f:
             json_string = str(f.read())
 
-        print(json_string)
-
         data = json.loads(json_string)
 
         return AutobuildingResultRhofit(pandda_name=data["pandda_name"],
