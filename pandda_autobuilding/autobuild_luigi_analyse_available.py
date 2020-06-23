@@ -155,4 +155,7 @@ if __name__ == "__main__":
 
     table = get_table(results_event, results_normal)
     print(table.head(20))
+    delta = (table["event_rscc"] - table["normal_rscc"]).mean()
+    print("Detal is {}".format(delta))
+    
 
