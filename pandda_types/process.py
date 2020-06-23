@@ -71,7 +71,7 @@ class AutobuildingResultRhofit:
 
         print(json_string)
 
-        data = json.load(json_string)
+        data = json.loads(json_string)
 
         return AutobuildingResultRhofit(pandda_name=data["pandda_name"],
                                         dtag=data["dtag"],
