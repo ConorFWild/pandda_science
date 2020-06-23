@@ -67,7 +67,7 @@ class AutobuildingResultRhofit:
     @staticmethod
     def from_json(path):
         with open(str(path), "r") as f:
-            json_string = f.read()
+            json_string = str(f.read())
 
         print(json_string)
 
