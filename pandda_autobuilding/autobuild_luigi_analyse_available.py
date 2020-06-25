@@ -5,6 +5,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import seaborn
+
 import gemmi
 
 import luigi
@@ -79,7 +81,13 @@ class Config:
                             required=True
                             )
 
-        parser.add_argument("-o", "--out_dir_path",
+        parser.add_argument("-a", "--autobuilds_dir",
+                            type=str,
+                            help="The directory for output and intermediate files to be saved to",
+                            required=True
+                            )
+
+        parser.add_argument("-o", "--out_dir",
                             type=str,
                             help="The directory for output and intermediate files to be saved to",
                             required=True
@@ -88,7 +96,8 @@ class Config:
         args = parser.parse_args()
 
         self.event_table_path = args.event_table_path
-        self.out_dir_path = Path(args.out_dir_path)
+        self.autobuilds_dir = Path(args.autobuilds_dir)
+        self.out_dir = Path(args.out_dir_path)
 
 
 def load_available_results_events(events, out_dir_path):
@@ -214,6 +223,18 @@ def get_rmsds_normal(events,
     return rmsds
 
 
+def rscc_scatter(normal_rsccs,
+                 event_rsccs,
+                 plot_path,
+                 ):
+    plot = seaborn.scatterplot(normal_rsccs,
+                               event_rsccs,
+                               )
+
+    fig = plot.get_figure()
+    fig.savefig(str(plot_path))
+
+
 if __name__ == "__main__":
     print("Geting Config...")
     config = Config()
@@ -223,11 +244,11 @@ if __name__ == "__main__":
     print("\tGot {} events!".format(len(events)))
 
     results_event = load_available_results_events(events,
-                                                  config.out_dir_path,
+                                                  config.autobuilds_dir,
                                                   )
     print("\t {} event results available".format(len(results_event)))
     results_normal = load_available_results_normal(events,
-                                                   config.out_dir_path,
+                                                   config.autobuilds_dir,
                                                    )
     print("\t {} normal results available".format(len(results_normal)))
 
@@ -249,10 +270,16 @@ if __name__ == "__main__":
     delta_modelable = get_delta_modelable(table["normal_rscc"], table["event_rscc"])
     print("In normal {} are modelable that were not".format(delta_modelable))
 
+    print("Saving rscc plot")
+    rscc_scatter(table["normal_rscc"],
+                 table["event_rscc"],
+                 config.out_dir / "rscc.png",
+                 )
+
     # # Compare RMSDs
     rmsds_normal = get_rmsds_normal(events,
                                     results_normal,
-                                    out_dir=config.out_dir_path,
+                                    out_dir=config.autobuilds_dir,
                                     )
     print("Mean normal rmsd to human model is: {}".format(np.mean([rmsd for rmsd in rmsds_normal])))
 
