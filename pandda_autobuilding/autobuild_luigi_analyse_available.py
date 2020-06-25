@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 import seaborn
+from matplotlib import pyplot as plt
 
 import gemmi
 
@@ -230,6 +231,9 @@ def rscc_scatter(normal_rsccs,
     plot = seaborn.scatterplot(normal_rsccs,
                                event_rsccs,
                                )
+    plt.plot(np.linspace(0, 1, 100),
+             np.linspace(0, 1, 100),
+             )
 
     fig = plot.get_figure()
     fig.savefig(str(plot_path))
