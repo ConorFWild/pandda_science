@@ -97,7 +97,7 @@ class Config:
 
         self.event_table_path = args.event_table_path
         self.autobuilds_dir = Path(args.autobuilds_dir)
-        self.out_dir = Path(args.out_dir_path)
+        self.out_dir = Path(args.out_dir)
 
 
 def load_available_results_events(events, out_dir_path):
