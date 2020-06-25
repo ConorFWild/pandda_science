@@ -248,6 +248,7 @@ if __name__ == "__main__":
     # # Compare RMSDs
     rmsds_normal = get_rmsds_normal(events,
                                     results_normal,
+                                    out_dir=config.out_dir_path,
                                     )
     print("Mean normal rmsd to human model is: {}".format(np.mean([rmsd for rmsd in rmsds_normal])))
 
