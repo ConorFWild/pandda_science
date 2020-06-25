@@ -187,13 +187,16 @@ def get_rmsds_normal(events,
 
     for key in results:
         # Load models
-        human_model = gemmi.read_structure(events[key].final_model_path)
-        autobuilt_model = gemmi.read_structure(str(out_dir / BUILD_DIR_PATTERN.format(
+        human_model_path = events[key].final_model_path
+        print("\tLoading model from {}".format(human_model_path))
+        human_model = gemmi.read_structure(human_model_path)
+        autobuilt_model_path = str(out_dir / BUILD_DIR_PATTERN.format(
             pandda_name=events[key].pandda_name,
             dtag=events[key].dtag,
             event_idx=events[key].event_idx,
         ) / RHOFIT_NORMAL_DIR / RHOFIT_BEST_MODEL_FILE)
-                                               )
+        print("\tLoading autobuilt model path: {}".format(autobuilt_model_path))
+        autobuilt_model = gemmi.read_structure(autobuilt_model_path)
 
         # Get residues
         ligand_residue_human = get_lig(human_model)
