@@ -270,6 +270,13 @@ if __name__ == "__main__":
     delta_modelable = get_delta_modelable(table["normal_rscc"], table["event_rscc"])
     print("In normal {} are modelable that were not".format(delta_modelable))
 
+    cutoff = 0.7
+    above_cutoff_normal = len(table["normal_rscc"][table["normal_rscc"] > cutoff])
+    print("In normal, {} builds above rscc {}".format(above_cutoff_normal, cutoff))
+
+    above_cutoff_event = len(table["event_rscc"][table["event_rscc"] > cutoff])
+    print("In event, {} builds above rscc {}".format(above_cutoff_event, cutoff))
+
     print("Saving rscc plot")
     rscc_scatter(table["normal_rscc"],
                  table["event_rscc"],
