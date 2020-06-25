@@ -190,6 +190,7 @@ def get_rmsds_normal(events,
         human_model_path = events[key].final_model_path
         print("\tLoading model from {}".format(human_model_path))
         human_model = gemmi.read_structure(human_model_path)
+
         autobuilt_model_path = str(out_dir / BUILD_DIR_PATTERN.format(
             pandda_name=events[key].pandda_name,
             dtag=events[key].dtag,
@@ -199,8 +200,8 @@ def get_rmsds_normal(events,
         autobuilt_model = gemmi.read_structure(autobuilt_model_path)
 
         # Get residues
-        ligand_residue_human = get_lig(human_model)
-        ligand_residue_autobuilt = get_lig(autobuilt_model)
+        ligand_residue_human = get_lig(human_model[0])
+        ligand_residue_autobuilt = get_lig(autobuilt_model[0])
 
         # Calculate rmsds
         rmsd = get_rmsd(ligand_residue_human,
