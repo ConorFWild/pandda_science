@@ -2,7 +2,10 @@ import os
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+
+import gemmi
 
 import luigi
 
@@ -41,7 +44,7 @@ def get_ligand_smiles(pandda_event_dir):
 
 
 def get_events(path):
-    events = []
+    events = {}
     event_table = pd.read_csv(str(path))
     for idx, event_row in event_table.iterrows():
         if event_row["actually_built"] is True:
@@ -52,7 +55,8 @@ def get_events(path):
                     event_row["ligand_smiles_path"] = get_ligand_smiles(Path(event_row["event_map_path"]).parent)
                     print("\tLigand smiles path:{}".format(event_row["ligand_smiles_path"]))
                     event = Event.from_record(event_row)
-                    events.append(event)
+                    # events.append(event)
+                    events[(event.pandda_name, event.dtag, event.event_idx)] = event
 
                 except Exception as e:
                     print(e)
@@ -89,7 +93,7 @@ class Config:
 
 def load_available_results_events(events, out_dir_path):
     results = {}
-    for event in events:
+    for event in events.values():
         results_normal_path = Path(out_dir_path) / BUILD_DIR_PATTERN.format(
             pandda_name=event.pandda_name,
             dtag=event.dtag,
@@ -107,7 +111,7 @@ def load_available_results_events(events, out_dir_path):
 
 def load_available_results_normal(events, out_dir_path):
     results = {}
-    for event in events:
+    for event in events.values():
         results_normal_path = Path(out_dir_path) / BUILD_DIR_PATTERN.format(
             pandda_name=event.pandda_name,
             dtag=event.dtag,
@@ -149,6 +153,63 @@ def get_delta_modelable(series1, series2, cutoff=0.7):
     return len(series_2_cutoff[series_2_cutoff < cutoff])
 
 
+def get_rmsd(ligand_residue_human,
+             ligand_residue_autobuilt,
+             ):
+    distances = []
+    for atom_num in range(len(ligand_residue_human)):
+        atom_1 = ligand_residue_human[atom_num]
+        atom_2 = ligand_residue_autobuilt[atom_num]
+
+        if atom_1.element != atom_2.element:
+            raise Exception("Atoms not equivilent!")
+
+        distance = atom_1.pos(atom_2.pos)
+        distances.append(distance)
+
+    return np.sqrt(np.sum(np.square(distances)) / len(distances))
+
+
+def get_lig(model):
+    for chain in model:
+        for residue in chain:
+            if residue.name == "LIG":
+                return residue
+
+    raise Exception("No lig!")
+
+
+def get_rmsds_normal(events,
+                     results,
+                     out_dir,
+                     ):
+    rmsds = {}
+
+    for key in results:
+        # Load models
+        human_model = gemmi.read_structure(events[key].final_model_path)
+        autobuilt_model = gemmi.read_structure(out_dir / BUILD_DIR_PATTERN.format(
+            pandda_name=events[key].pandda_name,
+            dtag=events[key].dtag,
+            event_idx=events[key].event_idx,
+        ) / RHOFIT_NORMAL_DIR / RHOFIT_BEST_MODEL_FILE
+                                               )
+
+        # Get residues
+        ligand_residue_human = get_lig(human_model)
+        ligand_residue_autobuilt = get_lig(autobuilt_model)
+
+        # Calculate rmsds
+        rmsd = get_rmsd(ligand_residue_human,
+                        ligand_residue_autobuilt,
+                        )
+
+        # Append
+        rmsds[key] = rmsd
+
+    return rmsds
+
+
 if __name__ == "__main__":
     print("Geting Config...")
     config = Config()
@@ -171,6 +232,7 @@ if __name__ == "__main__":
     delta = (table["event_rscc"] - table["normal_rscc"]).mean()
     print("Detal is {}".format(delta))
 
+    # # Compare RSCCs
     num_event_better = get_num_better(table["event_rscc"], table["normal_rscc"])
     print("Event rscc better for {} out of {} builds".format(num_event_better, len(table)))
 
@@ -182,5 +244,11 @@ if __name__ == "__main__":
 
     delta_modelable = get_delta_modelable(table["normal_rscc"], table["event_rscc"])
     print("In normal {} are modelable that were not".format(delta_modelable))
+
+    # # Compare RMSDs
+    rmsds_normal = get_rmsds_normal(events,
+                                    results_normal,
+                                    )
+    print("Mean normal rmsd to human model is: {}".format(np.mean([rmsd for rmsd in rmsds_normal])))
 
     # plot_rsccs()
