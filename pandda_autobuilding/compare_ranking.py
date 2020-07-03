@@ -46,7 +46,7 @@ class Config:
 
         args = parser.parse_args()
 
-        self.old_pandda_dir = args.old_pandda_dir
+        self.old_pandda_dir = Path(args.old_pandda_dir)
         self.new_pandda_dir = Path(args.new_pandda_dir)
 
 
