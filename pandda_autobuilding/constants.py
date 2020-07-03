@@ -12,3 +12,12 @@ RHOFIT_BEST_MODEL_FILE = "best.pdb"
 RSCC_TABLE_FILE = "rscc_table.csv"
 
 BUILD_DIR_PATTERN = "{pandda_name}_{dtag}_{event_idx}"
+
+
+CUMULATIVE_HITS_PLOT_FILE = "cumulative_hits.png"
+
+PANDDA_PROCESSED_DATASETS_DIR = "processed_datasets"
+PANDDA_MODELLED_STRUCTURES_DIR = "modelled_structures"
+PANDDA_LIGAND_FILES_DIR = "ligand_files"
+PANDDA_PDB_FILE = "{}-pandda-input.pdb"
+PANDDA_MTZ_FILE = "{}-pandda-input.mtz"

@@ -32,6 +32,32 @@ class Rhofit:
         return self.command
 
 
+class RhofitResultsFile:
+    def __init__(self, rscc):
+        self.rscc = rscc
+
+    @staticmethod
+    def from_file(path):
+        rscc = RhofitResultsFile.parse_rhofit_log(path)
+        return RhofitResultsFile(rscc)
+
+    @staticmethod
+    def parse_rhofit_log(rhofit_results_path):
+        regex = "(Hit_[^\s]+)[\s]+[^\s]+[\s]+[^\s]+[\s]+([^\s]+)"
+
+        with open(str(rhofit_results_path), "r") as f:
+            results_string = f.read()
+
+        rscc_matches = re.findall(regex,
+                                  results_string,
+                                  )
+
+        rsccs = {str(match_tuple[0]): float(match_tuple[1]) for match_tuple in rscc_matches}
+
+        max_rscc = max(list(rsccs.values()))
+
+        return max_rscc
+
 class AutobuildingResultRhofit:
     def __init__(self, pandda_name, dtag, event_idx, rscc_string, stdout, stderr):
         self.pandda_name = pandda_name
