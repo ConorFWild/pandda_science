@@ -60,6 +60,7 @@ class TableEvent:
                  smiles_path,
                  occupancy,
                  event_map_path,
+                 cluster_size,
                  ):
         self.dtag = dtag
         self.event_idx = event_idx
@@ -69,6 +70,7 @@ class TableEvent:
         self.smiles_path = smiles_path
         self.occupancy = occupancy
         self.event_map_path = event_map_path
+        self.cluster_size = cluster_size
 
     @staticmethod
     def from_row(row, pandda_dir):
@@ -87,6 +89,8 @@ class TableEvent:
         occupancy = row["1-BDC"]
         event_map_path = event_dir / PANDDA_EVENT_MAP_FILE.format(dtag, event_idx, occupancy)
 
+        cluster_size = row["cluster_size"]
+
         return TableEvent(dtag,
                           event_idx,
                           event_dir,
@@ -95,6 +99,7 @@ class TableEvent:
                           smiles_path,
                           occupancy,
                           event_map_path,
+                          cluster_size,
                           )
 
 
