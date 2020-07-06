@@ -306,7 +306,7 @@ def parse_results(new_pandda_dir,
 
         if results_path.exists():
             rhofit_results_file = RhofitResultsFile.from_file(results_path)
-            results[(event.pandda_name, event.dtag, event.event_idx)] = rhofit_results_file
+            results[(event.dtag, event.event_idx)] = rhofit_results_file
         else:
             print("\tNo result at {}".format(results_path))
 
@@ -392,6 +392,7 @@ def main():
     results = parse_results(config.new_pandda_dir,
                             pandda_events,
                             )
+    print("\tGot {} results".format(len(results)))
 
     print("Getting cumulative hits")
     cumulative_hits_event_size = get_cumulative_hits_event_size(pandda_events)
