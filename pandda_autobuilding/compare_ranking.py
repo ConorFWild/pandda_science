@@ -360,8 +360,10 @@ def get_cumulative_hits_rscc(pandda_events,
     num_hits = 0
     hits = []
     for result_key in sorted_results:
-        dtag = results[result_key].dtag
-        event_idx = results[result_key].event_idx
+        # dtag = results[result_key].dtag
+        # event_idx = results[result_key].event_idx
+        dtag = result_key[0]
+        event_idx = result_key[1]
         event_id = (dtag, event_idx)
 
         if pandda_events[event_id].modelled is True:
