@@ -204,7 +204,7 @@ def copy_pandda(pandda_events,
     processed_datasets_path = new_pannda_dir / "processed_datasets"
     try_make_dir(processed_datasets_path)
 
-    for event in pandda_events:
+    for event_id, event in pandda_events.items():
         try_copy_autobuild_files(processed_datasets_path,
                                  event,
                                  )
