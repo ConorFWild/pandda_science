@@ -353,15 +353,15 @@ def get_cumulative_hits_event_size(pandda_events):
 def get_cumulative_hits_rscc(pandda_events,
                              results,
                              ):
-    sorted_results = sorted(results.values(),
-                            key=lambda result: result.rscc,
+    sorted_results = sorted(results.keys(),
+                            key=lambda result_key: results[result_key].rscc,
                             )
 
     num_hits = 0
     hits = []
-    for result in sorted_results:
-        dtag = result.dtag
-        event_idx = result.event_idx
+    for result_key in sorted_results:
+        dtag = results[result_key].dtag
+        event_idx = results[result_key].event_idx
         event_id = (dtag, event_idx)
 
         if pandda_events[event_id].modelled is True:
