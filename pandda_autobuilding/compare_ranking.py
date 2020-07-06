@@ -276,7 +276,7 @@ def autobuild_pandda(new_pannda_dir):
     input = new_pannda_dir
     overwrite = "1"
 
-    command = "{}; {}; {} {} -i {} -o {} -p 1"
+    command = "{}; {}; {} {} -i {} -o {} -p 2"
     formated_command = command.format(module,
                                       env,
                                       python,
