@@ -327,105 +327,110 @@ def try_remove(ligand_path):
 
 
 def autobuild_event(event):
-    # Event map mtz
-    print("\tMaking event map mtz...")
-    initial_event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
     try:
-        os.remove(str(initial_event_mtz_path))
-    except:
-        pass
 
-    formatted_command, stdout, stderr = event_map_to_mtz(event.event_map_path,
-                                                         initial_event_mtz_path,
-                                                         event.analysed_resolution,
+        # Event map mtz
+        print("\tMaking event map mtz...")
+        initial_event_mtz_path = event.pandda_event_dir / "{}_{}.mtz".format(event.dtag, event.event_idx)
+        try:
+            os.remove(str(initial_event_mtz_path))
+        except:
+            pass
+
+        formatted_command, stdout, stderr = event_map_to_mtz(event.event_map_path,
+                                                             initial_event_mtz_path,
+                                                             event.analysed_resolution,
+                                                             )
+        print("\tMtz command: {}".format(formatted_command))
+        event_mtz_log = event.pandda_event_dir / "event_mtz_log.txt"
+        write_autobuild_log(formatted_command, stdout, stderr, event_mtz_log)
+
+        # Ligand cif
+        print("\tMaking ligand cif...")
+        ligand_path = event.pandda_event_dir / "autobuilding_ligand.cif"
+        try_remove(ligand_path)
+        ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
+        print(ligand_smiles_path)
+        # if not ligand_path.exists():
+        elbow(event.pandda_event_dir,
+              ligand_smiles_path,
+              )
+
+        # Stripped protein
+        print("\tStripping ligands near event...")
+        intial_receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
+        if not intial_receptor_path.exists():
+            strip_protein(event.receptor_path,
+                          event.coords,
+                          intial_receptor_path,
+                          )
+
+        # Quick refine
+        event_mtz_path = event.pandda_event_dir / "grafted_{}.mtz".format(event.event_idx)
+        try:
+            os.remove(str(event_mtz_path))
+        except:
+            pass
+        if not event_mtz_path.exists():
+            phase_graft(event.initial_mtz_path,
+                        initial_event_mtz_path,
+                        event_mtz_path,
+                        )
+
+        if not event_mtz_path.exists():
+            raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
+
+        if not ligand_path.exists():
+            raise Exception("Could not find ligand cif path after attempting generation: {}".format(event_mtz_path))
+
+        # if not receptor_path.exists():
+        #     raise Exception("Could not find event receptor path after attempting generation: {}".format(event_mtz_path))
+
+        out_dir_path = event.pandda_event_dir / "rhofit_{}".format(event.event_idx)
+
+        try:
+            shutil.rmtree(str(out_dir_path))
+        except:
+            pass
+
+        # os.mkdir(str(out_dir_path))
+
+        # autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
+        #                                            mtz_path=event_mtz_path,
+        #                                            ligand_path=event.ligand_path,
+        #                                            receptor_path=receptor_path,
+        #                                            coord=event.coords,
+        #                                            )
+        #
+        # formatted_command, stdout, stderr = execute(autobuilding_command)
+        #
+        # autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
+        # write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
+
+        print("\tAutobuilding...")
+        # if (out_dir_path / "results.txt").exists():
+        autobuilding_command = AutobuildingCommandRhofit(out_dir_path=out_dir_path,
+                                                         mtz_path=event_mtz_path,
+                                                         ligand_path=ligand_path,
+                                                         receptor_path=intial_receptor_path,
                                                          )
-    print("\tMtz command: {}".format(formatted_command))
-    event_mtz_log = event.pandda_event_dir / "event_mtz_log.txt"
-    write_autobuild_log(formatted_command, stdout, stderr, event_mtz_log)
-
-    # Ligand cif
-    print("\tMaking ligand cif...")
-    ligand_path = event.pandda_event_dir / "autobuilding_ligand.cif"
-    try_remove(ligand_path)
-    ligand_smiles_path = get_ligand_smiles(event.pandda_event_dir)
-    print(ligand_smiles_path)
-    # if not ligand_path.exists():
-    elbow(event.pandda_event_dir,
-          ligand_smiles_path,
-          )
-
-    # Stripped protein
-    print("\tStripping ligands near event...")
-    intial_receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
-    if not intial_receptor_path.exists():
-        strip_protein(event.receptor_path,
-                      event.coords,
-                      intial_receptor_path,
-                      )
-
-    # Quick refine
-    event_mtz_path = event.pandda_event_dir / "grafted_{}.mtz".format(event.event_idx)
-    try:
-        os.remove(str(event_mtz_path))
-    except:
-        pass
-    if not event_mtz_path.exists():
-        phase_graft(event.initial_mtz_path,
-                    initial_event_mtz_path,
-                    event_mtz_path,
-                    )
-
-    if not event_mtz_path.exists():
-        raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
-
-    if not ligand_path.exists():
-        raise Exception("Could not find ligand cif path after attempting generation: {}".format(event_mtz_path))
-
-    # if not receptor_path.exists():
-    #     raise Exception("Could not find event receptor path after attempting generation: {}".format(event_mtz_path))
-
-    out_dir_path = event.pandda_event_dir / "rhofit_{}".format(event.event_idx)
-
-    try:
-        shutil.rmtree(str(out_dir_path))
-    except:
-        pass
-
-    # os.mkdir(str(out_dir_path))
-
-    # autobuilding_command = AutobuildingCommand(out_dir_path=out_dir_path,
-    #                                            mtz_path=event_mtz_path,
-    #                                            ligand_path=event.ligand_path,
-    #                                            receptor_path=receptor_path,
-    #                                            coord=event.coords,
-    #                                            )
-    #
-    # formatted_command, stdout, stderr = execute(autobuilding_command)
-    #
-    # autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
-    # write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
-
-    print("\tAutobuilding...")
-    # if (out_dir_path / "results.txt").exists():
-    autobuilding_command = AutobuildingCommandRhofit(out_dir_path=out_dir_path,
-                                                     mtz_path=event_mtz_path,
-                                                     ligand_path=ligand_path,
-                                                     receptor_path=intial_receptor_path,
-                                                     )
-    print("\t\tCommand: {}".format(str(autobuilding_command)))
-    formatted_command, stdout, stderr = execute(autobuilding_command)
+        print("\t\tCommand: {}".format(str(autobuilding_command)))
+        formatted_command, stdout, stderr = execute(autobuilding_command)
 
 
 
-    try:
-        print("\tProcessing autobuilding results...")
-        autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
-        write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
-        result = AutobuildingResultRhofit.from_output(event,
-                                                      stdout,
-                                                      stderr,
-                                                      )
-    except:
+        try:
+            print("\tProcessing autobuilding results...")
+            autobuilding_log_path = out_dir_path / "pandda_autobuild_log.txt"
+            write_autobuild_log(formatted_command, stdout, stderr, autobuilding_log_path)
+            result = AutobuildingResultRhofit.from_output(event,
+                                                          stdout,
+                                                          stderr,
+                                                          )
+        except:
+            result = AutobuildingResultRhofit.null_result(event)
+
+    except Exception as e:
         result = AutobuildingResultRhofit.null_result(event)
 
     return result
