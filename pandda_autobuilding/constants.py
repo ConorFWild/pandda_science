@@ -16,6 +16,8 @@ BUILD_DIR_PATTERN = "{pandda_name}_{dtag}_{event_idx}"
 
 CUMULATIVE_HITS_PLOT_FILE = "cumulative_hits.png"
 
+RHOFIT_EVENT_DIR = "rhofit_{}"
+
 PANDDA_ANALYSES_DIR = "analyses"
 PANDDA_PROCESSED_DATASETS_DIR = "processed_datasets"
 PANDDA_MODELLED_STRUCTURES_DIR = "modelled_structures"

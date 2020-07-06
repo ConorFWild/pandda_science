@@ -302,7 +302,7 @@ def parse_results(new_pandda_dir,
     results = {}
     for event_id, event in events.items():
 
-        results_path = new_pandda_dir / PANDDA_PROCESSED_DATASETS_DIR / event.dtag / RHOFIT_DIR / RHOFIT_RESULTS_FILE
+        results_path = new_pandda_dir / PANDDA_PROCESSED_DATASETS_DIR / event.dtag / RHOFIT_EVENT_DIR / RHOFIT_RESULTS_FILE
 
         if results_path.exists():
             rhofit_results_file = RhofitResultsFile.from_file(results_path)
@@ -384,9 +384,9 @@ def main():
                 )
 
     print("Autobuilding pandda...")
-    stdout, stderr = autobuild_pandda(config.new_pandda_dir)
-    print(stdout)
-    print(stderr)
+    # stdout, stderr = autobuild_pandda(config.new_pandda_dir)
+    # print(stdout)
+    # print(stderr)
 
     print("Parsing results...")
     results = parse_results(config.new_pandda_dir,
