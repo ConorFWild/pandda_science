@@ -61,6 +61,7 @@ class TableEvent:
                  occupancy,
                  event_map_path,
                  cluster_size,
+                 modelled,
                  ):
         self.dtag = dtag
         self.event_idx = event_idx
@@ -71,6 +72,7 @@ class TableEvent:
         self.occupancy = occupancy
         self.event_map_path = event_map_path
         self.cluster_size = cluster_size
+        self.modelled = modelled
 
     @staticmethod
     def from_row(row, pandda_dir):
@@ -91,6 +93,8 @@ class TableEvent:
 
         cluster_size = row["cluster_size"]
 
+        modelled = TableEvent.is_modelled(event_dir)
+
         return TableEvent(dtag,
                           event_idx,
                           event_dir,
@@ -100,7 +104,20 @@ class TableEvent:
                           occupancy,
                           event_map_path,
                           cluster_size,
+                          modelled,
                           )
+
+    @staticmethod
+    def is_modelled(event_dir, dtag):
+        modelled_structures_dir = event_dir / PANDDA_MODELLED_STRUCTURES_DIR
+
+        pandda_event_model = modelled_structures_dir / PANDDA_EVENT_MODEL.format(dtag)
+
+        if pandda_event_model.exists():
+            return True
+
+        else:
+            return False
 
 
 def get_ligand_smiles(pandda_event_dir):
