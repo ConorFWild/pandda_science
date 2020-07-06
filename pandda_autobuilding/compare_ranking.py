@@ -211,6 +211,7 @@ def try_copy_autobuild_files(processed_dataset_dir,
 
 
 def copy_pandda(pandda_events,
+                old_pandda_dir,
                 new_pannda_dir,
                 ):
     print("\tTrying to make new pandda dir at: {}".format(new_pannda_dir))
@@ -219,6 +220,12 @@ def copy_pandda(pandda_events,
     processed_datasets_path = new_pannda_dir / "processed_datasets"
     print("\tTrying to make new processed datasets dir at: {}".format(processed_datasets_path))
     try_make_dir(processed_datasets_path)
+
+    old_pandda_inspect_events_path = old_pandda_dir / PANDDA_INSPECT_EVENTS_PATH
+    new_pandda_inspect_events_path = new_pannda_dir / PANDDA_INSPECT_EVENTS_PATH
+    try_copy(old_pandda_inspect_events_path,
+             new_pandda_inspect_events_path,
+             )
 
     for event_id, event in pandda_events.items():
         print("\tTrying to copy data for: {}".format(event_id))
@@ -340,6 +347,7 @@ def main():
 
     print("Copying PanDDA...")
     copy_pandda(pandda_events,
+                config.old_pandda_dir,
                 config.new_pandda_dir,
                 )
 
