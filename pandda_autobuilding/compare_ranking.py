@@ -302,7 +302,7 @@ def parse_results(new_pandda_dir,
     results = {}
     for event_id, event in events.items():
 
-        results_path = new_pandda_dir / PANDDA_PROCESSED_DATASETS_DIR / event.dtag / RHOFIT_EVENT_DIR / RHOFIT_RESULTS_FILE
+        results_path = new_pandda_dir / PANDDA_PROCESSED_DATASETS_DIR / event.dtag / RHOFIT_EVENT_DIR.format(event.event_idx) / RHOFIT_RESULTS_FILE
 
         if results_path.exists():
             rhofit_results_file = RhofitResultsFile.from_file(results_path)
