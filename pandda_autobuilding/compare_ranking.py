@@ -58,6 +58,8 @@ class TableEvent:
                  pdb_path,
                  mtz_path,
                  smiles_path,
+                 occupancy,
+                 event_map_path,
                  ):
         self.dtag = dtag
         self.event_idx = event_idx
@@ -65,6 +67,8 @@ class TableEvent:
         self.pdb_path = pdb_path
         self.mtz_path = mtz_path
         self.smiles_path = smiles_path
+        self.occupancy = occupancy
+        self.event_map_path = event_map_path
 
     @staticmethod
     def from_row(row, pandda_dir):
@@ -79,12 +83,18 @@ class TableEvent:
         mtz_path = event_dir / PANDDA_MTZ_FILE.format(dtag)
         smiles_path = get_ligand_smiles(event_dir)
 
+
+        occupancy = row["1-BDC"]
+        event_map_path = event_dir / PANDDA_EVENT_MAP_FILE.format(dtag, event_idx, occupancy)
+
         return TableEvent(dtag,
                           event_idx,
                           event_dir,
                           pdb_path,
                           mtz_path,
                           smiles_path,
+                          occupancy,
+                          event_map_path,
                           )
 
 
@@ -212,6 +222,19 @@ def try_copy_autobuild_files(processed_dataset_dir,
           )
     try_copy(event.smiles_path,
              new_smiles_path,
+             )
+
+    # Copy event map
+    new_event_map_path = processed_dataset_dir / PANDDA_EVENT_MAP_FILE.format(event.dtag,
+                                                                              event.event_idx,
+                                                                              event.occupancy,
+                                                                              )
+    print("\t\tTrying to copy event map from {} to {}".format(event.event_map_path,
+                                                        new_event_map_path,
+                                                        )
+          )
+    try_copy(event.event_map_path,
+             new_event_map_path,
              )
 
 
