@@ -148,10 +148,13 @@ def get_events(event_table,
     for index, row in event_table.iterrows():
         pandda_name = old_pandda_dir.name
 
-        event = TableEvent.from_row(row,
-                                    old_pandda_dir,
-                                    )
-        events[(event.dtag, event.event_idx)] = event
+        try:
+            event = TableEvent.from_row(row,
+                                        old_pandda_dir,
+                                        )
+            events[(event.dtag, event.event_idx)] = event
+        except Exception as e:
+            print("\t{}".format(e))
 
     return events
 
