@@ -172,25 +172,41 @@ def try_copy_autobuild_files(processed_datasets_dir,
                              event,
                              ):
     # Modelled folder
-    try_make_dir(processed_datasets_dir / PANDDA_MODELLED_STRUCTURES_DIR)
+    modelled_datasets_dir = processed_datasets_dir / PANDDA_MODELLED_STRUCTURES_DIR
+    print("\t\tMaking modelled datasets dir at {}".format(modelled_datasets_dir))
+    try_make_dir(modelled_datasets_dir)
 
     # ligand files
-    try_make_dir(processed_datasets_dir / PANDDA_LIGAND_FILES_DIR)
+    ligands_dir = processed_datasets_dir / PANDDA_LIGAND_FILES_DIR
+    print("\t\tMaking ligands dir at {}".format(processed_datasets_dir / PANDDA_LIGAND_FILES_DIR))
+    try_make_dir(ligands_dir)
 
     # Copy pdb
     new_pdb_path = processed_datasets_dir / event.pdb_path.name
+    print("\t\tTrying to copy pdb from {} to {}".format(event.pdb_path,
+                                                        new_pdb_path,
+                                                        )
+          )
     try_copy(event.pdb_path,
              new_pdb_path,
              )
 
     # Copy mtz
     new_mtz_path = processed_datasets_dir / event.mtz_path.name
+    print("\t\tTrying to copy pdb from {} to {}".format(event.mtz_path,
+                                                        new_mtz_path,
+                                                        )
+          )
     try_copy(event.mtz_path,
              new_mtz_path,
              )
 
     # Copy ligand
     new_smiles_path = processed_datasets_dir / event.smiles_path.name
+    print("\t\tTrying to copy pdb from {} to {}".format(event.smiles_path,
+                                                        new_smiles_path,
+                                                        )
+          )
     try_copy(event.smiles_path,
              new_smiles_path,
              )
@@ -199,12 +215,15 @@ def try_copy_autobuild_files(processed_datasets_dir,
 def copy_pandda(pandda_events,
                 new_pannda_dir,
                 ):
+    print("\tTrying to make new pandda dir at: {}".format(new_pannda_dir))
     try_make_dir(new_pannda_dir)
 
     processed_datasets_path = new_pannda_dir / "processed_datasets"
+    print("\tTrying to make new processed datasets dir at: {}".format(processed_datasets_path))
     try_make_dir(processed_datasets_path)
 
     for event_id, event in pandda_events.items():
+        print("\tTrying to copy data for: {}".format(event_id))
         try_copy_autobuild_files(processed_datasets_path,
                                  event,
                                  )
@@ -314,9 +333,11 @@ def main():
     if len(event_table) == 0:
         raise Exception("No events pulled!")
 
+    print("Getting events...")
     pandda_events = get_events(event_table,
                                config.old_pandda_dir)
 
+    print("Copying PanDDA...")
     copy_pandda(pandda_events,
                 config.new_pandda_dir,
                 )
@@ -324,22 +345,26 @@ def main():
     print(stdout)
     print(stderr)
 
+    print("Parsing results...")
     results = parse_results(config.new_pandda_dir,
                             pandda_events,
                             )
 
+    print("Getting cumulative hits")
     cumulative_hits_event_size = get_cumulative_hits_event_size(pandda_events)
 
     cumulative_hits_rscc = get_cumulative_hits_rscc(pandda_events,
                                                     results,
                                                     )
 
+    print("Getting enritchment tables...")
     enritchment_table_event_size = get_enritchment_table(cumulative_hits_event_size)
     print(enritchment_table_event_size)
 
     enritchment_table_rscc = get_enritchment_table(cumulative_hits_rscc)
     print(enritchment_table_rscc)
 
+    print("Plotting cumulative hits")
     plot_cumulative_hits(cumulative_hits_event_size,
                          cumulative_hits_rscc,
                          config.new_pandda_dir / CUMULATIVE_HITS_PLOT_FILE,
