@@ -93,7 +93,7 @@ class TableEvent:
 
         cluster_size = row["cluster_size"]
 
-        modelled = TableEvent.is_modelled(event_dir)
+        modelled = TableEvent.is_modelled(event_dir, dtag)
 
         return TableEvent(dtag,
                           event_idx,
