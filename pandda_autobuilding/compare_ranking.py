@@ -66,7 +66,6 @@ class TableEvent:
         self.mtz_path = mtz_path
         self.smiles_path = smiles_path
 
-
     @staticmethod
     def from_row(row, pandda_dir):
         dtag = row["dtag"]
@@ -87,7 +86,6 @@ class TableEvent:
                           mtz_path,
                           smiles_path,
                           )
-
 
 
 def get_ligand_smiles(pandda_event_dir):
@@ -168,21 +166,21 @@ def try_copy(old_path, new_path):
                         )
 
 
-def try_copy_autobuild_files(processed_datasets_dir,
+def try_copy_autobuild_files(processed_dataset_dir,
                              event,
                              ):
     # Modelled folder
-    modelled_datasets_dir = processed_datasets_dir / PANDDA_MODELLED_STRUCTURES_DIR
+    modelled_datasets_dir = processed_dataset_dir / PANDDA_MODELLED_STRUCTURES_DIR
     print("\t\tMaking modelled datasets dir at {}".format(modelled_datasets_dir))
     try_make_dir(modelled_datasets_dir)
 
     # ligand files
-    ligands_dir = processed_datasets_dir / PANDDA_LIGAND_FILES_DIR
-    print("\t\tMaking ligands dir at {}".format(processed_datasets_dir / PANDDA_LIGAND_FILES_DIR))
+    ligands_dir = processed_dataset_dir / PANDDA_LIGAND_FILES_DIR
+    print("\t\tMaking ligands dir at {}".format(ligands_dir))
     try_make_dir(ligands_dir)
 
     # Copy pdb
-    new_pdb_path = processed_datasets_dir / event.pdb_path.name
+    new_pdb_path = processed_dataset_dir / event.pdb_path.name
     print("\t\tTrying to copy pdb from {} to {}".format(event.pdb_path,
                                                         new_pdb_path,
                                                         )
@@ -192,7 +190,7 @@ def try_copy_autobuild_files(processed_datasets_dir,
              )
 
     # Copy mtz
-    new_mtz_path = processed_datasets_dir / event.mtz_path.name
+    new_mtz_path = processed_dataset_dir / event.mtz_path.name
     print("\t\tTrying to copy pdb from {} to {}".format(event.mtz_path,
                                                         new_mtz_path,
                                                         )
@@ -202,7 +200,7 @@ def try_copy_autobuild_files(processed_datasets_dir,
              )
 
     # Copy ligand
-    new_smiles_path = processed_datasets_dir / event.smiles_path.name
+    new_smiles_path = processed_dataset_dir / event.smiles_path.name
     print("\t\tTrying to copy pdb from {} to {}".format(event.smiles_path,
                                                         new_smiles_path,
                                                         )
@@ -224,7 +222,9 @@ def copy_pandda(pandda_events,
 
     for event_id, event in pandda_events.items():
         print("\tTrying to copy data for: {}".format(event_id))
-        try_copy_autobuild_files(processed_datasets_path,
+        processed_dataset_path = processed_datasets_path / event.dtag
+
+        try_copy_autobuild_files(processed_dataset_path,
                                  event,
                                  )
 
