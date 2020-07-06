@@ -320,7 +320,7 @@ def parse_results(new_pandda_dir,
 
 def get_cumulative_hits_event_size(pandda_events):
     sorted_events = sorted(pandda_events.values(),
-                           key=lambda event: event.event_size,
+                           key=lambda event: event.cluster_size,
                            )
 
     num_hits = 0
