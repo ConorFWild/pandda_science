@@ -359,7 +359,7 @@ def get_cumulative_hits_rscc(pandda_events,
 
     num_hits = 0
     hits = []
-    for result in results:
+    for result in sorted_results:
         dtag = result.dtag
         event_idx = result.event_idx
         event_id = (dtag, event_idx)
