@@ -223,7 +223,7 @@ def copy_pandda(pandda_events,
     for event_id, event in pandda_events.items():
         print("\tTrying to copy data for: {}".format(event_id))
         processed_dataset_path = processed_datasets_path / event.dtag
-
+        try_make_dir(processed_dataset_path)
         try_copy_autobuild_files(processed_dataset_path,
                                  event,
                                  )
