@@ -145,7 +145,7 @@ def get_events(event_table,
                old_pandda_dir,
                ):
     events = {}
-    for row in event_table.iterrows():
+    for index, row in event_table.iterrows():
         pandda_name = old_pandda_dir.name
 
         event = TableEvent.from_row(row,
