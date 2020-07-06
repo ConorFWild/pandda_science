@@ -420,10 +420,12 @@ def main():
 
     print("Getting cumulative hits")
     cumulative_hits_event_size = get_cumulative_hits_event_size(pandda_events)
+    print(cumulative_hits_event_size)
 
     cumulative_hits_rscc = get_cumulative_hits_rscc(pandda_events,
                                                     results,
                                                     )
+    print(cumulative_hits_rscc)
 
     print("Getting enritchment tables...")
     enritchment_table_event_size = get_enritchment_table(cumulative_hits_event_size)
