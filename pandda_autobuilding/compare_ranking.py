@@ -246,6 +246,7 @@ def autobuild_pandda(new_pannda_dir):
                                       overwrite,
                                       )
 
+    print("\tPanDDA submit command is: {}".format(formated_command))
     submit_proc = subprocess.Popen(str(formated_command),
                                    shell=True,
                                    stdout=subprocess.PIPE,
@@ -341,6 +342,8 @@ def main():
     copy_pandda(pandda_events,
                 config.new_pandda_dir,
                 )
+
+    print("Autobuilding pandda...")
     stdout, stderr = autobuild_pandda(config.new_pandda_dir)
     print(stdout)
     print(stderr)
