@@ -345,7 +345,7 @@ def get_cumulative_hits_event_size(pandda_events):
     for event in sorted_events:
         if event.modelled is True:
             num_hits = num_hits + 1
-            hits.append(num_hits)
+        hits.append(num_hits)
 
     return hits
 
@@ -368,7 +368,7 @@ def get_cumulative_hits_rscc(pandda_events,
 
         if pandda_events[event_id].modelled is True:
             num_hits = num_hits + 1
-            hits.append(num_hits)
+        hits.append(num_hits)
 
     return hits
 
