@@ -221,8 +221,12 @@ def copy_pandda(pandda_events,
     print("\tTrying to make new processed datasets dir at: {}".format(processed_datasets_path))
     try_make_dir(processed_datasets_path)
 
-    old_pandda_inspect_events_path = old_pandda_dir / PANDDA_INSPECT_EVENTS_PATH
-    new_pandda_inspect_events_path = new_pannda_dir / PANDDA_INSPECT_EVENTS_PATH
+    analyses_dir = new_pannda_dir / PANDDA_ANALYSES_DIR
+    print("\tMaking analyses dir")
+    try_make_dir(analyses_dir)
+
+    old_pandda_inspect_events_path = old_pandda_dir / PANDDA_ANALYSES_DIR / PANDDA_INSPECT_EVENTS_PATH
+    new_pandda_inspect_events_path = new_pannda_dir / PANDDA_ANALYSES_DIR / PANDDA_INSPECT_EVENTS_PATH
     try_copy(old_pandda_inspect_events_path,
              new_pandda_inspect_events_path,
              )
