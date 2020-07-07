@@ -409,7 +409,7 @@ def main():
                 )
 
     print("Autobuilding pandda...")
-    # stdout, stderr = autobuild_pandda(config.new_pandda_dir)
+    stdout, stderr = autobuild_pandda(config.new_pandda_dir)
     # print(stdout)
     # print(stderr)
 
