@@ -353,9 +353,10 @@ def get_cumulative_hits_event_size(pandda_events):
 def get_cumulative_hits_rscc(pandda_events,
                              results,
                              ):
-    sorted_results = sorted(results.keys(),
+    sorted_results = sorted(list(results.keys()),
                             key=lambda result_key: results[result_key].rscc,
                             )
+    print("Sorted results: {}".format(sorted_results))
 
     num_hits = 0
     hits = []
