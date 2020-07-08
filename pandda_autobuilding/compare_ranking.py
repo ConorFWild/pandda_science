@@ -399,13 +399,14 @@ def plot_cumulative_hits(cumulative_hits_event_size,
                        )
                    ):
         record = {}
-
         if i < len(cumulative_hits_rscc):
             record["i"] = i
             record["cumulative"] = float(cumulative_hits_rscc[i])
             record["type"] = "rscc"
             records.append(record)
 
+
+        record = {}
         if i < len(cumulative_hits_event_size):
             record["i"] = i
             record["cumulative"] = float(cumulative_hits_event_size[i])
