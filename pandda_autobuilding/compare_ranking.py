@@ -414,14 +414,16 @@ def plot_cumulative_hits(cumulative_hits_event_size,
 
     table = pd.DataFrame(records)
 
+    print(table.head(5))
+
     fig, ax = plt.subplots()
 
-    x = range(len(cumulative_hits_event_size))
-    y = cumulative_hits_event_size
+    # x = range(len(cumulative_hits_event_size))
+    # y = cumulative_hits_event_size
     seaborn.lineplot(x="i",
                      y="cumulative",
-                     ax=ax,
                      hue="type",
+                     ax=ax,
                      data=table
                                )
 
