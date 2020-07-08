@@ -413,6 +413,8 @@ def plot_cumulative_hits(cumulative_hits_event_size,
             record["type"] = "event_size"
             records.append(record)
 
+    print(len(records))
+
     table = pd.DataFrame(records)
 
     print(table.head(5))
