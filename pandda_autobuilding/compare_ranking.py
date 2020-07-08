@@ -389,6 +389,32 @@ def get_enritchment_table(cumulative_hits_list):
     return pd.DataFrame(enritchments)
 
 
+def plot_cumulative_hits(cumulative_hits_event_size,
+                         cumulative_hits_rscc,
+                         plot_file,
+                         ):
+    fig, ax = plt.subplots()
+
+    x = range(len(cumulative_hits_event_size))
+    y = cumulative_hits_event_size
+    seaborn.lineplot(x,
+                               y,
+                            ax=ax
+                               )
+
+
+
+    x = range(len(cumulative_hits_rscc))
+    y = cumulative_hits_rscc
+    seaborn.lineplot(x,
+                               y,
+                     ax=ax
+                               )
+
+    # fig = plot.get_figure()
+    fig.savefig(str(plot_file))
+
+
 def main():
     config = Config()
 
