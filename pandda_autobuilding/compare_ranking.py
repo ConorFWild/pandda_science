@@ -393,6 +393,9 @@ def plot_cumulative_hits(cumulative_hits_event_size,
                          cumulative_hits_rscc,
                          plot_file,
                          ):
+    print(len(cumulative_hits_event_size))
+    print(len(cumulative_hits_rscc))
+
     records = []
     for i in range(max(len(cumulative_hits_rscc),
                        len(cumulative_hits_event_size),
