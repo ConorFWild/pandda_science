@@ -410,6 +410,7 @@ def plot_cumulative_hits(cumulative_hits_event_size,
                                y,
                      ax=ax
                                )
+    ax.legend()
 
     # fig = plot.get_figure()
     fig.savefig(str(plot_file))
