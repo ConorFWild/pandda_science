@@ -393,24 +393,36 @@ def plot_cumulative_hits(cumulative_hits_event_size,
                          cumulative_hits_rscc,
                          plot_file,
                          ):
+    records = []
+    for i in range(max(len(cumulative_hits_rscc),
+                       len(cumulative_hits_event_size),
+                       )
+                   ):
+        record = {}
+
+        if i < len(cumulative_hits_rscc):
+            record["i"] = i
+            record["cumulative"] = cumulative_hits_rscc[i]
+            record["type"] = "rscc"
+            records.append(record)
+
+        if i < len(cumulative_hits_event_size):
+            record["i"] = i
+            record["cumulative"] = cumulative_hits_event_size[i]
+            record["type"] = "event_size"
+            records.append(record)
+
+    table = pd.DataFrame(records)
+
     fig, ax = plt.subplots()
 
     x = range(len(cumulative_hits_event_size))
     y = cumulative_hits_event_size
-    seaborn.lineplot(x,
-                               y,
-                            ax=ax
+    seaborn.lineplot(ax=ax,
+                     hue="type",
+                     data=table
                                )
 
-
-
-    x = range(len(cumulative_hits_rscc))
-    y = cumulative_hits_rscc
-    seaborn.lineplot(x,
-                               y,
-                     ax=ax
-                               )
-    ax.legend()
 
     # fig = plot.get_figure()
     fig.savefig(str(plot_file))
