@@ -123,6 +123,15 @@ class TableEvent:
 def get_ligand_smiles(pandda_event_dir):
     compound_dir = pandda_event_dir / "ligand_files"
 
+    ligand_pdbs = list(compound_dir.glob("*.pdb"))
+    ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
+    if len(ligand_pdb_strings) > 0:
+        shortest_ligand_path = min(ligand_pdb_strings,
+                                   key=len,
+                                   )
+        return Path(shortest_ligand_path)
+
+
     smiles_paths = compound_dir.glob("*.smiles")
     smiles_paths_list = list(smiles_paths)
 
@@ -133,13 +142,6 @@ def get_ligand_smiles(pandda_event_dir):
     else:
         raise Exception("No smiles found! Smiles list is: {}".format(smiles_paths_list))
 
-    # ligand_pdbs = list(compound_dir.glob("*.pdb"))
-    # ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
-    # if len(ligand_pdb_strings) > 0:
-    #     shortest_ligand_path = min(ligand_pdb_strings,
-    #                                key=len,
-    #                                )
-    #     return Path(shortest_ligand_path)
 
 
 
