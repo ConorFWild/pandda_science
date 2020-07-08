@@ -418,7 +418,9 @@ def plot_cumulative_hits(cumulative_hits_event_size,
 
     x = range(len(cumulative_hits_event_size))
     y = cumulative_hits_event_size
-    seaborn.lineplot(ax=ax,
+    seaborn.lineplot(x="i",
+                     y="cumulative",
+                     ax=ax,
                      hue="type",
                      data=table
                                )
