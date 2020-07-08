@@ -360,16 +360,21 @@ def get_cumulative_hits_rscc(pandda_events,
 
     num_hits = 0
     hits = []
-    for result_key in sorted_results:
-        # dtag = results[result_key].dtag
-        # event_idx = results[result_key].event_idx
-        dtag = result_key[0]
-        event_idx = result_key[1]
-        event_id = (dtag, event_idx)
+    for i in range(len(pandda_events)):
 
-        if pandda_events[event_id].modelled is True:
-            num_hits = num_hits + 1
-        hits.append(num_hits)
+        if i < len(sorted_results):
+            result_key = sorted_results[i]
+            # dtag = results[result_key].dtag
+            # event_idx = results[result_key].event_idx
+            dtag = result_key[0]
+            event_idx = result_key[1]
+            event_id = (dtag, event_idx)
+
+            if pandda_events[event_id].modelled is True:
+                num_hits = num_hits + 1
+            hits.append(num_hits)
+        else:
+            hits.append(num_hits)
 
     return hits
 
