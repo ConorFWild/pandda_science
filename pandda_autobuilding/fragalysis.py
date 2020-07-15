@@ -20,4 +20,4 @@ def main():
     print(results_table)
 
 if __name__ == "__main__":
-    
+    main()
