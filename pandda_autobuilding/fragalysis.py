@@ -8,7 +8,7 @@ def main():
     for col in mpro_summary.columns:
         print(col)
 
-    for row in mpro_summary.iterrows():
+    for index, row in mpro_summary.iterrows():
         for x in row:
             print(x)
         exit()
