@@ -156,6 +156,9 @@ def get_autobuild_rmsds(pandda_dir):
     project_code = pandda_dir_to_project_code(pandda_dir)
     reference_models = get_reference_models(project_code)
 
+    print(autobuild_models)
+    print(reference_models)
+
     # Calculate distances between them
     records = []
     for dtag, reference_model in reference_models.items():
