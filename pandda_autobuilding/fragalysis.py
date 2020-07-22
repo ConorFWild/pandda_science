@@ -96,7 +96,7 @@ def dtag_to_system(dtag):
                          dtag,
                          )
 
-    return matches[0][0]
+    return matches[0]
 
 
 def pandda_dir_to_project_code(pandda_dir):
@@ -105,6 +105,7 @@ def pandda_dir_to_project_code(pandda_dir):
     processed_model_dir = next(processed_models_dir.glob("*"))
 
     example_dtag = processed_model_dir.name
+    print("Example dtag is: {}".format(example_dtag))
 
     project_name = dtag_to_system(example_dtag)
 
