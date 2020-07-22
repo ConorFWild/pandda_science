@@ -4,7 +4,13 @@ from pathlib import Path
 
 import pandas as pd
 
+import matplotlib
+from matplotlib import pyplot as plt
+import seaborn as sns
+
 from pandda_autobuilding.fragalysis import (get_autobuild_rmsds)
+
+RMSD_PLOT_FILE = "rmsds.png"
 
 
 class Config:
@@ -29,12 +35,27 @@ class Config:
         self.input_pandda = Path(args.input_pandda)
         self.out_dir_path = Path(args.out_dir_path)
 
+
+def plot_rmsds(table, path):
+
+    fig, ax = plt.subplots(figsize=(15,15))
+    sns.distplot(table["distance"],
+                 rug=True,
+                 ax=ax,
+                 )
+    fig.savefig(str(path))
+
+
+
 def main():
     config = Config()
 
     table = get_autobuild_rmsds(config.input_pandda)
     print(table)
 
+    plot_rmsds(table,
+               config.out_dir_path / RMSD_PLOT_FILE,
+               )
 
 
 
