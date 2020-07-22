@@ -171,10 +171,11 @@ def get_autobuild_rmsds(pandda_dir):
     # Calculate distances between them
     records = []
     for dtag, reference_model in reference_models.items():
-        if dtag not in autobuild_models:
-            print("{} has not been autobuilt".format(dtag))
-            continue
+        print("Analysing dataset: {}".format(dtag))
 
+        if dtag not in autobuild_models:
+            print("\t{} has not been autobuilt".format(dtag))
+            continue
 
         autobuild_model = autobuild_models[dtag]
 
