@@ -148,10 +148,14 @@ def get_ligand(model):
     ligands = []
 
     for chain in model:
-        chain_ligands = chain.get_ligands()
-        for lig in chain_ligands:
-            if lig.name == "LIG":
-                ligands.append(lig)
+        # chain_ligands = chain.get_ligands()
+        # for lig in chain_ligands:
+        #     if lig.name == "LIG":
+        #         ligands.append(lig)
+
+        for res in chain:
+            if res.name == "LIG":
+                ligands.append(res)
 
     return ligands
 
