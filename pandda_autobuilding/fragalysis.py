@@ -115,6 +115,8 @@ def pandda_dir_to_project_code(pandda_dir):
 def get_reference_models(project_code):
     print("Project code is: {}".format(project_code))
     summary = xcextracter(project_code)
+    print(summary)
+    print("Number of records is: {}".format(len(summary)))
 
     pdb_grabber = GetPdbData()
 
@@ -156,8 +158,8 @@ def get_autobuild_rmsds(pandda_dir):
     project_code = pandda_dir_to_project_code(pandda_dir)
     reference_models = get_reference_models(project_code)
 
-    print(autobuild_models)
-    print(reference_models)
+    # print(autobuild_models)
+    # print(reference_models)
 
     # Calculate distances between them
     records = []
