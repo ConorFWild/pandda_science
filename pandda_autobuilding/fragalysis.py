@@ -112,6 +112,7 @@ def pandda_dir_to_project_code(pandda_dir):
 
 
 def get_reference_models(project_code):
+    print("Project code is: {}".format(project_code))
     summary = xcextracter(project_code)
 
     pdb_grabber = GetPdbData()
