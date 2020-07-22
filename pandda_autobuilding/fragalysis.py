@@ -29,7 +29,7 @@ def protein_code_to_dtag(protein_code):
                          protein_code,
                          )
 
-    return matches[0][0]
+    return matches[0]
 
 
 def xce_id_to_mol(table, xce_id):
