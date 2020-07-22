@@ -125,7 +125,7 @@ def get_reference_models(project_code):
     for index, row in summary.iterrows():
         protein_code = row["protein_code"]
         dtag = protein_code_to_dtag(protein_code)
-        print(dtag)
+        
         pdb_block = pdb_grabber.get_bound_pdb_file(protein_code)
         try:
             # print(pdb_block)
