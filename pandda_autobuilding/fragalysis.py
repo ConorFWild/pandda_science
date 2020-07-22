@@ -130,7 +130,9 @@ def get_reference_models(project_code):
         pdb_block = pdb_grabber.get_bound_pdb_file(protein_code)
         try:
             # print(pdb_block)
-            model = gemmi.read_pdb_string(pdb_block)
+            structure = gemmi.read_pdb_string(pdb_block)
+
+            model = structure[0]
 
             reference_models[dtag] = model
         except Exception as e:
@@ -170,7 +172,7 @@ def get_autobuild_rmsds(pandda_dir):
         if dtag not in autobuild_models:
             print("{} has not been autobuilt".format(dtag))
             continue
-        
+
 
         autobuild_model = autobuild_models[dtag]
 
