@@ -84,7 +84,8 @@ def get_pandda_models(pandda_dir):
 
     models = {}
     for model_id, model_path in model_paths.items():
-        models[model_id] = model_path_to_model(model_path)
+        if model_path.exists():
+            models[model_id] = model_path_to_model(model_path)
 
     return models
 
