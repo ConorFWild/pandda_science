@@ -63,7 +63,7 @@ def get_distance(model_1, model_2):
 def get_model_paths_from_pandda_dir(pandda_dir):
     processed_models_dir = pandda_dir / PANDDA_PROCESSED_DATASETS_DIR
 
-    processed_model_dirs = next(processed_models_dir.glob("*"))
+    processed_model_dirs = processed_models_dir.glob("*")
 
     paths = {}
     for processed_model_dir in processed_model_dirs:
