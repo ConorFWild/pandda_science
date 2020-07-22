@@ -178,6 +178,8 @@ def get_autobuild_rmsds(pandda_dir):
 
         record = {}
         if reference_model:
+            print("\t\t {}".format(autobuild_model))
+            print("\t\t {}".format(reference_model))
             autobuild_ligand_model = get_ligand(autobuild_model)[0]
             reference_ligand_models = get_ligand(reference_model)
 
