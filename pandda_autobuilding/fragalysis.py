@@ -125,6 +125,7 @@ def get_reference_models(project_code):
         dtag = protein_code_to_dtag(protein_code)
         pdb_block = pdb_grabber.get_bound_pdb_file(protein_code)
 
+        print(pdb_block)
         model = gemmi.read_pdb_string(pdb_block)
 
         reference_models[dtag] = model
