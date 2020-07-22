@@ -83,7 +83,7 @@ def get_pandda_models(pandda_dir):
     model_paths = get_model_paths_from_pandda_dir(pandda_dir)
 
     models = {}
-    for model_id, model_path in model_paths:
+    for model_id, model_path in model_paths.items():
         models[model_id] = model_path_to_model(model_path)
 
     return models
