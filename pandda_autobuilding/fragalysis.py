@@ -76,7 +76,7 @@ def get_model_paths_from_pandda_dir(pandda_dir):
 
 
 def model_path_to_model(model_path):
-    return gemmi.read_pdb_file(str(model_path))
+    return gemmi.read_structure(str(model_path))
 
 
 def get_pandda_models(pandda_dir):
