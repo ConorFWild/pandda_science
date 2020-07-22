@@ -125,6 +125,7 @@ def get_reference_models(project_code):
     for index, row in summary.iterrows():
         protein_code = row["protein_code"]
         dtag = protein_code_to_dtag(protein_code)
+        print(dtag)
         pdb_block = pdb_grabber.get_bound_pdb_file(protein_code)
         try:
             # print(pdb_block)
@@ -157,6 +158,7 @@ def get_autobuild_rmsds(pandda_dir):
     # Get reference models
     project_code = pandda_dir_to_project_code(pandda_dir)
     reference_models = get_reference_models(project_code)
+    print("Number of reference models is: {}".format(len(reference_models)))
 
     # print(autobuild_models)
     # print(reference_models)
