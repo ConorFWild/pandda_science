@@ -24,7 +24,7 @@ def dtag_to_protein_code(table, dtag):
 
 
 def protein_code_to_dtag(protein_code):
-    regex = "(^[^-]+[0-9a-Z]+)"
+    regex = "(^[^-]+[0-9a-zA-Z]+)"
     matches = re.findall(regex,
                          protein_code,
                          )
