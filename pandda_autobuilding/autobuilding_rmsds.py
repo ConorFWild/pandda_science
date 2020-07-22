@@ -39,7 +39,7 @@ class Config:
 def plot_rmsds(table, path):
 
     fig, ax = plt.subplots(figsize=(15,15))
-    sns.distplot(table["distance"],
+    sns.distplot(table["distance"][pd.notna(table["distance"])],
                  rug=True,
                  ax=ax,
                  )
