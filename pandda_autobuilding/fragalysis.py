@@ -124,11 +124,14 @@ def get_reference_models(project_code):
         protein_code = row["protein_code"]
         dtag = protein_code_to_dtag(protein_code)
         pdb_block = pdb_grabber.get_bound_pdb_file(protein_code)
+        try:
+            # print(pdb_block)
+            model = gemmi.read_pdb_string(pdb_block)
 
-        print(pdb_block)
-        model = gemmi.read_pdb_string(pdb_block)
-
-        reference_models[dtag] = model
+            reference_models[dtag] = model
+        except Exception as e:
+            print(e)
+            reference_models[dtag] = None
 
     return reference_models
 
