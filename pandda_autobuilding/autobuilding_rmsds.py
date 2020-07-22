@@ -43,6 +43,7 @@ def plot_rmsds(table, path):
                  rug=True,
                  ax=ax,
                  )
+
     fig.savefig(str(path))
 
 
@@ -56,7 +57,7 @@ def main():
     plot_rmsds(table,
                config.out_dir_path / RMSD_PLOT_FILE,
                )
-
+    print("Saved figure to {}".format(config.out_dir_path / RMSD_PLOT_FILE))
 
 
 if __name__ == "__main__":
