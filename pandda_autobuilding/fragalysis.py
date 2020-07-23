@@ -9,7 +9,7 @@ from fragalysis_api.xcextracter.getdata import GetPdbData
 from fragalysis_api.xcextracter.xcextracter import xcextracter
 
 from pandda_autobuilding.constants import *
-from pandda_autobuilding import logs
+from pandda_types import logs
 
 
 class XCEModel:
