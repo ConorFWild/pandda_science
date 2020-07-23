@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 from pandda_autobuilding.fragalysis import (get_autobuild_rmsds)
-from pandda_autobuilding import logs
+from pandda_types import logs
 
 RMSD_PLOT_FILE = "rmsds.png"
 
