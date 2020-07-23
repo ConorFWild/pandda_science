@@ -9,6 +9,7 @@ from fragalysis_api.xcextracter.getdata import GetPdbData
 from fragalysis_api.xcextracter.xcextracter import xcextracter
 
 from pandda_autobuilding.constants import *
+from pandda_autobuilding import logs
 
 
 class XCEModel:
@@ -167,6 +168,7 @@ def get_autobuild_rmsds(pandda_dir):
     # Get reference models
     project_code = pandda_dir_to_project_code(pandda_dir)
     reference_models = get_reference_models(project_code)
+    logs.LOG["number_of_reference_models"] = len(reference_models)
     print("Number of reference models is: {}".format(len(reference_models)))
 
     # print(autobuild_models)

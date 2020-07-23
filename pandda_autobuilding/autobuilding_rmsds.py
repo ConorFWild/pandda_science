@@ -9,8 +9,11 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 from pandda_autobuilding.fragalysis import (get_autobuild_rmsds)
+from pandda_autobuilding import logs
 
 RMSD_PLOT_FILE = "rmsds.png"
+
+
 
 
 class Config:
@@ -52,12 +55,13 @@ def main():
     config = Config()
 
     table = get_autobuild_rmsds(config.input_pandda)
-    print(table)
+    logs.LOG["table"] = str(table.head(5))
 
     plot_rmsds(table,
                config.out_dir_path / RMSD_PLOT_FILE,
                )
     print("Saved figure to {}".format(config.out_dir_path / RMSD_PLOT_FILE))
+    print(logs.LOG.dict)
 
 
 if __name__ == "__main__":
