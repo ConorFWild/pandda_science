@@ -76,9 +76,9 @@ def get_model_paths_from_pandda_dir(pandda_dir):
     return paths
 
 
-def model_path_to_model(model_path):
+def model_path_to_structure(model_path):
     structure = gemmi.read_structure(str(model_path))
-    model = structure[0]
+    model = structure
     return model
 
 
@@ -89,14 +89,14 @@ def get_pandda_models(pandda_dir):
     models = {}
     for model_id, model_path in model_paths.items():
         if model_path.exists():
-            models[model_id] = model_path_to_model(model_path)
+            models[model_id] = model_path_to_structure(model_path)
             if model_id not in logs.LOG["paths"]:
                 logs.LOG["paths"][model_id] = {}
             logs.LOG["paths"][model_id]["local"] = model_path
 
             if model_id not in logs.LOG.dict:
                 logs.LOG[model_id] = {}
-            logs.LOG[model_id]["local_path"] = model_path
+            logs.LOG[model_id]["local_path"] = str(model_path)
 
     return models
 
@@ -143,7 +143,7 @@ def get_reference_models(project_code):
             # print(pdb_block)
             structure = gemmi.read_pdb_string(pdb_block)
 
-            model = structure[0]
+            model = structure
 
             reference_models[dtag] = model
         except Exception as e:
@@ -168,30 +168,52 @@ def get_ligand(model):
 
     return ligands
 
+def save_reference_models(pandda_dir,
+                          reference_models,
+                          autobuild_models,
+                          ):
+    processed_models_dir = pandda_dir / PANDDA_PROCESSED_DATASETS_DIR
+
+    for dtag in autobuild_models:
+        model_dir = processed_models_dir / dtag / PANDDA_MODELLED_STRUCTURES_DIR
+        model_path = model_dir / "fragalysis.pdb"
+        if not model_path.exists():
+            if dtag in reference_models:
+                model = reference_models[dtag]
+
+
 
 def get_autobuild_rmsds(pandda_dir):
     # Get autobuilt models
-    autobuild_models = get_pandda_models(pandda_dir)
+    autobuild_structures = get_pandda_models(pandda_dir)
 
     # Get reference models
     project_code = pandda_dir_to_project_code(pandda_dir)
-    reference_models = get_reference_models(project_code)
-    logs.LOG["number_of_reference_models"] = len(reference_models)
-    print("Number of reference models is: {}".format(len(reference_models)))
+    reference_structures = get_reference_models(project_code)
+
+    save_reference_models(pandda_dir,
+                          reference_structures,
+                          autobuild_structures,
+                          )
+    logs.LOG["number_of_reference_models"] = len(reference_structures)
+    print("Number of reference models is: {}".format(len(reference_structures)))
 
     # print(autobuild_models)
     # print(reference_models)
 
     # Calculate distances between them
     records = []
-    for dtag, reference_model in reference_models.items():
+    for dtag, reference_structure in reference_structures.items():
         print("Analysing dataset: {}".format(dtag))
 
-        if dtag not in autobuild_models:
+        reference_model = reference_structure[0]
+
+        if dtag not in autobuild_structures:
             print("\t{} has not been autobuilt".format(dtag))
             continue
 
-        autobuild_model = autobuild_models[dtag]
+        autobuild_structure = autobuild_structures[dtag]
+        autobuild_model = autobuild_structure[0]
 
         record = {}
         if reference_model:
