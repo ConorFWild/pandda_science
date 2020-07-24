@@ -206,40 +206,41 @@ def get_autobuild_rmsds(pandda_dir):
     # Calculate distances between them
     records = []
     for dtag, reference_structure in reference_structures.items():
+        record = {}
+        record["dtag"] = dtag
+
         print("Analysing dataset: {}".format(dtag))
 
         if reference_structure is None:
+            record["distance"] = None
+
             continue
 
         if dtag not in autobuild_structures:
+            record["distance"] = None
+
             print("\t{} has not been autobuilt".format(dtag))
             continue
 
         reference_model = reference_structure[0]
 
-
         autobuild_structure = autobuild_structures[dtag]
         autobuild_model = autobuild_structure[0]
 
-        record = {}
-        if reference_model:
 
-            autobuild_ligand_model = get_ligand(autobuild_model)[0]
-            reference_ligand_models = get_ligand(reference_model)
+        autobuild_ligand_model = get_ligand(autobuild_model)[0]
+        reference_ligand_models = get_ligand(reference_model)
 
-            distances = []
-            for reference_ligand_model in reference_ligand_models:
-                distance = get_distance(reference_ligand_model,
-                                        autobuild_ligand_model,
-                                        )
-                distances.append(distance)
-            print("\tDistances are: {}".format(distances))
-            record["dtag"] = dtag
-            record["distance"] = min(distances)
-        else:
-            record["distance"] = None
+        distances = []
+        for reference_ligand_model in reference_ligand_models:
+            distance = get_distance(reference_ligand_model,
+                                    autobuild_ligand_model,
+                                    )
+            distances.append(distance)
+        print("\tDistances are: {}".format(distances))
+        record["distance"] = min(distances)
 
-        records.append(record)
+    records.append(record)
 
     # Table
     table = pd.DataFrame(records)
