@@ -59,7 +59,7 @@ def main():
     for index, row in table.iterrows():
         dtag = row["dtag"]
         rmsd = row["distance"]
-        if dtag not in logs.LOG:
+        if dtag not in logs.LOG.dict:
             logs.LOG[dtag] = {}
         logs.LOG[dtag]["distance"] = rmsd
 

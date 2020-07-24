@@ -94,8 +94,7 @@ def get_pandda_models(pandda_dir):
                 logs.LOG["paths"][model_id] = {}
             logs.LOG["paths"][model_id]["local"] = model_path
 
-            print(model_id)
-            if model_id not in logs.LOG:
+            if model_id not in logs.LOG.dict:
                 logs.LOG[model_id] = {}
             logs.LOG[model_id]["local_path"] = model_path
 
