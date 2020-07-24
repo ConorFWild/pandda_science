@@ -83,12 +83,16 @@ def model_path_to_model(model_path):
 
 
 def get_pandda_models(pandda_dir):
+    logs.LOG["paths"]
     model_paths = get_model_paths_from_pandda_dir(pandda_dir)
 
     models = {}
     for model_id, model_path in model_paths.items():
         if model_path.exists():
             models[model_id] = model_path_to_model(model_path)
+            if model_id not in logs.LOG["paths"]:
+                logs.LOG["paths"][model_id] = {}
+            logs.LOG["paths"][model_id]["local"] = model_path
 
     return models
 
