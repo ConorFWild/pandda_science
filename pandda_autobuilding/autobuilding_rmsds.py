@@ -13,7 +13,7 @@ from pandda_types import logs
 
 RMSD_PLOT_FILE = "rmsds.png"
 
-
+from pprint import PrettyPrinter
 
 
 class Config:
@@ -61,7 +61,9 @@ def main():
                config.out_dir_path / RMSD_PLOT_FILE,
                )
     print("Saved figure to {}".format(config.out_dir_path / RMSD_PLOT_FILE))
-    print(logs.LOG.dict)
+
+    printer = PrettyPrinter()
+    printer.pprint(logs.LOG.dict)
 
 
 if __name__ == "__main__":
