@@ -83,7 +83,7 @@ def model_path_to_model(model_path):
 
 
 def get_pandda_models(pandda_dir):
-    logs.LOG["paths"]
+    logs.LOG["paths"] = {}
     model_paths = get_model_paths_from_pandda_dir(pandda_dir)
 
     models = {}
