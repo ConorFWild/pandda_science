@@ -169,17 +169,19 @@ def get_ligand(model):
     return ligands
 
 def save_reference_models(pandda_dir,
-                          reference_models,
-                          autobuild_models,
+                          reference_structures,
+                          autobuild_structures,
                           ):
     processed_models_dir = pandda_dir / PANDDA_PROCESSED_DATASETS_DIR
 
-    for dtag in autobuild_models:
+    for dtag in autobuild_structures:
         model_dir = processed_models_dir / dtag / PANDDA_MODELLED_STRUCTURES_DIR
         model_path = model_dir / "fragalysis.pdb"
         if not model_path.exists():
-            if dtag in reference_models:
-                model = reference_models[dtag]
+            if dtag in reference_structures:
+                structure = reference_structures[dtag]
+                structure.write_pdb(str(model_path))
+                logs.LOG[dtag]["remote_path"] = str(model_path)
 
 
 
