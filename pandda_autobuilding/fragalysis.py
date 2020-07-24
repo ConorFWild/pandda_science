@@ -214,6 +214,8 @@ def get_autobuild_rmsds(pandda_dir):
         if reference_structure is None:
             record["distance"] = None
 
+            print("\t{} has not been hand built".format(dtag))
+
             continue
 
         if dtag not in autobuild_structures:
