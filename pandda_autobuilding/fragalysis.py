@@ -225,9 +225,14 @@ def get_autobuild_rmsds(pandda_dir):
             continue
 
         reference_model = reference_structure[0]
-
         autobuild_structure = autobuild_structures[dtag]
         autobuild_model = autobuild_structure[0]
+
+        if len(reference_model) == 0:
+            record["distance"] = None
+
+            print("\t{} has an empty reference structure".format(dtag))
+            continue
 
 
         autobuild_ligand_model = get_ligand(autobuild_model)[0]
