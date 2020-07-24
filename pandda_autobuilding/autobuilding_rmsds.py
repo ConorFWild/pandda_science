@@ -59,6 +59,8 @@ def main():
     for index, row in table.iterrows():
         dtag = row["dtag"]
         rmsd = row["distance"]
+        if dtag not in logs.LOG:
+            logs.LOG[dtag] = {}
         logs.LOG[dtag]["distance"] = rmsd
 
     plot_rmsds(table,
