@@ -94,6 +94,8 @@ def get_pandda_models(pandda_dir):
                 logs.LOG["paths"][model_id] = {}
             logs.LOG["paths"][model_id]["local"] = model_path
 
+            logs.LOG[model_id]["local_path"] = model_path
+
     return models
 
 
@@ -202,6 +204,7 @@ def get_autobuild_rmsds(pandda_dir):
                                         )
                 distances.append(distance)
             print("\tDistances are: {}".format(distances))
+            record["dtag"] = dtag
             record["distance"] = min(distances)
         else:
             record["distance"] = None

@@ -55,7 +55,11 @@ def main():
     config = Config()
 
     table = get_autobuild_rmsds(config.input_pandda)
-    logs.LOG["table"] = str(table.head(5))
+    print(table)
+    for index, row in table.iterrows():
+        dtag = row["dtag"]
+        rmsd = row["distance"]
+        logs.LOG[dtag]["distance"] = rmsd
 
     plot_rmsds(table,
                config.out_dir_path / RMSD_PLOT_FILE,
@@ -64,7 +68,6 @@ def main():
 
     printer = PrettyPrinter()
     printer.pprint(logs.LOG.dict)
-
 
 if __name__ == "__main__":
     main()
