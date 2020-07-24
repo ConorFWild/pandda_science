@@ -206,11 +206,15 @@ def get_autobuild_rmsds(pandda_dir):
     for dtag, reference_structure in reference_structures.items():
         print("Analysing dataset: {}".format(dtag))
 
-        reference_model = reference_structure[0]
+        if reference_structure is None:
+            continue
 
         if dtag not in autobuild_structures:
             print("\t{} has not been autobuilt".format(dtag))
             continue
+
+        reference_model = reference_structure[0]
+
 
         autobuild_structure = autobuild_structures[dtag]
         autobuild_model = autobuild_structure[0]
