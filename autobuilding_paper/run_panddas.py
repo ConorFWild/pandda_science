@@ -131,6 +131,7 @@ def main():
 
     panddas = {}
     for system_id, system_info in system_table.to_dict().items():
+        logs.LOG[system_id] = {}
         logs.LOG[system_id]["started"] = True
 
         pandda = PanDDA.from_system(system_info["data_dirs"],
@@ -140,7 +141,7 @@ def main():
         while result is not None:
             result = pandda.poll()
 
-        panddas[system_id] = result
+        panddas[system_id]["result"] = result
 
         printer.pprint(logs.LOG.dict)
 
