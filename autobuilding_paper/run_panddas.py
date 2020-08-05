@@ -108,6 +108,9 @@ class PanDDA:
 
         process = QSub(command,
                        script_path,
+                       cores=cpus,
+                       m_mem_free=m_mem_free,
+                       h_vmem=h_vmem,
                        )
 
         return PanDDA(model_dir, out_dir, process)
