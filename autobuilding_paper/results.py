@@ -10,7 +10,8 @@ class SystemTable:
 
     @staticmethod
     def from_json(file):
-        dictionary = json.load(str(file))
+        with open(str(file), "r") as f:
+            dictionary = json.load(f)
         return SystemTable(dictionary)
 
 

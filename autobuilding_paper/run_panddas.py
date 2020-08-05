@@ -118,9 +118,10 @@ class PanDDA:
 
 
 def to_json(dictionary, path):
-    json.dump(str(path),
-              dictionary,
-              )
+    with open(str(path), "w") as f:
+        json.dump(f,
+                  dictionary,
+                  )
 
 
 def main():
