@@ -138,7 +138,7 @@ def main():
         printer.pprint(logs.LOG.dict)
 
 
-        pandda = PanDDA.from_system(system_info["data_dirs"],
+        pandda = PanDDA.from_system(Path(system_info),
                                     config.panddas_dir / system_id,
                                     )
         result = pandda.poll()
