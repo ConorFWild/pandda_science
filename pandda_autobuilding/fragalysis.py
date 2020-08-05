@@ -90,6 +90,8 @@ def get_pandda_models(pandda_dir):
     for model_id, model_path in model_paths.items():
         if model_path.exists():
             models[model_id] = model_path_to_structure(model_path)
+
+
             if model_id not in logs.LOG["paths"]:
                 logs.LOG["paths"][model_id] = {}
             logs.LOG["paths"][model_id]["local"] = model_path
