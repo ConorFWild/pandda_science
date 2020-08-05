@@ -43,13 +43,9 @@ class PanDDA:
         self.process = process
 
     def poll(self):
-        if self.process.is_finished():
-            results = self.get_results()
-
-            return results
-
-        else:
-            return None
+        self.process()
+        results = self.get_results()
+        return results
 
     def get_results(self):
         finished = self.is_finished()
