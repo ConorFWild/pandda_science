@@ -133,7 +133,10 @@ def main():
     panddas = {}
     for system_id, system_info in system_table.to_dict().items():
         logs.LOG[system_id] = {}
+        logs.LOG[system_id]["path"] = system_info
         logs.LOG[system_id]["started"] = True
+        printer.pprint(logs.LOG.dict)
+
 
         pandda = PanDDA.from_system(system_info["data_dirs"],
                                     config.panddas_dir / system_id,
