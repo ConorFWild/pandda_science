@@ -55,15 +55,26 @@ class Autobuild:
         return results
 
     def get_results(self):
-        events = self.get_events()
+        builds = self.get_builds()
 
         return {"pandda_dir": self.pandda_dir,
                 "finished": True,
-                "events": events,
+                "builds": builds,
                 }
 
+    def get_builds(self):
+        event_table_file = self.pandda_dir / PANDDA_ANALYSES_DIR / "autobuilding_results.csv"
+        event_table = pd.read_csv(str(event_table_file))
+
+        dictionary = {}
+        for index, row in event_table.iterrows():
+            series = row.to_dict()
+            dictionary[(series["dtag"], series["event_idx"])] = series
+
+        return dictionary
+
     def is_finished(self):
-        if (self.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE).exists():
+        if (self.pandda_dir / PANDDA_ANALYSES_DIR / "autobuilding_results.csv").exists():
             return True
         else:
             return False
@@ -78,7 +89,7 @@ class Autobuild:
 
         command = "{env}; {python} {program} -i {input_pandda} -o {overwrite} -p {version}"
 
-        env="module load gcc/4.9.3; source /dls/science/groups/i04-1/conor_dev/anaconda/bin/activate env_clipper_no_mkl"
+        env = "module load gcc/4.9.3; source /dls/science/groups/i04-1/conor_dev/anaconda/bin/activate env_clipper_no_mkl"
         python = "python"
         program = "/dls/science/groups/i04-1/conor_dev/pandda_science"
         input_pandda = pandda_dir
@@ -116,26 +127,27 @@ def main():
 
     system_table = SystemTable.from_json(config.system_file)
 
-    pandda_table = PanDDAResult.from_json(config.pandda_file)
+    pandda_table = PanDDAResult.from_json(config.panddas_file)
 
     autobuilds = {}
-    for system_id, system_info in pandda_table.to_dict().items():
-        logs.LOG[system_id] = {}
-        logs.LOG[system_id]["started"] = True
+    for pandda_id, pandda_info in pandda_table.to_dict().items():
+        logs.LOG[pandda_id] = {}
+        logs.LOG[pandda_id]["started"] = True
         printer.pprint(logs.LOG.dict)
 
-        autobuild = Autobuild.from_system(Path(system_info),
-                                          config.panddas_dir / system_id,
-                                          script_path=Path("/tmp") / system_id,
+        pandda_dir = Path(pandda_info["out_dir"])
+
+        autobuild = Autobuild.from_system(pandda_dir,
+                                          script_path=Path("/tmp") / "autobuild_{}".format(pandda_id),
                                           )
         result = autobuild.poll()
 
-        autobuilds[system_id]["result"] = result
+        autobuilds[pandda_id]["result"] = result
 
         printer.pprint(logs.LOG.dict)
 
     to_json(autobuilds,
-            config.panddas_dir / "results.json",
+            config.autobuild_file,
             )
 
 
