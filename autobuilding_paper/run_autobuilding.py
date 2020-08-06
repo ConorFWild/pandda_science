@@ -9,7 +9,7 @@ import pandas as pd
 from pandda_types import logs
 from pandda_types.process import QSub
 
-from autobuilding_paper.results import SystemTable
+from autobuilding_paper.results import SystemTable, PanDDAResult
 from autobuilding_paper.constants import *
 
 
@@ -24,7 +24,13 @@ class Config:
                             required=True
                             )
 
-        parser.add_argument("-p", "--panddas_dir",
+        parser.add_argument("-p", "--panddas_file",
+                            type=str,
+                            help="The directory for output and intermediate files to be saved to",
+                            required=True
+                            )
+
+        parser.add_argument("-a", "--autobuild_file",
                             type=str,
                             help="The directory for output and intermediate files to be saved to",
                             required=True
@@ -33,18 +39,18 @@ class Config:
         args = parser.parse_args()
 
         self.system_file = Path(args.system_file)
-        self.panddas_dir = Path(args.panddas_dir)
+        self.panddas_file = Path(args.panddas_file)
+        self.autobuild_file = Path(args.autobuild_file)
 
 
-class PanDDA:
+class Autobuild:
     def __init__(self, model_dir, out_dir, process):
         self.model_dir = model_dir
         self.out_dir = out_dir
         self.process = process
 
     def poll(self):
-        if not self.is_finished():
-            self.process()
+        self.process()
         results = self.get_results()
         return results
 
@@ -86,26 +92,10 @@ class PanDDA:
                     m_mem_free=12,
                     script_path=Path("/tmp"),
                     ):
-        env = "module load ccp4"
-        python = "/dls/science/groups/i04-1/conor_dev/ccp4/build/bin/cctbx.python"
-        script = "/dls/science/groups/i04-1/conor_dev/pandda_2/program/run_pandda_2.py"
-        pandda_args = "data_dirs='{dds}/*' pdb_style={pst} mtz_style={mst} cpus={cpus} out_dir={odr}".format(
-            dds=model_dir,
-            pst=pdb_style,
-            mst=mtz_style,
-            cpus=cpus,
-            odr=out_dir,
-        )
-        qsub_args = "h_vmem={hvm} m_mem_free={mmf} process_dict_n_cpus={cpus}".format(hvm=h_vmem,
-                                                                                      mmf=m_mem_free,
-                                                                                      cpus=cpus,
-                                                                                      )
-        command = "{env}; {pyt} {scrp} {pandda_args} {qsub_args}".format(env=env,
-                                                                         pyt=python,
-                                                                         scrp=script,
-                                                                         pandda_args=pandda_args,
-                                                                         qsub_args=qsub_args,
-                                                                         )
+
+        command = "{env}; {python} {program} -i {input_pandda} -o {overwrite} -p {version}"
+
+        formatted_command = command.format()
 
         process = QSub(command,
                        script_path,
@@ -130,25 +120,25 @@ def main():
 
     system_table = SystemTable.from_json(config.system_file)
 
-    panddas = {}
-    for system_id, system_info in system_table.to_dict().items():
+    pandda_table = PanDDAResult.from_json(config.pandda_file)
+
+    autobuilds = {}
+    for system_id, system_info in pandda_table.to_dict().items():
         logs.LOG[system_id] = {}
-        logs.LOG[system_id]["path"] = system_info
         logs.LOG[system_id]["started"] = True
         printer.pprint(logs.LOG.dict)
 
+        autobuild = Autobuild.from_system(Path(system_info),
+                                          config.panddas_dir / system_id,
+                                          script_path=Path("/tmp") / system_id,
+                                          )
+        result = autobuild.poll()
 
-        pandda = PanDDA.from_system(Path(system_info),
-                                    config.panddas_dir / system_id,
-                                    script_path=Path("/tmp") / system_id,
-                                    )
-        result = pandda.poll()
-
-        panddas[system_id]["result"] = result
+        autobuilds[system_id]["result"] = result
 
         printer.pprint(logs.LOG.dict)
 
-    to_json(panddas,
+    to_json(autobuilds,
             config.panddas_dir / "results.json",
             )
 
