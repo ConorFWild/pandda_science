@@ -145,7 +145,7 @@ def main():
         result = pandda.poll()
 
         panddas[system_id] = result
-
+        logs.LOG[system_id]["result"] = result
         printer.pprint(logs.LOG.dict)
 
     to_json(panddas,
