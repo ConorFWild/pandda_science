@@ -44,37 +44,23 @@ class Config:
 
 
 class Autobuild:
-    def __init__(self, model_dir, out_dir, process):
-        self.model_dir = model_dir
-        self.out_dir = out_dir
+    def __init__(self, pandda_dir, process):
+        self.pandda_dir = pandda_dir
         self.process = process
 
     def poll(self):
-        self.process()
+        if not self.is_finished():
+            self.process()
         results = self.get_results()
         return results
 
     def get_results(self):
-        finished = self.is_finished()
-
         events = self.get_events()
 
-        return {"model_dir": self.model_dir,
-                "out_dir": self.out_dir,
-                "finished": finished,
+        return {"pandda_dir": self.pandda_dir,
+                "finished": True,
                 "events": events,
                 }
-
-    def get_events(self):
-        event_table_file = self.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE
-        event_table = pd.read_csv(str(event_table_file))
-
-        dictionary = {}
-        for index, row in event_table.iterrows():
-            series = row.to_dict()
-            dictionary[(series["dtag"], series["event_idx"])] = series
-
-        return dictionary
 
     def is_finished(self):
         if (self.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE).exists():
@@ -83,10 +69,7 @@ class Autobuild:
             return False
 
     @staticmethod
-    def from_system(model_dir,
-                    out_dir,
-                    pdb_style="dimple.pdb",
-                    mtz_style="dimple.mtz",
+    def from_system(pandda_dir,
                     cpus=12,
                     h_vmem=240,
                     m_mem_free=12,
@@ -95,16 +78,29 @@ class Autobuild:
 
         command = "{env}; {python} {program} -i {input_pandda} -o {overwrite} -p {version}"
 
-        formatted_command = command.format()
+        env="module load gcc/4.9.3; source /dls/science/groups/i04-1/conor_dev/anaconda/bin/activate env_clipper_no_mkl"
+        python = "python"
+        program = "/dls/science/groups/i04-1/conor_dev/pandda_science"
+        input_pandda = pandda_dir
+        overwrite = 0
+        version = 2
 
-        process = QSub(command,
+        formatted_command = command.format(env=env,
+                                           python=python,
+                                           program=program,
+                                           input_pandda=input_pandda,
+                                           overwrite=overwrite,
+                                           version=version,
+                                           )
+
+        process = QSub(formatted_command,
                        script_path,
                        cores=cpus,
                        m_mem_free=m_mem_free,
                        h_vmem=h_vmem,
                        )
 
-        return PanDDA(model_dir, out_dir, process)
+        return Autobuild(pandda_dir, process)
 
 
 def to_json(dictionary, path):
