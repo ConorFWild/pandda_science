@@ -132,6 +132,12 @@ def main():
 
     panddas = {}
     for system_id, system_info in system_table.to_dict().items():
+        if system_info is None:
+            logs.LOG[system_id] = {}
+            logs.LOG[system_id]["path"] = system_info
+            logs.LOG[system_id]["started"] = False
+            logs.LOG[system_id]["result"] = None
+
         logs.LOG[system_id] = {}
         logs.LOG[system_id]["path"] = system_info
         logs.LOG[system_id]["started"] = True
