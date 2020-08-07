@@ -125,7 +125,7 @@ def to_json(dictionary, path):
 
 
 def main():
-    printer = PrettyPrinter()
+    printer = PrettyPrinter(depth=2)
     config = Config()
 
     system_table = SystemTable.from_json(config.system_file)
@@ -137,6 +137,7 @@ def main():
             logs.LOG[system_id]["path"] = system_info
             logs.LOG[system_id]["started"] = False
             logs.LOG[system_id]["result"] = None
+            continue
 
         logs.LOG[system_id] = {}
         logs.LOG[system_id]["path"] = system_info
