@@ -27,8 +27,15 @@ class PanDDAResult:
     def from_json(file):
         with open(str(file), "r") as f:
             dictionary = json.load(f)
-        return SystemTable(dictionary)
+        return PanDDAResult(dictionary)
 
 
 class AutobuildResult:
-    pass
+    def __init__(self, dictionary):
+        self.dictionary = dictionary
+
+    @staticmethod
+    def from_json(file):
+        with open(str(file), "r") as f:
+            dictionary = json.load(f)
+        return AutobuildResult(dictionary)

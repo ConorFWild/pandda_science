@@ -11,7 +11,7 @@ import gemmi
 from fragalysis_api.xcextracter.getdata import GetPdbData
 from fragalysis_api.xcextracter.xcextracter import xcextracter
 
-from pandda_autobuilding.constants import *
+from autobuilding_paper.constants import *
 
 
 class PanDDAModelPaths:
@@ -267,13 +267,55 @@ class Ligands:
 
         return Ligands(ligands)
 
+
+@dataclasses.dataclass()
+class EventID:
+    dtag: str
+    event_idx: int
+
+    def __hash__(self):
+        return (self.dtag, self.event_idx)
+
+
+@dataclasses.dataclass()
+class Event:
+    dtag: str
+    event_idx: int
+    x: float
+    y: float
+    z: float
+
+    @staticmethod
+    def from_dict(dictionary):
+        return Event(dtag=dictionary["dtag"],
+                     event_idx=dictionary["event_idx"],
+                     x=dictionary["x"],
+                     y=dictionary["y"],
+                     z=dictionary["z"],
+                     )
+
+
 @dataclasses.dataclass()
 class PanDDAEvents:
-    events: typing.List[PanDDAEvent]
+    dictionary: typing.Dict[EventID, Event]
+
+    def __getitem__(self, item):
+        return self.dictionary[item]
+
+    def __setitem__(self, key, value):
+        self.dictionary[key] = value
 
     @staticmethod
     def from_dir(pandda_dir):
+        pandda_analyse_file = pandda_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE
 
-        events =
+        table = pd.read_csv(str(pandda_analyse_file))
 
-        return PanDDAEvents(events)
+        events: typing.Dict[EventID, Event] = {}
+        for index, series in table.iterrows():
+            event_id = EventID(dtag=series["dtag"],
+                               event_idx=series["event_idx"],
+                               )
+            events[event_id] = Event.from_dict(series)
+
+        return PanDDAEvents(dictionary=events)

@@ -71,10 +71,6 @@ def main():
 
     results = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():
-        logs.LOG[pandda_id] = {}
-        logs.LOG[pandda_id]["started"] = True
-        printer.pprint(logs.LOG.dict)
-
         pandda_dir = Path(pandda_info["out_dir"])
 
         # Closest event: how good is PanDDA2
