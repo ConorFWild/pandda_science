@@ -3,7 +3,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from autobuilding_paper.lib import AutobuiltStructures, ReferenceStructures, Distances
+from autobuilding_paper.lib import AutobuiltStructures, ReferenceStructures, RMSDs
 
 
 class AutobuildRMSDTable:
@@ -16,7 +16,7 @@ class AutobuildRMSDTable:
 
         reference_structures = ReferenceStructures.from_dir(pandda_dir)
 
-        distances = Distances.from_structures(reference_structures, autobuilt_structures)
+        distances = RMSDs.from_structures(reference_structures, autobuilt_structures)
 
         table = pd.DataFrame(distances.distances)
 

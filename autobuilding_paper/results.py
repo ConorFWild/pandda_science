@@ -1,6 +1,5 @@
 import json
 
-
 class SystemTable:
     def __init__(self, dictionary):
         self.dictionary = dictionary

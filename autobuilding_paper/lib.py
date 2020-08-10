@@ -92,9 +92,9 @@ class ProjectCode:
         return ProjectCode(project_name)
 
 
+@dataclasses.dataclass()
 class Dtag:
-    def __init__(self, dtag):
-        self.dtag = dtag
+    dtag: str
 
     @staticmethod
     def from_protein_code(protein_code):
@@ -104,6 +104,11 @@ class Dtag:
                              )
 
         return Dtag(matches[0])
+
+
+@dataclasses.dataclass()
+class EventIDX:
+    event_idx: int
 
 
 class ReferenceStructures:
@@ -127,8 +132,8 @@ class ReferenceStructures:
             try:
                 Structure(pdb_block)
 
-            except:
-                None
+            except Exception as e:
+                continue
 
         return ReferenceStructures(structures)
 
@@ -141,13 +146,20 @@ class Distance:
         pass
 
 
-class Ligand:
-    def __init__(self):
-        pass
+@dataclasses.dataclass()
+class LigandResidues:
+    residues: typing.List[typing.Any]
 
     @staticmethod
     def from_structure(structure):
-        pass
+        residues = []
+        for model in structure:
+            for chain in model:
+                for residue in chain:
+                    if residue.name == "LIG":
+                        residues.append(residue)
+
+        return LigandResidues(residues)
 
 
 class StructureIterator:
@@ -158,22 +170,90 @@ class StructureIterator:
         return StructureIterator()
 
 
-class Distances:
-    def __init__(self, distances):
-        self.distances = distances
+# class Distances:
+#     def __init__(self, distances):
+#         self.distances = distances
+#
+#     @staticmethod
+#     def from_structures(reference_structures, autobuilt_structures):
+#         distances = {}
+#
+#         for dtag, autobuilt_structure, reference_structure in StructureIterator(autobuilt_structures,
+#                                                                                 reference_structures,
+#                                                                                 ):
+#             autobuild_ligand = LigandResidues.from_structure(autobuilt_structure)
+#             reference_ligand = LigandResidues.from_structure(reference_structure)
+#
+#
+#
+#         return Distances(distances)
+
+
+@dataclasses.dataclass()
+class RMSD:
+    rmsd: float
+
+    @staticmethod
+    def from_residues(residue_1, residue_2):
+        closest_distances = []
+        for atom_1 in residue_1:
+            distances = []
+            for atom_2 in residue_2:
+                distance = atom_1.pos.dist(atom_2.pos)
+                distances.append(distance)
+
+            closest_distance = min(distances)
+            closest_distances.append(closest_distance)
+
+        mean_distance = float(np.mean(closest_distances))
+        return RMSD(mean_distance)
+
+
+@dataclasses.dataclass()
+class CommonKeyIterator(typing.Iterable):
+    dict_1: typing.Any
+    dict_2: typing.Any
+
+    def __next__(self):
+        for key in self.dict_1:
+            if key in self.dict_2:
+                yield key, self.dict_1[key], self.dict_2[key]
+
+    def __iter__(self):
+        return self
+
+
+@dataclasses.dataclass()
+class RMSDs:
+    distances: typing.Dict[Dtag, RMSD]
+
+    def __getitem__(self, item):
+        return self.distances[item]
+
+    def __setitem__(self, key, value):
+        self.distances[key] = value
 
     @staticmethod
     def from_structures(reference_structures, autobuilt_structures):
-        distances = {}
+        rmsds = {}
 
-        for dtag, autobuilt_structure, reference_structure in StructureIterator(autobuilt_structures,
+        for dtag, autobuilt_structure, reference_structure in CommonKeyIterator(autobuilt_structures,
                                                                                 reference_structures):
-            autobuild_ligand = Ligand.from_structure(autobuilt_structure)
-            reference_ligand = Ligand.from_structure(reference_structure)
+            autobuild_ligand = LigandResidues.from_structure(autobuilt_structure)
+            reference_ligand = LigandResidues.from_structure(reference_structure)
 
-            distance = Distance.from_ligands(autobuild_ligand, reference_ligand)
+            residue_rmsds = []
+            for residue_1 in autobuild_ligand.residues:
+                for residue_2 in reference_ligand.residues:
+                    rmsd = RMSD.from_residues(residue_1,
+                                              residue_2,
+                                              )
 
-        return Distances(distances)
+                    residue_rmsds.append(rmsd.rmsd)
+
+            rmsds[dtag] = RMSD(min(residue_rmsds))
+
+        return RMSDs(rmsds)
 
 
 class ResidueEventDistance:
@@ -274,7 +354,7 @@ class EventID:
     event_idx: int
 
     def __hash__(self):
-        return (self.dtag, self.event_idx)
+        return self.dtag, self.event_idx
 
 
 @dataclasses.dataclass()
