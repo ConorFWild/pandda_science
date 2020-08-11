@@ -53,8 +53,8 @@ class PanDDA:
 
         events = self.get_events()
 
-        return {"model_dir": self.model_dir,
-                "out_dir": self.out_dir,
+        return {"model_dir": str(self.model_dir),
+                "out_dir": str(self.out_dir),
                 "finished": finished,
                 "events": events,
                 }
