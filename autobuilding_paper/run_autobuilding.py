@@ -135,7 +135,7 @@ def main():
         logs.LOG[pandda_id]["started"] = True
         printer.pprint(logs.LOG.dict)
 
-        pandda_dir = Path(pandda_info["out_dir"])
+        pandda_dir = Path(pandda_info.out_dir)
 
         autobuild = Autobuild.from_system(pandda_dir,
                                           script_path=Path("/tmp") / "autobuild_{}".format(pandda_id),
