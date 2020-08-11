@@ -9,7 +9,7 @@ import pandas as pd
 from pandda_types import logs
 from pandda_types.process import QSub
 
-from autobuilding_paper.results import SystemTable
+from autobuilding_paper.results import SystemTable, PanDDAResult
 from autobuilding_paper.constants import *
 
 
@@ -53,11 +53,17 @@ class PanDDA:
 
         events = self.get_events()
 
-        return {"model_dir": str(self.model_dir),
-                "out_dir": str(self.out_dir),
-                "finished": finished,
-                "events": events,
-                }
+        # return {"model_dir": str(self.model_dir),
+        #         "out_dir": str(self.out_dir),
+        #         "finished": finished,
+        #         "events": events,
+        #         }
+
+        return PanDDAResult(model_dir=self.model_dir,
+                            out_dir=self.out_dir,
+                            finished=finished,
+                            events=events,
+                            )
 
     def get_events(self):
         event_table_file = self.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE

@@ -9,7 +9,7 @@ import pandas as pd
 from pandda_types import logs
 from pandda_types.process import QSub
 
-from autobuilding_paper.results import SystemTable, PanDDAResult
+from autobuilding_paper.results import SystemTable, PanDDAResults
 from autobuilding_paper.constants import *
 
 
@@ -127,7 +127,7 @@ def main():
 
     system_table = SystemTable.from_json(config.system_file)
 
-    pandda_table = PanDDAResult.from_json(config.panddas_file)
+    pandda_table = PanDDAResults.from_json(config.panddas_file)
 
     autobuilds = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():
