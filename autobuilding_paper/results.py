@@ -70,6 +70,10 @@ class PanDDAResults:
             return PanDDAResults(dictionary)
 
 
+    def to_dict(self):
+        return self.results
+
+
 class AutobuildResult:
     def __init__(self, dictionary):
         self.dictionary = dictionary
