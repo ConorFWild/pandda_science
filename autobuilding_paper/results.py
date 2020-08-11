@@ -41,10 +41,18 @@ class PanDDAResult:
                       )
 
     @staticmethod
+    def from_dict(dictionary):
+        return PanDDAResult(model_dir=dictionary["model_dir"],
+                            out_dir=dictionary["out_dir"],
+                            finished=dictionary["finished"],
+                            events=dictionary["events"],
+                            )
+
+    @staticmethod
     def from_json(file):
         with open(str(file), "r") as f:
             dictionary = json.load(f)
-        return PanDDAResult(dictionary)
+        return PanDDAResult.from_dict(dictionary)
 
 
 @dataclasses.dataclass()
@@ -57,9 +65,9 @@ class PanDDAResults:
             dictionary = json.load(f)
 
         for key in dictionary:
-            dictionary[key] = PanDDAResult[dictionary[key]]
+            dictionary[key] = PanDDAResult.from_dict(dictionary[key])
 
-        return PanDDAResults(dictionary)
+            return PanDDAResults(dictionary)
 
 
 class AutobuildResult:
