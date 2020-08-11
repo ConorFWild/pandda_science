@@ -66,7 +66,12 @@ class PanDDA:
         dictionary = {}
         for index, row in event_table.iterrows():
             series = row.to_dict()
-            dictionary[(series["dtag"], series["event_idx"])] = series
+            dtag = series["dtag"]
+            event_idx = series["event_idx"]
+            if dtag not in dictionary:
+                dictionary[dtag] = {}
+
+            dictionary[dtag][event_idx] = series
 
         return dictionary
 
@@ -125,8 +130,6 @@ def to_json(dictionary, path):
                   )
 
 
-
-
 def main():
     printer = PrettyPrinter(depth=2)
     config = Config()
@@ -146,7 +149,6 @@ def main():
         logs.LOG[system_id]["path"] = system_info
         logs.LOG[system_id]["started"] = True
         printer.pprint(logs.LOG.dict)
-
 
         pandda = PanDDA.from_system(Path(system_info),
                                     config.panddas_dir / system_id,
