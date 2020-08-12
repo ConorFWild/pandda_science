@@ -91,7 +91,7 @@ class Autobuild:
 
         env = "module load gcc/4.9.3; source /dls/science/groups/i04-1/conor_dev/anaconda/bin/activate env_clipper_no_mkl"
         python = "python"
-        program = "/dls/science/groups/i04-1/conor_dev/pandda_science"
+        program = "/dls/science/groups/i04-1/conor_dev/pandda_science/pandda_autobuilding/autobuild_pandda.py"
         input_pandda = pandda_dir
         overwrite = 0
         version = 2
