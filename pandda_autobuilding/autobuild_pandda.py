@@ -812,6 +812,10 @@ def merge_model(event, fs):
     return initial_model
 
 
+def try_make(path):
+    if not path.exists():
+        os.mkdir(str(path))
+
 def merge_models(events,
                  autobuilding_results,
                  results_table,
@@ -833,6 +837,7 @@ def merge_models(events,
         final_model = merge_model(event, fs)
 
         pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
+        try_make(pandda_inspect_model_dir)
         pandda_inspect_model_path = pandda_inspect_model_dir / "{}-pandda-model.pdb".format(event.dtag)
         if (overwrite or (not pandda_inspect_model_path.exists())):
             save_event_model(final_model,
