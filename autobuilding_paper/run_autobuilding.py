@@ -133,6 +133,8 @@ def main():
     for pandda_id, pandda_info in pandda_table.to_dict().items():
         logs.LOG[pandda_id] = {}
         logs.LOG[pandda_id]["started"] = True
+        logs.LOG[pandda_id]["pandda_info"] = pandda_info
+
         autobuilds[pandda_id] = {}
         autobuilds[pandda_id]["started"] = {}
         printer.pprint(logs.LOG.dict)
