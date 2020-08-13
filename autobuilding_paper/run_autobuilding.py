@@ -133,6 +133,8 @@ def main():
     for pandda_id, pandda_info in pandda_table.to_dict().items():
         logs.LOG[pandda_id] = {}
         logs.LOG[pandda_id]["started"] = True
+        autobuilds[pandda_id] = {}
+        autobuilds[pandda_id]["started"] = {}
         printer.pprint(logs.LOG.dict)
 
         pandda_dir = Path(pandda_info.out_dir)
@@ -141,6 +143,7 @@ def main():
                                           script_path=Path("/tmp") / "autobuild_{}".format(pandda_id),
                                           )
         result = autobuild.poll()
+
 
         autobuilds[pandda_id]["result"] = result
 
