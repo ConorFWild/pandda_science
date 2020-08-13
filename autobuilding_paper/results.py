@@ -67,7 +67,7 @@ class PanDDAResults:
         for key in dictionary:
             dictionary[key] = PanDDAResult.from_dict(dictionary[key])
 
-            return PanDDAResults(dictionary)
+        return PanDDAResults(dictionary)
 
 
     def to_dict(self):
