@@ -122,7 +122,7 @@ def to_json(dictionary, path):
 
 
 def main():
-    printer = PrettyPrinter(depth=2)
+    printer = PrettyPrinter(depth=1)
     config = Config()
 
     system_table = SystemTable.from_json(config.system_file)
