@@ -122,7 +122,7 @@ def to_json(dictionary, path):
 
 
 def main():
-    printer = PrettyPrinter()
+    printer = PrettyPrinter(depth=2)
     config = Config()
 
     system_table = SystemTable.from_json(config.system_file)
@@ -148,7 +148,6 @@ def main():
                                           script_path=Path("/tmp") / "autobuild_{}".format(pandda_id),
                                           )
         result = autobuild.poll()
-
 
         autobuilds[pandda_id]["result"] = result
 
