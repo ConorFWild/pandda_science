@@ -65,6 +65,9 @@ class AutobuiltStructures:
         for dtag in self.structures:
             yield self.structures[dtag]
 
+    def __getitem__(self, item):
+        return self.structures[item]
+
 
 class System:
     def __init__(self, system):
@@ -140,11 +143,14 @@ class ReferenceStructures:
             pdb_block = pdb_grabber.get_bound_pdb_file(protein_code)
 
             try:
-                Structure(pdb_block)
+                structure = Structure(pdb_block)
+                structures[dtag] = structure
 
             except Exception as e:
+                print(e)
                 continue
 
+        print("\tGot {} structures".format(len(structures)))
         return ReferenceStructures(structures)
 
     def to_dict(self) -> typing.Dict[Dtag, Structure]:
