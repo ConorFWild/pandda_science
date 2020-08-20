@@ -150,6 +150,10 @@ class ReferenceStructures:
     def to_dict(self) -> typing.Dict[Dtag, Structure]:
         return self.structures
 
+    def __iter__(self):
+        for dtag in self.structures:
+            yield self.structures[dtag]
+
 class Distance:
     def __init__(self):
         pass
