@@ -90,7 +90,7 @@ class ProjectCode:
         example_dtag = processed_model_dir.name
         print("Example dtag is: {}".format(example_dtag))
 
-        project_name = System(example_dtag).system
+        project_name = System.from_dtag(example_dtag).system
 
         return ProjectCode(project_name)
 
