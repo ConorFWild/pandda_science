@@ -68,13 +68,13 @@ class System:
     def from_dtag(dtag):
         regex = "([^\-]+)\-[^\-]+"
         # regex = "([0-9])"
-        print("\tdtag to match: {}".format(dtag))
+        # print("\tdtag to match: {}".format(dtag))
         matches = re.findall(regex,
                              str(dtag),
                              )
-        print([match for match in matches])
+        # print([match for match in matches])
 
-        return matches[0]
+        return System(matches[0])
 
 
 class ProjectCode:
@@ -88,7 +88,7 @@ class ProjectCode:
         processed_model_dir = next(processed_models_dir.glob("*"))
 
         example_dtag = processed_model_dir.name
-        print("Example dtag is: {}".format(example_dtag))
+        # print("Example dtag is: {}".format(example_dtag))
 
         project_name = System.from_dtag(example_dtag).system
 
