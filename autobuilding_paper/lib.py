@@ -141,6 +141,8 @@ class ReferenceStructures:
 
         return ReferenceStructures(structures)
 
+    def to_dict(self) -> typing.Dict[Dtag, Structure]:
+        return self.structures
 
 class Distance:
     def __init__(self):
