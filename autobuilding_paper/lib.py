@@ -119,7 +119,7 @@ class ReferenceStructures:
     def from_dir(pandda_dir):
         project_code = ProjectCode.from_dir(pandda_dir)
 
-        xcd = xcextracter(project_code)
+        xcd = xcextracter(project_code.project_code)
 
         pdb_grabber = GetPdbData()
 
