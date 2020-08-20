@@ -77,15 +77,17 @@ def main():
     results = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():
         logs.LOG[pandda_id] = {}
-        pandda_dir = Path(pandda_info["out_dir"])
+        pandda_dir = Path(pandda_info.out_dir)
 
         # Closest event: how good is PanDDA2
         dataset_events = PanDDAEventDistances.from_dir(pandda_dir)
-        logs.LOG[pandda_id]["event_distances"] = dataset_events
+        printer(dataset_events)
+        # logs.LOG[pandda_id]["event_distances"] = dataset_events
 
         # Ligand RMSD: how good is autobuilding
         ligand_rmsds = AutobuildRMSDTable.from_directory(pandda_dir)
-        logs.LOG[pandda_id]["ligand_rmsds"] = ligand_rmsds
+        printer(ligand_rmsds)
+        # logs.LOG[pandda_id]["ligand_rmsds"] = ligand_rmsds
 
         # Ranking
         references = ReferenceStructures.from_dir(pandda_dir)
