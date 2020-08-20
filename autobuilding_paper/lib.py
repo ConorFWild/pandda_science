@@ -54,7 +54,7 @@ class AutobuiltStructures:
 
         structures = {}
         for dtag, path in model_paths.paths.items():
-            model = Structure.from_model_path(model_paths.paths)
+            model = Structure.from_model_path(model_paths.path)
 
             structures[dtag] = model
 
