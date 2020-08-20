@@ -8,7 +8,7 @@ class PanDDAEventDistances:
     @staticmethod
     def from_dir(pandda_dir):
         reference_structures = ReferenceStructures.from_dir(pandda_dir)
-        print("Got {} reference structures")
+        print("Got {} reference structures".format(len(reference_structures)))
 
         events = PanDDAEvents.from_dir(pandda_dir)
 

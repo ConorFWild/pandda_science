@@ -73,7 +73,7 @@ def main():
 
     autobuilding_table = AutobuildResults.from_json(config.autobuild_file)
     printer.pprint("Got autobuilding table")
-    printer.pprint(autobuilding_table)
+    # printer.pprint(autobuilding_table)
 
     results = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():

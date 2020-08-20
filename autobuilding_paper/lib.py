@@ -382,14 +382,16 @@ class Event:
     x: float
     y: float
     z: float
+    event_size: int
 
     @staticmethod
     def from_dict(dictionary):
         return Event(dtag=dictionary["dtag"],
                      event_idx=dictionary["event_idx"],
-                     x=dictionary["x"],
-                     y=dictionary["y"],
-                     z=dictionary["z"],
+                     x=float(dictionary["x"]),
+                     y=float(dictionary["y"]),
+                     z=float(dictionary["z"]),
+                     event_size=int(dictionary["event_size"])
                      )
 
 
