@@ -68,8 +68,9 @@ class System:
     def from_dtag(dtag):
         regex = "([^\-]+)\-[^\-]+"
         # regex = "([0-9])"
+        print("dtag to match: {}".format(dtag))
         matches = re.findall(regex,
-                             dtag,
+                             str(dtag),
                              )
         print([match for match in matches])
 
