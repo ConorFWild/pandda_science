@@ -18,7 +18,8 @@ class PanDDAModelPaths:
     def __init__(self, paths):
         self.paths = paths
 
-    def from_dir(self, pandda_dir):
+    @staticmethod
+    def from_dir(pandda_dir):
         processed_models_dir = pandda_dir / PANDDA_PROCESSED_DATASETS_DIR
         processed_model_dirs = processed_models_dir.glob("*")
 
@@ -49,7 +50,7 @@ class AutobuiltStructures:
 
     @staticmethod
     def from_dir(pandda_dir):
-        model_paths = PanDDAModelPaths(pandda_dir)
+        model_paths = PanDDAModelPaths.from_dir(pandda_dir)
 
         structures = {}
         for dtag, path in model_paths.paths.items():
