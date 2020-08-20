@@ -118,6 +118,7 @@ class ReferenceStructures:
     @staticmethod
     def from_dir(pandda_dir):
         project_code = ProjectCode.from_dir(pandda_dir)
+        print("\tProject code is: {}".format(project_code.project_code))
 
         xcd = xcextracter(project_code.project_code)
 
