@@ -61,6 +61,10 @@ class AutobuiltStructures:
 
         return AutobuiltStructures(structures)
 
+    def __iter__(self):
+        for dtag in self.structures:
+            yield self.structures[dtag]
+
 
 class System:
     def __init__(self, system):
