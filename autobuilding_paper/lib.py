@@ -358,7 +358,7 @@ class EventID:
     event_idx: int
 
     def __hash__(self):
-        return self.dtag, self.event_idx
+        return hash((self.dtag, self.event_idx))
 
 
 @dataclasses.dataclass()
