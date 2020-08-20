@@ -431,3 +431,6 @@ class PanDDAEvents:
             events[event_id] = Event.from_dict(series)
 
         return PanDDAEvents(dictionary=events)
+
+    def to_dict(self):
+        return self.dictionary
