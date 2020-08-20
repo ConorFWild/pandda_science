@@ -57,7 +57,7 @@ class Autobuild:
     def get_results(self):
         builds = self.get_builds()
 
-        return {"pandda_dir": self.pandda_dir,
+        return {"pandda_dir": str(self.pandda_dir),
                 "finished": True,
                 "builds": builds,
                 }
