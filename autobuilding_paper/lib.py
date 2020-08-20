@@ -154,6 +154,9 @@ class ReferenceStructures:
         for dtag in self.structures:
             yield self.structures[dtag]
 
+    def __len__(self):
+        return len(self.structures)
+
 class Distance:
     def __init__(self):
         pass
