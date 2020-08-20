@@ -66,13 +66,13 @@ def main():
     config = Config()
 
     system_table = SystemTable.from_json(config.system_file)
-    printer.pprint(system_table)
+    printer.pprint("Got system table")
 
     pandda_table = PanDDAResults.from_json(config.panddas_file)
-    printer.pprint(pandda_table)
+    printer.pprint("Got pandda table")
 
     autobuilding_table = AutobuildResults.from_json(config.autobuild_file)
-    printer.pprint(autobuilding_table)
+    printer.pprint("Got autobuilding table")
 
     results = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():
