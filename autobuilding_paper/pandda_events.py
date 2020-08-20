@@ -12,7 +12,7 @@ class PanDDAEventDistances:
         events = PanDDAEvents.from_dir(pandda_dir)
 
         distances = {}
-        for reference_dtag, reference_structure in reference_structures.to_dict.items():
+        for reference_dtag, reference_structure in reference_structures.to_dict().items():
 
             event_distances = []
             for event_dtag, event in events.to_dict.items():
