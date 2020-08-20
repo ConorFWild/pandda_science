@@ -16,7 +16,7 @@ class PanDDAEventDistances:
         for reference_dtag, reference_structure in reference_structures.to_dict().items():
 
             event_distances = []
-            for event_dtag, event in events.to_dict.items():
+            for event_dtag, event in events.to_dict().items():
                 if event_dtag != reference_dtag:
                     continue
 
