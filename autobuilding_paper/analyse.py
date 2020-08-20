@@ -75,8 +75,8 @@ def main():
     printer.pprint(autobuilding_table)
 
     results = {}
-    try:
-        for pandda_id, pandda_info in pandda_table.to_dict().items():
+    for pandda_id, pandda_info in pandda_table.to_dict().items():
+        try:
             logs.LOG[pandda_id] = {}
             pandda_dir = Path(pandda_info.out_dir)
 
@@ -104,9 +104,9 @@ def main():
             logs.LOG[pandda_id]["autobuilding"] = autobuilding_enritchment.enritchment
 
             printer.pprint(logs.LOG.dict)
-    except Exception as e:
-        printer.pprint(e)
-        
+        except Exception as e:
+            printer.pprint(e)
+
     to_json(results,
             config.autobuild_file,
             )
