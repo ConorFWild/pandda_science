@@ -66,13 +66,14 @@ class System:
 
     @staticmethod
     def from_dtag(dtag):
-        regex = "([^-]+)-[^-]+"
+        regex = "([^\-]+)\-[^\-]+"
+        # regex = "([0-9])"
         matches = re.findall(regex,
                              dtag,
                              )
         print([match for match in matches])
 
-        return matches[1]
+        return matches[0]
 
 
 class ProjectCode:
