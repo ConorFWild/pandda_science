@@ -117,6 +117,9 @@ class Dtag:
 
         return Dtag(matches[0])
 
+    def __hash__(self):
+        return hash(self.dtag)
+
 
 @dataclasses.dataclass()
 class EventIDX:
