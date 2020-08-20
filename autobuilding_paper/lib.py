@@ -70,6 +70,7 @@ class System:
         matches = re.findall(regex,
                              dtag,
                              )
+        print([match for match in matches])
 
         return matches[1]
 
