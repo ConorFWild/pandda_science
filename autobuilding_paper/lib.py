@@ -71,7 +71,7 @@ class System:
                              dtag,
                              )
 
-        return matches[0]
+        return matches[1]
 
 
 class ProjectCode:
