@@ -73,13 +73,37 @@ class PanDDAResults:
     def to_dict(self):
         return self.results
 
-
+@dataclasses.dataclass()
 class AutobuildResult:
-    def __init__(self, dictionary):
-        self.dictionary = dictionary
+    builds: typing.Dict[typing.Tuple[str], typing.Dict]
+
+    @staticmethod
+    def from_dict(dictionary):
+
+        builds = {}
+        for dtag in dictionary:
+            for event_idx in dictionary[dtag]:
+                if dtag not in builds:
+                    builds[dtag] = {}
+
+                builds[dtag][event_idx] = dictionary[dtag][event_idx]
+
+        return AutobuildResult(builds)
+
+
+@dataclasses.dataclass()
+class AutobuildResults:
+
+    results: typing.Dict[str, AutobuildResult]
 
     @staticmethod
     def from_json(file):
         with open(str(file), "r") as f:
             dictionary = json.load(f)
-        return AutobuildResult(dictionary)
+
+        results = {}
+        for system in dictionary:
+            results[system] = AutobuildResult.from_dict(dictionary[system])
+
+
+        return AutobuildResults(results)

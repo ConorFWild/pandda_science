@@ -12,7 +12,7 @@ from pandda_types.process import QSub
 from autobuilding_paper.lib import ReferenceStructures
 from autobuilding_paper.pandda_events import PanDDAEventDistances
 from autobuilding_paper.autobuild_rmsd_table import AutobuildRMSDTable
-from autobuilding_paper.results import SystemTable, PanDDAResult, AutobuildResult
+from autobuilding_paper.results import SystemTable, PanDDAResults, AutobuildResults
 from autobuilding_paper.ranking import PanDDARanking, Enritchment
 from autobuilding_paper.constants import *
 
@@ -62,14 +62,17 @@ def to_json(dictionary, path):
 
 
 def main():
-    printer = PrettyPrinter()
+    printer = PrettyPrinter(depth=1)
     config = Config()
 
     system_table = SystemTable.from_json(config.system_file)
+    printer.pprint(system_table)
 
-    pandda_table = PanDDAResult.from_json(config.panddas_file)
+    pandda_table = PanDDAResults.from_json(config.panddas_file)
+    printer.pprint(pandda_table)
 
-    autobuilding_table = AutobuildResult.from_json(config.autobuild_file)
+    autobuilding_table = AutobuildResults.from_json(config.autobuild_file)
+    printer.pprint(autobuilding_table)
 
     results = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():
