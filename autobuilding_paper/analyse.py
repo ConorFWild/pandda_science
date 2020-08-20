@@ -106,6 +106,7 @@ def main():
             printer.pprint(logs.LOG.dict)
     except Exception as e:
         printer.pprint(e)
+        
     to_json(results,
             config.autobuild_file,
             )
