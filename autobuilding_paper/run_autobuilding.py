@@ -69,7 +69,10 @@ class Autobuild:
         dictionary = {}
         for index, row in event_table.iterrows():
             series = row.to_dict()
-            dictionary[(series["dtag"], series["event_idx"])] = series
+            if series["dtag"] not in dictionary:
+                dictionary[series["dtag"]] = {}
+
+            dictionary[series["dtag"]][series["event_idx"]] = series
 
         return dictionary
 
