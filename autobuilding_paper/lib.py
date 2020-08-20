@@ -385,7 +385,7 @@ class Event:
     x: float
     y: float
     z: float
-    event_size: int
+    cluster_size: int
 
     @staticmethod
     def from_dict(dictionary):
@@ -394,7 +394,7 @@ class Event:
                      x=float(dictionary["x"]),
                      y=float(dictionary["y"]),
                      z=float(dictionary["z"]),
-                     event_size=int(dictionary["event_size"])
+                     cluster_size=int(dictionary["cluster_size"])
                      )
 
 

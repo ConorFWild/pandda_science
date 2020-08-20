@@ -30,7 +30,7 @@ class PanDDARanking:
             events.append(event)
 
         sorted_events = sorted(events,
-                               key=lambda x: x.event_size,
+                               key=lambda x: x.cluster_size,
                                )
 
         return sorted_events
