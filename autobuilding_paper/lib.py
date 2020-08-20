@@ -236,7 +236,9 @@ class CommonKeyIterator(typing.Iterable):
                 yield key, self.dict_1[key], self.dict_2[key]
 
     def __iter__(self):
-        return self
+        for key in self.dict_1:
+            if key in self.dict_2:
+                yield key, self.dict_1[key], self.dict_2[key]
 
 
 @dataclasses.dataclass()
