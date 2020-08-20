@@ -28,7 +28,8 @@ class PanDDAModelPaths:
             dtag = processed_model_dir.name
             model_dir = processed_model_dir / PANDDA_MODELLED_STRUCTURES_DIR
             model_path = model_dir / PANDDA_EVENT_MODEL.format(dtag)
-            paths[dtag] = model_path
+            if model_path.exists():
+                paths[dtag] = model_path
 
         return PanDDAModelPaths(paths)
 
