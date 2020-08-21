@@ -31,7 +31,7 @@ class PanDDAEventDistances:
 
             if len(event_distances) == 0:
                 distances[reference_dtag] = 0
-
-            distances[reference_dtag] = min(event_distances)
+            else:
+                distances[reference_dtag] = min(event_distances)
 
         return PanDDAEventDistances(distances)
