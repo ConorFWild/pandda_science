@@ -372,6 +372,7 @@ class Ligands:
         for model in structure.structure:
             for chain in model:
                 for res in chain:
+                    print(res)
                     if res.name == "LIG":
                         ligands.append(res)
 
