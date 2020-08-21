@@ -366,10 +366,10 @@ class Ligands:
     ligands: typing.List[gemmi.Residue]
 
     @staticmethod
-    def from_structure(structure):
+    def from_structure(structure: Structure):
         ligands = []
 
-        for model in structure:
+        for model in structure.structure:
             for chain in model:
                 for res in chain:
                     if res.name == "LIG":
