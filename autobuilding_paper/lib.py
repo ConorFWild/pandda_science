@@ -385,8 +385,6 @@ class Ligands:
         return Ligands(ligands)
 
 
-
-
 @dataclasses.dataclass()
 class EventID:
     dtag: str
