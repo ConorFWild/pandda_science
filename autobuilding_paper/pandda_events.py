@@ -18,8 +18,8 @@ class PanDDAEventDistances:
 
             event_distances = []
             for event_dtag, event in events.to_dict().items():
-                print("\t\t\tLooking for match in {}".format(event_dtag))
-                if event_dtag != reference_dtag:
+                # print("\t\t\tLooking for match in {}".format(event_dtag))
+                if event_dtag.dtag != reference_dtag.dtag:
                     continue
 
                 lig = Ligands.from_structure(reference_structure)
