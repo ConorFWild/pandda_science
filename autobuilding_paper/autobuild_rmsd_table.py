@@ -16,8 +16,10 @@ class AutobuildRMSDTable:
         print("Got {} autobuilt structures".format(len(autobuilt_structures.structures)))
 
         reference_structures = ReferenceStructures.from_dir(pandda_dir)
+        print("\t\tGot {} reference structures".format(len(reference_structures.structures)))
 
         distances = RMSDs.from_structures(reference_structures, autobuilt_structures)
+        print("\t\tGot {} distances".format(len(distances)))
 
         table = pd.DataFrame(distances.distances)
 
