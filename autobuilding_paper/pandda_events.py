@@ -22,6 +22,7 @@ class PanDDAEventDistances:
                 if event_dtag.dtag != reference_dtag.dtag:
                     continue
 
+                print(reference_structure)
                 lig = Ligands.from_structure(reference_structure)
 
                 distance = (ResidueEventDistance.from_residue_event(lig,
