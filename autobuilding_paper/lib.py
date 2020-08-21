@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 
 import dataclasses
@@ -297,7 +299,7 @@ class ResidueEventDistance:
 
     @staticmethod
     def from_residue_event(residue,
-                           event,
+                           event: Event,
                            ):
         fragment_mean_coord = (ResidueMeanCoord.from_residue(residue)).to_euclidean_coord()
         event_centroid_coord = event.to_centroid_coord()
@@ -318,7 +320,7 @@ class EuclideanDistance:
     distance: float
 
     @staticmethod
-    def from_coords(coord_1, coord_2):
+    def from_coords(coord_1: EuclideanCoord, coord_2:EuclideanCoord):
         vec_1 = coord_1.to_array()
         vec_2 = coord_2.to_array()
 
@@ -412,6 +414,9 @@ class Event:
                      z=float(dictionary["z"]),
                      cluster_size=int(dictionary["cluster_size"])
                      )
+
+    def to_centroid_coord(self):
+        return EuclideanCoord(self.x, self.y, self.z)
 
 
 @dataclasses.dataclass()
