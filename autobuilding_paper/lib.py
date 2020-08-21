@@ -309,7 +309,7 @@ class ResidueEventDistance:
                                                   )
                     ).to_float()
 
-        return distance
+        return ResidueEventDistance(distance)
 
     def to_float(self):
         return self.distance
@@ -320,13 +320,11 @@ class EuclideanDistance:
     distance: float
 
     @staticmethod
-    def from_coords(coord_1: EuclideanCoord, coord_2:EuclideanCoord):
+    def from_coords(coord_1: EuclideanCoord, coord_2: EuclideanCoord):
         vec_1 = coord_1.to_array()
         vec_2 = coord_2.to_array()
 
         distance = np.linalg.norm(vec_1 - vec_2)
-
-        print(distance)
 
         return EuclideanDistance(distance)
 
