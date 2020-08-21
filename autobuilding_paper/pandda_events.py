@@ -18,6 +18,7 @@ class PanDDAEventDistances:
 
             event_distances = []
             for event_dtag, event in events.to_dict().items():
+                print("\t\t\tLooking for match in {}".format(event_dtag))
                 if event_dtag != reference_dtag:
                     continue
 
