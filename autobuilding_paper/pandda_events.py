@@ -14,6 +14,7 @@ class PanDDAEventDistances:
 
         distances = {}
         for reference_dtag, reference_structure in reference_structures.to_dict().items():
+            print("\tLooking for matches to {}".format(reference_dtag))
 
             event_distances = []
             for event_dtag, event in events.to_dict().items():
