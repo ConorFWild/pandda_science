@@ -44,6 +44,11 @@ class Structure:
 
         return Structure(structure)
 
+    @staticmethod
+    def from_pdb_string(pdb_string: str):
+        structure = gemmi.read_pdb_string(pdb_string)
+        return Structure(structure)
+
 
 class AutobuiltStructures:
     def __init__(self, structures):
@@ -146,7 +151,7 @@ class ReferenceStructures:
             pdb_block = pdb_grabber.get_bound_pdb_file(protein_code)
 
             try:
-                structure = Structure(pdb_block)
+                structure = Structure.from_pdb_string(pdb_block)
                 structures[dtag] = structure
 
             except Exception as e:
