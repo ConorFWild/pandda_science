@@ -8,13 +8,13 @@ class PanDDAEventDistances:
     @staticmethod
     def from_dir(pandda_dir):
         reference_structures = ReferenceStructures.from_dir(pandda_dir)
-        print("Got {} reference structures".format(len(reference_structures)))
+        print("\tGot {} reference structures".format(len(reference_structures)))
 
         events = PanDDAEvents.from_dir(pandda_dir)
 
         distances = {}
         for reference_dtag, reference_structure in reference_structures.to_dict().items():
-            print("\tLooking for matches to {}".format(reference_dtag))
+            print("\t\tLooking for matches to {}".format(reference_dtag))
 
             event_distances = []
             for event_dtag, event in events.to_dict().items():

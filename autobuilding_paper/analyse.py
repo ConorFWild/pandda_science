@@ -77,16 +77,19 @@ def main():
 
     results = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():
+        printer.pprint("##### Analysing {} #####".format(pandda_id))
         # try:
         logs.LOG[pandda_id] = {}
         pandda_dir = Path(pandda_info.out_dir)
 
         # Closest event: how good is PanDDA2
+        printer.pprint("# Analysing event distances")
         dataset_events = PanDDAEventDistances.from_dir(pandda_dir)
         printer.pprint(dataset_events)
         # logs.LOG[pandda_id]["event_distances"] = dataset_events
 
         # Ligand RMSD: how good is autobuilding
+        printer.pprint("# Analysing ligand rmsds")
         ligand_rmsds = AutobuildRMSDTable.from_directory(pandda_dir)
         printer.pprint(ligand_rmsds)
         # logs.LOG[pandda_id]["ligand_rmsds"] = ligand_rmsds
