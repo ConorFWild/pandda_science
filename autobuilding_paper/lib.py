@@ -326,6 +326,8 @@ class EuclideanDistance:
 
         distance = np.linalg.norm(vec_1 - vec_2)
 
+        print(distance)
+
         return EuclideanDistance(distance)
 
     def to_float(self):
