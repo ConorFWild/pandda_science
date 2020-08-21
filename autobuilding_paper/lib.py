@@ -374,16 +374,15 @@ class Ligands:
     def from_structure(structure: Structure):
         ligands = []
 
-        print(structure.structure)
         for model in structure.structure:
-            print(model)
             for chain in model:
                 for res in chain:
-                    print(res)
                     if res.name == "LIG":
                         ligands.append(res)
 
         return Ligands(ligands)
+
+
 
 
 @dataclasses.dataclass()

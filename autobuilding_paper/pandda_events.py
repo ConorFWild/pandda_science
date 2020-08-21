@@ -23,12 +23,19 @@ class PanDDAEventDistances:
                     continue
 
                 print(reference_structure)
-                lig = Ligands.from_structure(reference_structure)
+                ligs = Ligands.from_structure(reference_structure)
 
-                distance = (ResidueEventDistance.from_residue_event(lig,
-                                                                    event,
-                                                                    )
-                            ).to_float()
+                distances = []
+                for lig in ligs.ligands:
+
+                    distance = (ResidueEventDistance.from_residue_event(lig,
+                                                                        event,
+                                                                        )
+                                ).to_float()
+
+                    distances.append(distance)
+
+                distance = min(distances)
 
                 event_distances.append(distance)
 
