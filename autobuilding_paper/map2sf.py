@@ -41,8 +41,11 @@ def main():
 
     m = gemmi.read_ccp4_map(str(config.xmap_in))
     print(dir(m))
-    m.spacegroup = gemmi.find_spacegroup_by_name('P1')
+    # m.spacegroup = gemmi.find_spacegroup_by_name('P1')
     print(m.grid.spacegroup)
+    m.grid.spacegroup = gemmi.find_spacegroup_by_name('P1')
+    print(m.grid.spacegroup)
+
 
     m.setup()
     print(m.grid.spacegroup)
