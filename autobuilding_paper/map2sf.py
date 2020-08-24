@@ -41,7 +41,8 @@ def main():
 
     m = gemmi.read_ccp4_map(str(config.xmap_in))
     print(m.grid.spacegroup)
-    # m.setup()
+    m.setup()
+    print(m.grid.spacegroup)
     sf = gemmi.transform_map_to_f_phi(m.grid, half_l=True)
     print(sf.spacegroup)
     # data = sf
