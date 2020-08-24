@@ -379,20 +379,24 @@ def phase_graft(initial_mtz_path,
     initial_mtz_phwt_index = initial_mtz.column_labels().index("PHWT")
     event_mtz_phwt_index = event_mtz.column_labels().index("PHWT")
 
-    print("\tBeginning graft...")
-    new_reflections = {}
-    for hkl in event_reflections:
-        event_reflection = event_reflections[hkl]
+    try:
+        print("\tBeginning graft...")
+        new_reflections = {}
+        for hkl in event_reflections:
+            event_reflection = event_reflections[hkl]
 
-        asu_hkl = initial_asu.to_asu(hkl.to_list(), operations, )
-        initial_reflection: Reflection = initial_reflections[asu_hkl]
+            asu_hkl = initial_asu.to_asu(hkl.to_list(), operations, )
+            initial_reflection: Reflection = initial_reflections[asu_hkl]
 
-        new_reflection = Reflection(hkl, initial_reflection.data)
+            new_reflection = Reflection(hkl, initial_reflection.data)
 
-        new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
-        new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
+            new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
+            new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
 
-        new_reflections[hkl] = new_reflection
+            new_reflections[hkl] = new_reflection
+
+    except Exception as e:
+        print(e)
 
     new_array = Reflections(new_reflections).to_array()
 
