@@ -13,6 +13,7 @@ import gemmi
 class Config:
     xmap_in: Path
     mtz_out: Path
+    resolution: float
 
     @staticmethod
     def from_config():
@@ -28,11 +29,17 @@ class Config:
                             help="The directory OF THE ROOT OF THE XCHEM DATABASE",
                             required=True
                             )
+        parser.add_argument("-r", "--resolution",
+                            type=float,
+                            help="The directory OF THE ROOT OF THE XCHEM DATABASE",
+                            required=True
+                            )
 
         args = parser.parse_args()
 
         return Config(xmap_in=Path(args.xmap_in),
                       mtz_out=Path(args.mtz_out),
+                      resolution=float(args.resolution)
                       )
 
 
@@ -56,7 +63,7 @@ def main():
     print(sf.spacegroup)
     # data = sf
     print(dir(sf))
-    data = sf.prepare_asu_data(dmin=2.0, with_000=True)
+    data = sf.prepare_asu_data(dmin=config.resolution, with_000=True)
 
     mtz = gemmi.Mtz(with_base=True)
     # mtz = gemmi.Mtz()

@@ -96,7 +96,7 @@ class Autobuild:
         python = "python"
         program = "/dls/science/groups/i04-1/conor_dev/pandda_science/pandda_autobuilding/autobuild_pandda.py"
         input_pandda = pandda_dir
-        overwrite = 0
+        overwrite = 1
         version = 2
 
         formatted_command = command.format(env=env,

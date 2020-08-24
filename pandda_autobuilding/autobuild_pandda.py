@@ -93,8 +93,32 @@ def execute(command):
     stdout, stderr = submit_proc.communicate()
     return str(command), stdout, stderr
 
-
 def event_map_to_mtz(event_map_path: Path,
+                     output_path,
+                     resolution,
+                     map2sf_path: Path = "/dls/science/groups/i04-1/conor_dev/pandda_science/autobuilding_paper/map2sf.py",
+                     ):
+    command = "module load gcc/4.9.3; source /dls/science/groups/i04-1/conor_dev/anaconda/bin/activate env_clipper_no_mkl; python {map2sf_path} -i {event_map_path} -o {output_path} -r {resolution}"
+    formatted_command = command.format(map2sf_path=map2sf_path,
+                                       event_map_path=event_map_path,
+                                       output_path=output_path,
+                                       resolution=resolution,
+                                       )
+    # print(formatted_command)
+
+    p = subprocess.Popen(formatted_command,
+                         shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         )
+
+    stdout, stderr = p.communicate()
+
+    return formatted_command, stdout, stderr
+
+
+
+def event_map_to_mtz_dep(event_map_path: Path,
                      output_path,
                      resolution,
                      col_f="FWT",
@@ -359,11 +383,11 @@ def autobuild_event(event):
         # Stripped protein
         print("\tStripping ligands near event...")
         intial_receptor_path = event.pandda_event_dir / "receptor_{}.pdb".format(event.event_idx)
-        if not intial_receptor_path.exists():
-            strip_protein(event.receptor_path,
-                          event.coords,
-                          intial_receptor_path,
-                          )
+        # if not intial_receptor_path.exists():
+        strip_protein(event.receptor_path,
+                      event.coords,
+                      intial_receptor_path,
+                      )
 
         # Quick refine
         event_mtz_path = event.pandda_event_dir / "grafted_{}.mtz".format(event.event_idx)
@@ -371,11 +395,11 @@ def autobuild_event(event):
             os.remove(str(event_mtz_path))
         except:
             pass
-        if not event_mtz_path.exists():
-            phase_graft(event.initial_mtz_path,
-                        initial_event_mtz_path,
-                        event_mtz_path,
-                        )
+        # if not event_mtz_path.exists():
+        phase_graft(event.initial_mtz_path,
+                    initial_event_mtz_path,
+                    event_mtz_path,
+                    )
 
         if not event_mtz_path.exists():
             raise Exception("Could not find event mtz after attempting generation: {}".format(event_mtz_path))
