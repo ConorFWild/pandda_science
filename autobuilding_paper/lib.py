@@ -280,23 +280,26 @@ class RMSDs:
         print(len(reference_structures.structures))
         print(len(autobuilt_structures.structures))
 
-        for dtag, autobuilt_structure, reference_structure in CommonKeyIterator(autobuilt_structures.structures,
-                                                                                reference_structures.structures,
-                                                                                ):
-            print("\t\t\tGetting rmsd for dtag: {}".format(dtag))
-            autobuild_ligand = LigandResidues.from_structure(autobuilt_structure)
-            reference_ligand = LigandResidues.from_structure(reference_structure)
+        for dtag in reference_structures.structures:
+            if dtag in autobuilt_structures.structures:
 
-            residue_rmsds = []
-            for residue_1 in autobuild_ligand.residues:
-                for residue_2 in reference_ligand.residues:
-                    rmsd = RMSD.from_residues(residue_1,
-                                              residue_2,
-                                              )
+                autobuilt_structure = autobuilt_structures[dtag]
+                reference_structure = reference_structures[dtag]
 
-                    residue_rmsds.append(rmsd.rmsd)
+                print("\t\t\tGetting rmsd for dtag: {}".format(dtag))
+                autobuild_ligand = LigandResidues.from_structure(autobuilt_structure)
+                reference_ligand = LigandResidues.from_structure(reference_structure)
 
-            rmsds[dtag] = RMSD(min(residue_rmsds))
+                residue_rmsds = []
+                for residue_1 in autobuild_ligand.residues:
+                    for residue_2 in reference_ligand.residues:
+                        rmsd = RMSD.from_residues(residue_1,
+                                                  residue_2,
+                                                  )
+
+                        residue_rmsds.append(rmsd.rmsd)
+
+                rmsds[dtag] = RMSD(min(residue_rmsds))
 
         return RMSDs(rmsds)
 
