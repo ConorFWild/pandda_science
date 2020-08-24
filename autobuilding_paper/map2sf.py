@@ -52,7 +52,8 @@ def main():
     mtz = gemmi.Mtz(with_base=True, dmin=2.0)
     # mtz = gemmi.Mtz()
     print(dir(mtz))
-    mtz.spacegroup = sf.spacegroup
+    # mtz.spacegroup = sf.spacegroup
+    mtz.spacegroup = gemmi.find_spacegroup_by_name('P1')
     # mtz.set_cell_for_all(sf.unit_cell)
     mtz.cell = sf.unit_cell
     mtz.add_dataset('unknown')
