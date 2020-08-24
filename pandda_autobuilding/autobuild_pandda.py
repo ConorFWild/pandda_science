@@ -1,3 +1,7 @@
+from __future__ import annotations
+import dataclasses
+import typing
+
 import os
 import argparse
 import re
@@ -93,6 +97,7 @@ def execute(command):
     stdout, stderr = submit_proc.communicate()
     return str(command), stdout, stderr
 
+
 def event_map_to_mtz(event_map_path: Path,
                      output_path,
                      resolution,
@@ -117,14 +122,13 @@ def event_map_to_mtz(event_map_path: Path,
     return formatted_command, stdout, stderr
 
 
-
 def event_map_to_mtz_dep(event_map_path: Path,
-                     output_path,
-                     resolution,
-                     col_f="FWT",
-                     col_ph="PHWT",
-                     gemmi_path: Path = "/dls/science/groups/i04-1/conor_dev/gemmi/gemmi",
-                     ):
+                         output_path,
+                         resolution,
+                         col_f="FWT",
+                         col_ph="PHWT",
+                         gemmi_path: Path = "/dls/science/groups/i04-1/conor_dev/gemmi/gemmi",
+                         ):
     command = "module load gcc/4.9.3; source /dls/science/groups/i04-1/conor_dev/anaconda/bin/activate env_clipper_no_mkl; {gemmi_path} map2sf {event_map_path} {output_path} {col_f} {col_ph} --dmin={resolution}"
     formatted_command = command.format(gemmi_path=gemmi_path,
                                        event_map_path=event_map_path,
@@ -280,10 +284,122 @@ def index_to_array(intial_mtz):
     return index_to_array_map
 
 
+@dataclasses.dataclass()
+class HKL:
+    h: int
+    k: int
+    l: int
+
+    @staticmethod
+    def from_hkl(h, k, l):
+        return HKL(h, k, l)
+
+    def __hash__(self):
+        return hash((self.h, self.k, self.l))
+
+    def to_list(self):
+        return [self.h, self.k, self.l]
+
+
+@dataclasses.dataclass()
+class Reflection:
+    hkl: HKL
+    data: np.array
+
+    @staticmethod
+    def from_row(row: np.array):
+        h = row[0]
+        k = row[1]
+        l = row[2]
+        hkl = HKL(h, k, l)
+        data = row[3:]
+        return Reflection(hkl,
+                          data)
+
+
+@dataclasses.dataclass()
+class Reflections:
+    reflections: typing.Dict[HKL, Reflection]
+
+    @staticmethod
+    def from_array(array):
+        reflections = {}
+        for row in array:
+            reflection = Reflection.from_row(row)
+            reflections[reflection.hkl] = reflection
+
+        return Reflections(reflections)
+
+    def __getitem__(self, item):
+        return self.reflections[item]
+
+    def __iter__(self):
+        for hkl in self.reflections:
+            yield hkl
+
+    def to_array(self):
+        rows = []
+        for hkl in self.reflections:
+            hkl_array = np.array(hkl.to_list())
+            data = self.reflections[hkl].data
+
+            row = np.hstack([hkl_array, data])
+
+            rows.append(row)
+
+        array = np.vstack(rows)
+
+        return array
+
+
 def phase_graft(initial_mtz_path,
                 event_mtz_path,
                 out_path,
                 ):
+    initial_mtz = gemmi.read_mtz_file(str(initial_mtz_path))
+    event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
+
+    initial_mtz_data = np.array(initial_mtz, copy=False)
+    event_mtz_data = np.array(event_mtz, copy=False)
+
+    initial_reflections: Reflections = Reflections.from_array(initial_mtz_data)
+    event_reflections: Reflections = Reflections.from_array(event_mtz_data)
+
+    initial_asu = gemmi.ReciprocalAsu(initial_mtz.spacegroup)
+    operations = initial_mtz.spacegroup.operations()
+
+    initial_mtz_fwt_index = initial_mtz.column_labels().index("FWT")
+    event_mtz_fwt_index = event_mtz.column_labels().index("FWT")
+
+    initial_mtz_phwt_index = initial_mtz.column_labels().index("PHWT")
+    event_mtz_phwt_index = event_mtz.column_labels().index("PHWT")
+
+    new_reflections = {}
+    for hkl in event_reflections:
+        event_reflection = event_reflections[hkl]
+
+        asu_hkl = initial_asu.to_asu(hkl.to_list(), operations, )
+        initial_reflection: Reflection = initial_reflections[asu_hkl]
+
+        new_reflection = Reflection(hkl, initial_reflection.data)
+
+        new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
+        new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
+
+        new_reflections[hkl] = new_reflection
+
+    new_array = Reflections(new_reflections).to_array()
+
+    initial_mtz.spacegroup = event_mtz.spacegroup
+    initial_mtz.set_data(new_array)
+
+    initial_mtz.write_to_file(str(out_path))
+
+
+def phase_graft_dep(initial_mtz_path,
+                    event_mtz_path,
+                    out_path,
+                    ):
     intial_mtz = gemmi.read_mtz_file(str(initial_mtz_path))
     event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
 
@@ -349,7 +465,7 @@ def phase_graft(initial_mtz_path,
 
 def try_remove(ligand_path):
     if ligand_path.exists():
-         os.remove(str(ligand_path))
+        os.remove(str(ligand_path))
 
 
 def autobuild_event(event):
@@ -442,8 +558,6 @@ def autobuild_event(event):
                                                          )
         print("\t\tCommand: {}".format(str(autobuilding_command)))
         formatted_command, stdout, stderr = execute(autobuilding_command)
-
-
 
         try:
             print("\tProcessing autobuilding results...")
@@ -841,6 +955,7 @@ def merge_model(event, fs):
 def try_make(path):
     if not path.exists():
         os.mkdir(str(path))
+
 
 def merge_models(events,
                  autobuilding_results,
