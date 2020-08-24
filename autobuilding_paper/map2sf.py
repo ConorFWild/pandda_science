@@ -47,7 +47,7 @@ def main():
     print(sf.spacegroup)
     # data = sf
     print(dir(sf))
-    data = sf.prepare_asu_data(dmin=2.0)
+    data = sf.prepare_asu_data(dmin=2.0, with_000=True)
 
     mtz = gemmi.Mtz(with_base=True)
     # mtz = gemmi.Mtz()
