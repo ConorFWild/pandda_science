@@ -270,6 +270,9 @@ class RMSDs:
     def __setitem__(self, key, value):
         self.distances[key] = value
 
+    def __len__(self):
+        return len(self.distances)
+
     @staticmethod
     def from_structures(reference_structures, autobuilt_structures):
         rmsds = {}
