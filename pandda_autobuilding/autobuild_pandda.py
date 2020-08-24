@@ -420,7 +420,7 @@ def phase_graft(initial_mtz_path,
             # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
             new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
             new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
-            # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
+            print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
 
 
             new_reflections[hkl] = new_reflection
@@ -431,7 +431,7 @@ def phase_graft(initial_mtz_path,
         print("\tShape of new array is {}".format(new_array.shape))
 
 
-        initial_mtz.set_cell_for_all(event_mtz.spacegroup)
+        initial_mtz.spacegroup = event_mtz.spacegroup
         initial_mtz.set_data(new_array)
 
         print("\tWriting new reflections to {}".format(str(out_path)))
