@@ -417,8 +417,11 @@ def phase_graft(initial_mtz_path,
 
                 new_reflection = Reflection(hkl, initial_reflection.data)
 
+            print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
             new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
             new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
+            print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
+
 
             new_reflections[hkl] = new_reflection
 
