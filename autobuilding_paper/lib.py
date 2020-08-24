@@ -189,9 +189,9 @@ class LigandResidues:
     residues: typing.List[typing.Any]
 
     @staticmethod
-    def from_structure(structure):
+    def from_structure(structure: Structure):
         residues = []
-        for model in structure:
+        for model in structure.structure:
             for chain in model:
                 for residue in chain:
                     if residue.name == "LIG":
