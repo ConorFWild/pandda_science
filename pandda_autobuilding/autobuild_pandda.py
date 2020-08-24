@@ -342,6 +342,8 @@ def phase_graft(initial_mtz_path,
     print("\tCopied PHWT from {} to {}".format(event_mtz_phwt_index, initial_mtz_phwt_index))
     print("\tSkipper {} reflections".format(skipped))
 
+    intial_mtz.spacegroup = event_mtz.spacegroup
+
     intial_mtz.write_to_file(str(out_path))
 
 
