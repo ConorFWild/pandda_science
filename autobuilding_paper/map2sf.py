@@ -45,10 +45,12 @@ def main():
     # data = sf.prepare_asu_data(dmin=RESOLUTION_LIMIT)
     data = sf
 
+    # mtz = gemmi.Mtz(with_base=True)
     mtz = gemmi.Mtz()
     print(dir(mtz))
     mtz.spacegroup = sf.spacegroup
-    mtz.set_cell_for_all(sf.unit_cell)
+    # mtz.set_cell_for_all(sf.unit_cell)
+    mtz.cell = sf.unit_cell
     mtz.add_dataset('unknown')
     mtz.add_column('FWT', 'F')
     mtz.add_column('PHWT', 'P')
