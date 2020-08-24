@@ -372,7 +372,9 @@ def phase_graft(initial_mtz_path,
     event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
 
     initial_mtz_data = np.array(initial_mtz, copy=False)
+    print("Shape of initial array is {}".format(initial_mtz_data.shape))
     event_mtz_data = np.array(event_mtz, copy=False)
+    print("Shape of event array is {}".format(event_mtz_data.shape))
 
     initial_reflections: Reflections = Reflections.from_array(initial_mtz_data)
     event_reflections: Reflections = Reflections.from_array(event_mtz_data)
@@ -386,26 +388,23 @@ def phase_graft(initial_mtz_path,
     initial_mtz_phwt_index = initial_mtz.column_labels().index("PHWT")
     event_mtz_phwt_index = event_mtz.column_labels().index("PHWT")
 
-    try:
-        print("\tBeginning graft...")
-        new_reflections = {}
-        for hkl in event_reflections:
-            event_reflection = event_reflections[hkl]
+    print("\tBeginning graft...")
+    new_reflections = {}
+    for hkl in event_reflections:
+        event_reflection = event_reflections[hkl]
 
-            asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
-            initial_reflection: Reflection = initial_reflections[asu_hkl]
+        asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
+        initial_reflection: Reflection = initial_reflections[asu_hkl]
 
-            new_reflection = Reflection(hkl, initial_reflection.data)
+        new_reflection = Reflection(hkl, initial_reflection.data)
 
-            new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
-            new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
+        new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
+        new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
 
-            new_reflections[hkl] = new_reflection
-
-    except Exception as e:
-        print(e)
+        new_reflections[hkl] = new_reflection
 
     new_array = Reflections(new_reflections).to_array()
+    print("Shape of new array is {}".format(new_array.shape))
 
     initial_mtz.spacegroup = event_mtz.spacegroup
     initial_mtz.set_data(new_array)
