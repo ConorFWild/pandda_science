@@ -390,30 +390,32 @@ def phase_graft(initial_mtz_path,
 
     print("\tBeginning graft...")
     new_reflections = {}
-    for hkl in event_reflections:
-        event_reflection = event_reflections[hkl]
+    try:
+        for hkl in event_reflections:
+            event_reflection = event_reflections[hkl]
 
-        asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
-        initial_reflection: Reflection = initial_reflections[asu_hkl]
+            asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
+            initial_reflection: Reflection = initial_reflections[asu_hkl]
 
-        new_reflection = Reflection(hkl, initial_reflection.data)
+            new_reflection = Reflection(hkl, initial_reflection.data)
 
-        new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
-        new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
+            new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
+            new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
 
-        new_reflections[hkl] = new_reflection
+            new_reflections[hkl] = new_reflection
 
-    print("\tFinished iterating reflections")
+        print("\tFinished iterating reflections")
 
-    new_array = Reflections(new_reflections).to_array()
-    print("\tShape of new array is {}".format(new_array.shape))
+        new_array = Reflections(new_reflections).to_array()
+        print("\tShape of new array is {}".format(new_array.shape))
 
-    initial_mtz.spacegroup = event_mtz.spacegroup
-    initial_mtz.set_data(new_array)
+        initial_mtz.spacegroup = event_mtz.spacegroup
+        initial_mtz.set_data(new_array)
 
-    print("\tWriting new reflections to {}".format(str(out_path)))
-    initial_mtz.write_to_file(str(out_path))
-
+        print("\tWriting new reflections to {}".format(str(out_path)))
+        initial_mtz.write_to_file(str(out_path))
+    except Exception as e:
+        print(e)
 
 def phase_graft_dep(initial_mtz_path,
                     event_mtz_path,
