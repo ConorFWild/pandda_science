@@ -173,6 +173,9 @@ class ReferenceStructures:
     def __len__(self):
         return len(self.structures)
 
+    def __getitem__(self, item):
+        return self.structures[item]
+
 class Distance:
     def __init__(self):
         pass
@@ -281,7 +284,7 @@ class RMSDs:
         print(len(autobuilt_structures.structures))
 
         for dtag in reference_structures.structures:
-            if dtag in autobuilt_structures.structures:
+            if dtag.dtag in [other_dtag.dtag for other_dtag in autobuilt_structures.structures]:
 
                 autobuilt_structure = autobuilt_structures[dtag]
                 reference_structure = reference_structures[dtag]
