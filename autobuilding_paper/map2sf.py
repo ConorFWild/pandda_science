@@ -45,7 +45,7 @@ def main():
     # data = sf.prepare_asu_data(dmin=RESOLUTION_LIMIT)
     data = sf
 
-    mtz = gemmi.Mtz(with_base=True)
+    mtz = gemmi.Mtz()
     mtz.spacegroup = sf.spacegroup
     mtz.set_cell_for_all(sf.unit_cell)
     mtz.add_dataset('unknown')
