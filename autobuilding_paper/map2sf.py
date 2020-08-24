@@ -53,3 +53,6 @@ def main():
     mtz.add_column('PHWT', 'P')
     mtz.set_data(data)
     mtz.write_to_file(str(config.mtz_out))
+
+if __name__ == "__main__":
+    main()
