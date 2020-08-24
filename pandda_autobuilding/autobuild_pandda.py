@@ -372,9 +372,9 @@ def phase_graft(initial_mtz_path,
     event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
 
     initial_mtz_data = np.array(initial_mtz, copy=False)
-    print("Shape of initial array is {}".format(initial_mtz_data.shape))
+    print("\tShape of initial array is {}".format(initial_mtz_data.shape))
     event_mtz_data = np.array(event_mtz, copy=False)
-    print("Shape of event array is {}".format(event_mtz_data.shape))
+    print("\tShape of event array is {}".format(event_mtz_data.shape))
 
     initial_reflections: Reflections = Reflections.from_array(initial_mtz_data)
     event_reflections: Reflections = Reflections.from_array(event_mtz_data)
@@ -403,8 +403,10 @@ def phase_graft(initial_mtz_path,
 
         new_reflections[hkl] = new_reflection
 
+    print("\tFinished iterating reflections")
+
     new_array = Reflections(new_reflections).to_array()
-    print("Shape of new array is {}".format(new_array.shape))
+    print("\tShape of new array is {}".format(new_array.shape))
 
     initial_mtz.spacegroup = event_mtz.spacegroup
     initial_mtz.set_data(new_array)
