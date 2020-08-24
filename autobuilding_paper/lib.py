@@ -277,12 +277,13 @@ class RMSDs:
     def from_structures(reference_structures: ReferenceStructures, autobuilt_structures: AutobuiltStructures):
         rmsds = {}
 
-        print(reference_structures)
-        print(autobuilt_structures)
+        print(len(reference_structures.structures))
+        print(len(autobuilt_structures.structures))
 
         for dtag, autobuilt_structure, reference_structure in CommonKeyIterator(autobuilt_structures.structures,
                                                                                 reference_structures.structures,
                                                                                 ):
+            print("\t\t\tGetting rmsd for dtag: {}".format(dtag))
             autobuild_ligand = LigandResidues.from_structure(autobuilt_structure)
             reference_ligand = LigandResidues.from_structure(reference_structure)
 
