@@ -21,6 +21,6 @@ class AutobuildRMSDTable:
         distances = RMSDs.from_structures(reference_structures, autobuilt_structures)
         print("\t\tGot {} distances".format(len(distances)))
 
-        table = pd.DataFrame(distances.distances)
+        table = pd.DataFrame([{"dtag": dtag.dtag, "distance": rmsd.rmsd} for dtag, rmsd in distances.distances.items()])
 
         return AutobuildRMSDTable(table)
