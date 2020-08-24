@@ -415,7 +415,7 @@ def phase_graft(initial_mtz_path,
         print("\tWriting new reflections to {}".format(str(out_path)))
         initial_mtz.write_to_file(str(out_path))
     except Exception as e:
-        print(e)
+        print("\t\tEXCEPTION: {}".format(e))
 
 def phase_graft_dep(initial_mtz_path,
                     event_mtz_path,
