@@ -430,6 +430,11 @@ def phase_graft(initial_mtz_path,
         new_array = Reflections(new_reflections).to_array()
         print("\tShape of new array is {}".format(new_array.shape))
 
+        print(initial_mtz_data[:5,:5])
+        print(event_mtz_data[:5,:])
+        print(new_array[:5,:5])
+        exit()
+
         initial_mtz.spacegroup = event_mtz.spacegroup
         initial_mtz.set_data(new_array)
 
