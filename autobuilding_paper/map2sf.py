@@ -46,6 +46,7 @@ def main():
     data = sf
 
     mtz = gemmi.Mtz()
+    print(dir(mtz))
     mtz.spacegroup = sf.spacegroup
     mtz.set_cell_for_all(sf.unit_cell)
     mtz.add_dataset('unknown')
