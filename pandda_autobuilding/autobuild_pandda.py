@@ -306,6 +306,14 @@ class HKL:
                    hkl_list[1],
                    hkl_list[2],
                    )
+    
+    def is_000(self):
+        if self.h == 0:
+            if self.k == 0:
+                if self.l == 0:
+                    return True
+
+        return False
 
 
 @dataclasses.dataclass()
@@ -396,6 +404,8 @@ def phase_graft(initial_mtz_path,
 
             asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
             print("\t\tasu reflection is {}".format(asu_hkl))
+            if asu_hkl.is_000():
+                continue
             initial_reflection: Reflection = initial_reflections[asu_hkl]
 
             new_reflection = Reflection(hkl, initial_reflection.data)
