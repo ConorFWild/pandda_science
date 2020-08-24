@@ -300,6 +300,13 @@ class HKL:
     def to_list(self):
         return [self.h, self.k, self.l]
 
+    @staticmethod
+    def from_list(hkl_list):
+        return HKL(hkl_list[0],
+                   hkl_list[1],
+                   hkl_list[2],
+                   )
+
 
 @dataclasses.dataclass()
 class Reflection:
@@ -385,7 +392,7 @@ def phase_graft(initial_mtz_path,
         for hkl in event_reflections:
             event_reflection = event_reflections[hkl]
 
-            asu_hkl = initial_asu.to_asu(hkl.to_list(), operations, )
+            asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
             initial_reflection: Reflection = initial_reflections[asu_hkl]
 
             new_reflection = Reflection(hkl, initial_reflection.data)
