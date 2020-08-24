@@ -42,8 +42,8 @@ def main():
     m = gemmi.read_ccp4_map(str(config.xmap_in))
     # m.setup()
     sf = gemmi.transform_map_to_f_phi(m.grid, half_l=True)
-    # data = sf.prepare_asu_data(dmin=RESOLUTION_LIMIT)
-    data = sf
+    # data = sf
+    data = sf.prepare_asu_data()
 
     # mtz = gemmi.Mtz(with_base=True)
     mtz = gemmi.Mtz()
