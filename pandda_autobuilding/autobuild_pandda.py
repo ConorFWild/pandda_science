@@ -356,6 +356,11 @@ def phase_graft(initial_mtz_path,
                 event_mtz_path,
                 out_path,
                 ):
+    print("\tGrafting phases from {} to {}".format(str(event_mtz_path),
+                                                   str(initial_mtz_path),
+                                                   ),
+          )
+
     initial_mtz = gemmi.read_mtz_file(str(initial_mtz_path))
     event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
 
@@ -374,6 +379,7 @@ def phase_graft(initial_mtz_path,
     initial_mtz_phwt_index = initial_mtz.column_labels().index("PHWT")
     event_mtz_phwt_index = event_mtz.column_labels().index("PHWT")
 
+    print("\tBeginning graft...")
     new_reflections = {}
     for hkl in event_reflections:
         event_reflection = event_reflections[hkl]
@@ -393,6 +399,7 @@ def phase_graft(initial_mtz_path,
     initial_mtz.spacegroup = event_mtz.spacegroup
     initial_mtz.set_data(new_array)
 
+    print("\tWriting new reflections to {}".format(str(out_path)))
     initial_mtz.write_to_file(str(out_path))
 
 
