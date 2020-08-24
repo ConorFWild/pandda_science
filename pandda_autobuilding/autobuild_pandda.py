@@ -377,7 +377,9 @@ def phase_graft(initial_mtz_path,
           )
 
     initial_mtz = gemmi.read_mtz_file(str(initial_mtz_path))
+    print("\tInitial mtz spacegroup: {}".format(initial_mtz.spacegroup))
     event_mtz = gemmi.read_mtz_file(str(event_mtz_path))
+    print("\tEvent mtz spacegroup: {}".format(event_mtz.spacegroup))
 
     initial_mtz_data = np.array(initial_mtz, copy=False)
     print("\tShape of initial array is {}".format(initial_mtz_data.shape))
