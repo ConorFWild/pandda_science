@@ -395,6 +395,7 @@ def phase_graft(initial_mtz_path,
             event_reflection = event_reflections[hkl]
 
             asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
+            print("\t\tasu reflection is {}".format(asu_hkl))
             initial_reflection: Reflection = initial_reflections[asu_hkl]
 
             new_reflection = Reflection(hkl, initial_reflection.data)
