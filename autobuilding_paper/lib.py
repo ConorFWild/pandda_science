@@ -274,14 +274,15 @@ class RMSDs:
         return len(self.distances)
 
     @staticmethod
-    def from_structures(reference_structures, autobuilt_structures):
+    def from_structures(reference_structures: ReferenceStructures, autobuilt_structures: AutobuiltStructures):
         rmsds = {}
 
         print(reference_structures)
         print(autobuilt_structures)
 
-        for dtag, autobuilt_structure, reference_structure in CommonKeyIterator(autobuilt_structures,
-                                                                                reference_structures):
+        for dtag, autobuilt_structure, reference_structure in CommonKeyIterator(autobuilt_structures.structures,
+                                                                                reference_structures.structures,
+                                                                                ):
             autobuild_ligand = LigandResidues.from_structure(autobuilt_structure)
             reference_ligand = LigandResidues.from_structure(reference_structure)
 
