@@ -43,6 +43,7 @@ def main():
     # m.setup()
     sf = gemmi.transform_map_to_f_phi(m.grid, half_l=True)
     # data = sf
+    print(dir(sf))
     data = sf.prepare_asu_data()
 
     # mtz = gemmi.Mtz(with_base=True)
