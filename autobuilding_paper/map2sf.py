@@ -46,6 +46,9 @@ def main():
 
     m.setup()
     print(m.grid.spacegroup)
+
+    m.grid.spacegroup = gemmi.find_spacegroup_by_name('P1')
+    print(m.grid.spacegroup)
     sf = gemmi.transform_map_to_f_phi(m.grid, half_l=True)
     print(sf.spacegroup)
     # data = sf
