@@ -449,9 +449,12 @@ def phase_graft(initial_mtz_path,
         # new_reflection.data[initial_mtz_phdelwt_index - 3] = 0.0
         #
         # new_reflection.data[initial_mtz_sigf_index - 3] = 0.0
+
         event_reflection = event_reflections[hkl]
 
         asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
+        if asu_hkl.is_000():
+            print("\t\t{}".format([hkl, asu_hkl]))
 
         data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
         new_reflection = Reflection(hkl, data)
