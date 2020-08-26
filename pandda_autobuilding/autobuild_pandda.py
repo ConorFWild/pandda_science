@@ -410,6 +410,8 @@ def phase_graft(initial_mtz_path,
     initial_mtz_delfwt_index = initial_mtz.column_labels().index("DELFWT")
     initial_mtz_phdelwt_index = initial_mtz.column_labels().index("PHDELWT")
 
+    initial_mtz_sigf_index = initial_mtz.column_labels().index("SIGF")
+
 
 
 
@@ -445,6 +447,8 @@ def phase_graft(initial_mtz_path,
         new_reflection.data[initial_mtz_phc_all_index - 3] = 0.0
         new_reflection.data[initial_mtz_delfwt_index - 3] = 0.0
         new_reflection.data[initial_mtz_phdelwt_index - 3] = 0.0
+
+        new_reflection.data[initial_mtz_sigf_index - 3] = 0.0
 
 
 
