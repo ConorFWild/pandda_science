@@ -426,6 +426,7 @@ def phase_graft(initial_mtz_path,
         new_reflection.data[initial_mtz_fo_index - 3] = 0.0
         new_reflection.data[initial_mtz_fc_index - 3] = 0.0
         new_reflection.data[initial_mtz_phc_index - 3] = 0.0
+        new_reflection.data[fom_index - 3] = 0.0
 
 
         new_reflections[hkl] = new_reflection
