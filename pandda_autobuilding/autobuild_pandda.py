@@ -400,44 +400,44 @@ def phase_graft(initial_mtz_path,
 
     print("\tBeginning graft...")
     new_reflections = {}
-    try:
-        for hkl in event_reflections:
-            event_reflection = event_reflections[hkl]
+    for hkl in event_reflections:
+        event_reflection = event_reflections[hkl]
 
-            asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
-            # print("\t\tasu reflection is {}".format(asu_hkl))
-            if asu_hkl.is_000():
-                print("\t\t\tReflection 000 {}".format(event_reflection))
-                data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
-                print("\t\t\t{}".format(data.shape))
-                new_reflection = Reflection(hkl, data)
+        asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
+        # print("\t\tasu reflection is {}".format(asu_hkl))
+        if asu_hkl.is_000():
+            print("\t\t\tReflection 000 {}".format(event_reflection))
+            data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
+            print("\t\t\t{}".format(data.shape))
+            new_reflection = Reflection(hkl, data)
 
-            else:
-                initial_reflection: Reflection = initial_reflections[asu_hkl]
+        else:
+            initial_reflection: Reflection = initial_reflections[asu_hkl]
 
-                new_reflection = Reflection(hkl, initial_reflection.data)
+            new_reflection = Reflection(hkl, initial_reflection.data)
 
-            # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
-            new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
-            new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
-            print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
+        # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
+        new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
+        new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
+        # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
 
+        new_reflections[hkl] = new_reflection
 
-            new_reflections[hkl] = new_reflection
+    print("\tFinished iterating reflections")
 
-        print("\tFinished iterating reflections")
+    new_array = Reflections(new_reflections).to_array()
+    print("\tShape of new array is {}".format(new_array.shape))
 
-        new_array = Reflections(new_reflections).to_array()
-        print("\tShape of new array is {}".format(new_array.shape))
+    initial_mtz.spacegroup = event_mtz.spacegroup
+    initial_mtz.set_data(new_array)
 
+    print([initial_mtz_fwt_index, initial_mtz_phwt_index, event_mtz_fwt_index, event_mtz_phwt_index])
+    print(np.array(initial_mtz)[:5,:5])
+    print(np.array(event_mtz)[:5,:5])
 
-        initial_mtz.spacegroup = event_mtz.spacegroup
-        initial_mtz.set_data(new_array)
+    print("\tWriting new reflections to {}".format(str(out_path)))
+    initial_mtz.write_to_file(str(out_path))
 
-        print("\tWriting new reflections to {}".format(str(out_path)))
-        initial_mtz.write_to_file(str(out_path))
-    except Exception as e:
-        print("\t\tEXCEPTION: {}".format(e))
 
 def phase_graft_dep(initial_mtz_path,
                     event_mtz_path,
