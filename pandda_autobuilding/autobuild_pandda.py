@@ -399,7 +399,7 @@ def phase_graft(initial_mtz_path,
     event_mtz_phwt_index = event_mtz.column_labels().index("PHWT")
 
     # fom_index = initial_mtz.column_labels().index("FOM")
-    
+    initial_mtz_fo_index = initial_mtz.column_labels().index("F")
 
     print("\tBeginning graft...")
     new_reflections = {}
@@ -421,8 +421,7 @@ def phase_graft(initial_mtz_path,
 
         new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
         new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
-
-
+        new_reflection.data[initial_mtz_fo_index - 3] = 0.0
 
         new_reflections[hkl] = new_reflection
 
