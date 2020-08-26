@@ -435,9 +435,9 @@ def phase_graft(initial_mtz_path,
     np.core.arrayprint._line_width = 240
     print([initial_mtz_fwt_index, initial_mtz_phwt_index, event_mtz_fwt_index, event_mtz_phwt_index])
     print(new_array.shape)
-    print(new_array[-1:-5,:])
-    print(np.array(initial_mtz)[-1:-5,:])
-    print(np.array(event_mtz)[-1:-5,:])
+    print(new_array[-5:-1,:])
+    print(np.array(initial_mtz)[-5:-1,:])
+    print(np.array(event_mtz)[-5:-1,:])
 
     print("\tWriting new reflections to {}".format(str(out_path)))
     initial_mtz.write_to_file(str(out_path))
