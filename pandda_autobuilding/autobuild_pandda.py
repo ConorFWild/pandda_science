@@ -403,8 +403,14 @@ def phase_graft(initial_mtz_path,
     initial_mtz_fc_index = initial_mtz.column_labels().index("FC")
     initial_mtz_phc_index = initial_mtz.column_labels().index("PHIC")
     initial_mtz_r_index = initial_mtz.column_labels().index("FreeR_flag")
-    # FC_ALL_LS
-    # PHIC_ALL_LS
+    initial_mtz_ls_fc_all_index = initial_mtz.column_labels().index("FC_ALL_LS")
+    initial_mtz_ls_phc_all_index = initial_mtz.column_labels().index("PHIC_ALL_LS")
+    initial_mtz_fc_all_index = initial_mtz.column_labels().index("FC_ALL")
+    initial_mtz_phc_all_index = initial_mtz.column_labels().index("PHIC_ALL")
+    initial_mtz_delfwt_index = initial_mtz.column_labels().index("DELFWT")
+    initial_mtz_phdelwt_index = initial_mtz.column_labels().index("PHDELWT")
+
+
 
 
     print("\tBeginning graft...")
@@ -432,6 +438,13 @@ def phase_graft(initial_mtz_path,
         new_reflection.data[initial_mtz_phc_index - 3] = 0.0
         new_reflection.data[fom_index - 3] = 0.0
         new_reflection.data[initial_mtz_r_index - 3] = 0.0
+
+        new_reflection.data[initial_mtz_ls_fc_all_index - 3] = 0.0
+        new_reflection.data[initial_mtz_ls_phc_all_index - 3] = 0.0
+        new_reflection.data[initial_mtz_fc_all_index - 3] = 0.0
+        new_reflection.data[initial_mtz_phc_all_index - 3] = 0.0
+        new_reflection.data[initial_mtz_delfwt_index - 3] = 0.0
+        new_reflection.data[initial_mtz_phdelwt_index - 3] = 0.0
 
 
 
