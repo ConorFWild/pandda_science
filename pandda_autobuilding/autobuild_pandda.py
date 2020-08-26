@@ -442,6 +442,12 @@ def phase_graft(initial_mtz_path,
     print("\tWriting new reflections to {}".format(str(out_path)))
     initial_mtz.write_to_file(str(out_path))
 
+    initial_mtz_file = gemmi.read_mtz_file(str(out_path))
+    initial_mtz_array = np.array(initial_mtz_file, copy=False)
+    print(np.array(initial_mtz_array)[-5:-1,:])
+
+
+
 
 def phase_graft_dep(initial_mtz_path,
                     event_mtz_path,
