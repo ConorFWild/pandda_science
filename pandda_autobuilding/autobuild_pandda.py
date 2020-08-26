@@ -418,39 +418,46 @@ def phase_graft(initial_mtz_path,
     print("\tBeginning graft...")
     new_reflections = {}
     for hkl in event_reflections:
+        # event_reflection = event_reflections[hkl]
+        #
+        # asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
+        # # print("\t\tasu reflection is {}".format(asu_hkl))
+        # if asu_hkl.is_000():
+        #     # print("\t\t\tReflection 000 {}".format(event_reflection))
+        #     data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
+        #     # print("\t\t\t{}".format(data.shape))
+        #     new_reflection = Reflection(hkl, data)
+        #
+        # else:
+        #         initial_reflection: Reflection = initial_reflections[asu_hkl]
+        #
+        #         new_reflection = Reflection(hkl, initial_reflection.data)
+        #
+        # new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
+        # new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
+        # new_reflection.data[initial_mtz_fo_index - 3] = 0.0
+        # new_reflection.data[initial_mtz_fc_index - 3] = 0.0
+        # new_reflection.data[initial_mtz_phc_index - 3] = 0.0
+        # new_reflection.data[fom_index - 3] = 0.0
+        # new_reflection.data[initial_mtz_r_index - 3] = 0.0
+        #
+        # new_reflection.data[initial_mtz_ls_fc_all_index - 3] = 0.0
+        # new_reflection.data[initial_mtz_ls_phc_all_index - 3] = 0.0
+        # new_reflection.data[initial_mtz_fc_all_index - 3] = 0.0
+        # new_reflection.data[initial_mtz_phc_all_index - 3] = 0.0
+        # new_reflection.data[initial_mtz_delfwt_index - 3] = 0.0
+        # new_reflection.data[initial_mtz_phdelwt_index - 3] = 0.0
+        #
+        # new_reflection.data[initial_mtz_sigf_index - 3] = 0.0
         event_reflection = event_reflections[hkl]
 
         asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
-        # print("\t\tasu reflection is {}".format(asu_hkl))
-        if asu_hkl.is_000():
-            # print("\t\t\tReflection 000 {}".format(event_reflection))
-            data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
-            # print("\t\t\t{}".format(data.shape))
-            new_reflection = Reflection(hkl, data)
 
-        else:
-                initial_reflection: Reflection = initial_reflections[asu_hkl]
-
-                new_reflection = Reflection(hkl, initial_reflection.data)
+        data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
+        new_reflection = Reflection(hkl, data)
 
         new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
         new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
-        new_reflection.data[initial_mtz_fo_index - 3] = 0.0
-        new_reflection.data[initial_mtz_fc_index - 3] = 0.0
-        new_reflection.data[initial_mtz_phc_index - 3] = 0.0
-        new_reflection.data[fom_index - 3] = 0.0
-        new_reflection.data[initial_mtz_r_index - 3] = 0.0
-
-        new_reflection.data[initial_mtz_ls_fc_all_index - 3] = 0.0
-        new_reflection.data[initial_mtz_ls_phc_all_index - 3] = 0.0
-        new_reflection.data[initial_mtz_fc_all_index - 3] = 0.0
-        new_reflection.data[initial_mtz_phc_all_index - 3] = 0.0
-        new_reflection.data[initial_mtz_delfwt_index - 3] = 0.0
-        new_reflection.data[initial_mtz_phdelwt_index - 3] = 0.0
-
-        new_reflection.data[initial_mtz_sigf_index - 3] = 0.0
-
-
 
 
         new_reflections[hkl] = new_reflection
