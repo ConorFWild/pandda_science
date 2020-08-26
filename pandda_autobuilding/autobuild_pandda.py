@@ -419,7 +419,7 @@ def phase_graft(initial_mtz_path,
         # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
         new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
         new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
-        print([new_reflection.data[initial_mtz_fwt_index - 3], event_reflection.data[event_mtz_fwt_index - 3]])
+        print([hkl, asu_hkl, new_reflection.data[initial_mtz_fwt_index - 3], event_reflection.data[event_mtz_fwt_index - 3]])
         # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
 
         new_reflections[hkl] = new_reflection
@@ -435,9 +435,9 @@ def phase_graft(initial_mtz_path,
     np.core.arrayprint._line_width = 160
     print([initial_mtz_fwt_index, initial_mtz_phwt_index, event_mtz_fwt_index, event_mtz_phwt_index])
     print(new_array.shape)
-    print(new_array[:5,:])
-    print(np.array(initial_mtz)[:5,:])
-    print(np.array(event_mtz)[:5,:])
+    print(new_array[:-5,:])
+    print(np.array(initial_mtz)[:-5,:])
+    print(np.array(event_mtz)[:-5,:])
 
     print("\tWriting new reflections to {}".format(str(out_path)))
     initial_mtz.write_to_file(str(out_path))
