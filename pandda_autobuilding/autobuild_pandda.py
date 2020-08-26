@@ -398,6 +398,9 @@ def phase_graft(initial_mtz_path,
     initial_mtz_phwt_index = initial_mtz.column_labels().index("PHWT")
     event_mtz_phwt_index = event_mtz.column_labels().index("PHWT")
 
+    # fom_index = initial_mtz.column_labels().index("FOM")
+    
+
     print("\tBeginning graft...")
     new_reflections = {}
     for hkl in event_reflections:
@@ -405,22 +408,21 @@ def phase_graft(initial_mtz_path,
 
         asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
         # print("\t\tasu reflection is {}".format(asu_hkl))
-        # if asu_hkl.is_000():
-        # print("\t\t\tReflection 000 {}".format(event_reflection))
-        data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
-        # print("\t\t\t{}".format(data.shape))
-        new_reflection = Reflection(hkl, data)
+        if asu_hkl.is_000():
+            # print("\t\t\tReflection 000 {}".format(event_reflection))
+            data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
+            # print("\t\t\t{}".format(data.shape))
+            new_reflection = Reflection(hkl, data)
 
-        # else:
-        #     initial_reflection: Reflection = initial_reflections[asu_hkl]
-        #
-        #     new_reflection = Reflection(hkl, initial_reflection.data)
+        else:
+                initial_reflection: Reflection = initial_reflections[asu_hkl]
 
-        # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
+                new_reflection = Reflection(hkl, initial_reflection.data)
+
         new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
         new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
-        # print([hkl, asu_hkl, new_reflection.data[initial_mtz_fwt_index - 3], event_reflection.data[event_mtz_fwt_index - 3]])
-        # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
+
+
 
         new_reflections[hkl] = new_reflection
 
