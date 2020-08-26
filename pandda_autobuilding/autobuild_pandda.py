@@ -406,9 +406,9 @@ def phase_graft(initial_mtz_path,
         asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
         # print("\t\tasu reflection is {}".format(asu_hkl))
         # if asu_hkl.is_000():
-        print("\t\t\tReflection 000 {}".format(event_reflection))
+        # print("\t\t\tReflection 000 {}".format(event_reflection))
         data = np.zeros(len(list(initial_reflections.reflections.values())[0].data))
-        print("\t\t\t{}".format(data.shape))
+        # print("\t\t\t{}".format(data.shape))
         new_reflection = Reflection(hkl, data)
 
         # else:
@@ -419,7 +419,7 @@ def phase_graft(initial_mtz_path,
         # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
         new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
         new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
-        print([hkl, asu_hkl, new_reflection.data[initial_mtz_fwt_index - 3], event_reflection.data[event_mtz_fwt_index - 3]])
+        # print([hkl, asu_hkl, new_reflection.data[initial_mtz_fwt_index - 3], event_reflection.data[event_mtz_fwt_index - 3]])
         # print("\t\t\t{}".format(new_reflection.data[initial_mtz_fwt_index - 3]))
 
         new_reflections[hkl] = new_reflection
@@ -427,24 +427,24 @@ def phase_graft(initial_mtz_path,
     print("\tFinished iterating reflections")
 
     new_array = Reflections(new_reflections).to_array()
-    print("\tShape of new array is {}".format(new_array.shape))
+    # print("\tShape of new array is {}".format(new_array.shape))
 
     initial_mtz.spacegroup = event_mtz.spacegroup
     initial_mtz.set_data(new_array)
 
     np.core.arrayprint._line_width = 240
-    print([initial_mtz_fwt_index, initial_mtz_phwt_index, event_mtz_fwt_index, event_mtz_phwt_index])
-    print(new_array.shape)
-    print(new_array[-5:-1,:])
-    print(np.array(initial_mtz)[-5:-1,:])
-    print(np.array(event_mtz)[-5:-1,:])
+    # print([initial_mtz_fwt_index, initial_mtz_phwt_index, event_mtz_fwt_index, event_mtz_phwt_index])
+    # print(new_array.shape)
+    # print(new_array[-5:-1,:])
+    # print(np.array(initial_mtz)[-5:-1,:])
+    # print(np.array(event_mtz)[-5:-1,:])
 
     print("\tWriting new reflections to {}".format(str(out_path)))
     initial_mtz.write_to_file(str(out_path))
 
-    initial_mtz_file = gemmi.read_mtz_file(str(out_path))
-    initial_mtz_array = np.array(initial_mtz_file, copy=False)
-    print(np.array(initial_mtz_array)[-5:-1,:])
+    # initial_mtz_file = gemmi.read_mtz_file(str(out_path))
+    # initial_mtz_array = np.array(initial_mtz_file, copy=False)
+    # print(np.array(initial_mtz_array)[-5:-1,:])
 
 
 
