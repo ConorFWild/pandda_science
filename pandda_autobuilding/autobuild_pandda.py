@@ -1162,7 +1162,13 @@ def main():
     # print("\tAutobuilt {} events".format(len(autobuilding_results)))
     # for result in autobuilding_results: print("\t{} {} : RSCC: {}".format(result.dtag, result.event_idx, result.rscc))
 
-    build_results: typing.Dict[typing.Tuple[str, int], Builds] = {(event.dtag, event.event_idx): Builds.from_event(event) for event in events}
+    build_results: typing.Dict[typing.Tuple[str, int], Builds] = {}
+    for event in events:
+        try:
+            build_result = Builds.from_event(event)
+            build_results[(event.dtag, event.event_idx)] = build_result
+        except Exception as e:
+            continue
 
     print("Making autobuilding results table...")
     results_table = ResultsTable(build_results)
