@@ -412,9 +412,6 @@ def phase_graft(initial_mtz_path,
 
     initial_mtz_sigf_index = initial_mtz.column_labels().index("SIGF")
 
-
-
-
     print("\tBeginning graft...")
     new_reflections = {}
     for hkl in event_reflections:
@@ -429,9 +426,9 @@ def phase_graft(initial_mtz_path,
             new_reflection = Reflection(hkl, data)
 
         else:
-                initial_reflection: Reflection = initial_reflections[asu_hkl]
+            initial_reflection: Reflection = initial_reflections[asu_hkl]
 
-                new_reflection = Reflection(hkl, np.copy(initial_reflection.data))
+            new_reflection = Reflection(hkl, np.copy(initial_reflection.data))
 
         new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
         new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
@@ -466,7 +463,6 @@ def phase_graft(initial_mtz_path,
         # new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
         # new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
 
-
         new_reflections[hkl] = new_reflection
 
     print("\tFinished iterating reflections")
@@ -490,8 +486,6 @@ def phase_graft(initial_mtz_path,
     # initial_mtz_file = gemmi.read_mtz_file(str(out_path))
     # initial_mtz_array = np.array(initial_mtz_file, copy=False)
     # print(np.array(initial_mtz_array)[-5:-1,:])
-
-
 
 
 def phase_graft_dep(initial_mtz_path,
@@ -961,13 +955,13 @@ class AutobuildingResult:
 
 
 class ResultsTable:
-    def __init__(self, results):
+    def __init__(self, builds: typing.Dict[typing.Tuple[str, int], Builds]):
         records = []
-        for result in results:
+        for key, build in builds.items():
             record = {}
-            record["dtag"] = result.dtag
-            record["event_idx"] = result.event_idx
-            record["rscc"] = result.rscc
+            record["dtag"] = build.dtag
+            record["event_idx"] = build.event_idx
+            record["rscc"] = max(build.build_results.values())
 
             records.append(record)
 
@@ -1024,14 +1018,17 @@ def save_event_model(event_model, path):
     event_model.write_pdb(str(path))
 
 
-def merge_model(event, fs):
+def merge_model(event, fs, build: Builds):
     # event_autobuilding_dir = event.pandda_event_dir / "autobuild_event_{}".format(event.event_idx)
     # event_ligandfit_dir = event_autobuilding_dir / "LigandFit_run_1_"
     # event_build_path = event_ligandfit_dir / "ligand_fit_1.pdb"
 
     event_autobuilding_dir = event.pandda_event_dir
     event_rhofit_dir = event_autobuilding_dir / "rhofit_{}".format(event.event_idx)
-    event_build_path = event_rhofit_dir / "best.pdb"
+    # event_build_path = event_rhofit_dir / "best.pdb"
+    event_build_path: Path = max(build.build_results.keys(),
+                                 key=lambda x: build.build_results[x],
+                                 )
 
     initial_model_path = event.pandda_event_dir / "{}-pandda-input.pdb".format(event.dtag)
 
@@ -1056,12 +1053,12 @@ def try_make(path):
 
 
 def merge_models(events,
-                 autobuilding_results,
+                 build_results: typing.Dict[typing.Tuple[str, int], Builds],
                  results_table,
                  fs,
                  overwrite=False,
                  ):
-    results_dict = {(result.dtag, result.event_idx): result for result in autobuilding_results}
+    results_dict = {(result.dtag, result.event_idx): result for result in build_results.values()}
 
     highest_rscc_events = get_highest_rscc_events(events,
                                                   results_table,
@@ -1073,7 +1070,7 @@ def merge_models(events,
         if results_dict[(event.dtag, event.event_idx)].rscc == 0.0:
             print("\tNo build for event! Skipping!")
             continue
-        final_model = merge_model(event, fs)
+        final_model = merge_model(event, fs, build_results[(event.dtag, event.event_idx)])
 
         pandda_inspect_model_dir = event.pandda_event_dir / "modelled_structures"
         try_make(pandda_inspect_model_dir)
@@ -1084,6 +1081,60 @@ def merge_models(events,
                              )
         else:
             print("\tAlready has a model, skipping!")
+
+
+# @dataclasses.dataclass()
+# class Build:
+#     build_results: typing.Dict[]
+
+
+@dataclasses.dataclass()
+class Builds:
+    dtag: str
+    event_idx: int
+    build_results: typing.Dict[Path, float]
+
+    @staticmethod
+    def from_event(event: Event):
+        dtag: str = event.dtag
+        event_idx: int = event.event_idx
+        event_dir: Path = event.pandda_event_dir
+
+        rhofit_rsccs: typing.Dict[Path, float] = Builds.parse_rhofit_results(event_dir, event_idx)
+
+        return Builds(dtag, event_idx, rhofit_rsccs)
+
+    @staticmethod
+    def parse_rhofit_results(event_dir: Path, event_idx: int):
+        rhotfit_dir: Path = event_dir / "rhofit_{}".format(event_idx)
+        rhofit_results_file: Path = rhotfit_dir / "results.txt"
+
+        regex = "(Hit_[^\s]+)[\s]+[^\s]+[\s]+[^\s]+[\s]+([^\s]+)"
+
+        with open(str(rhofit_results_file), "r") as f:
+            results_string = f.read()
+
+        rscc_matches = re.findall(regex,
+                                  results_string,
+                                  )
+
+        rsccs = {rhotfit_dir / str(match_tuple[0]): float(match_tuple[1]) for match_tuple in rscc_matches}
+
+        return rsccs
+
+
+# @dataclasses.dataclass()
+# class BuildResults:
+#     build_results: typing.Dict[typing.Tuple[str, str, str], BuildResult]
+#
+#     @staticmethod
+#     def from_events(events: typing.List[Event]):
+#         build_results = []
+#         for event in events:
+#             build_result = Builds.from_event(event)
+#             build_results.append(build_result)
+#
+#         build_results_dict = {{build_result.}}
 
 
 def main():
@@ -1105,19 +1156,21 @@ def main():
     print("\tGot models of {} events".format(len(events)))
 
     print("Autobuilding...")
-    autobuilding_results = map_parallel(autobuild_event,
-                                        events,
-                                        )
-    print("\tAutobuilt {} events".format(len(autobuilding_results)))
-    for result in autobuilding_results: print("\t{} {} : RSCC: {}".format(result.dtag, result.event_idx, result.rscc))
+    # autobuilding_results = map_parallel(autobuild_event,
+    #                                     events,
+    #                                     )
+    # print("\tAutobuilt {} events".format(len(autobuilding_results)))
+    # for result in autobuilding_results: print("\t{} {} : RSCC: {}".format(result.dtag, result.event_idx, result.rscc))
+
+    build_results: typing.Dict[typing.Tuple[str, int], Builds] = {(event.dtag, event.event_idx): Builds.from_event(event) for event in events}
 
     print("Making autobuilding results table...")
-    results_table = ResultsTable(autobuilding_results)
+    results_table = ResultsTable(build_results)
     print("\tMade autobuilding resutls table")
 
     print("Merging best models")
     merge_models(events,
-                 autobuilding_results,
+                 build_results,
                  results_table.table,
                  fs,
                  overwrite=config.overwrite,
