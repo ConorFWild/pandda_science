@@ -1093,6 +1093,7 @@ class Builds:
     dtag: str
     event_idx: int
     build_results: typing.Dict[Path, float]
+    rscc: float
 
     @staticmethod
     def from_event(event: Event):
@@ -1102,7 +1103,9 @@ class Builds:
 
         rhofit_rsccs: typing.Dict[Path, float] = Builds.parse_rhofit_results(event_dir, event_idx)
 
-        return Builds(dtag, event_idx, rhofit_rsccs)
+        rscc = max(rhofit_rsccs.values())
+
+        return Builds(dtag, event_idx, rhofit_rsccs, rscc)
 
     @staticmethod
     def parse_rhofit_results(event_dir: Path, event_idx: int):
