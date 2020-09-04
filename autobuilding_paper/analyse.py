@@ -95,19 +95,20 @@ def main():
         # logs.LOG[pandda_id]["ligand_rmsds"] = ligand_rmsds
 
         # Ranking
-        references = ReferenceStructures.from_dir(pandda_dir)
-        naive_ranking = PanDDARanking.from_pandda_dir(pandda_dir)
-        autobuilding_ranking = PanDDARanking.from_autobuild_rscc(autobuilding_table[pandda_id])
-        naive_enritchment = Enritchment.from_ranking(naive_ranking,
-                                                     references,
-                                                     )
-        autobuilding_enritchment = Enritchment.from_ranking(autobuilding_ranking,
-                                                        references,
-                                                        )
-        logs.LOG[pandda_id]["naive"] = naive_enritchment.enritchment
-        logs.LOG[pandda_id]["autobuilding"] = autobuilding_enritchment.enritchment
-
-        printer.pprint(logs.LOG.dict)
+        printer.pprint("# Analysing ranking")
+        # references = ReferenceStructures.from_dir(pandda_dir)
+        # naive_ranking = PanDDARanking.from_pandda_dir(pandda_dir)
+        # autobuilding_ranking = PanDDARanking.from_autobuild_rscc(autobuilding_table[pandda_id])
+        # naive_enritchment = Enritchment.from_ranking(naive_ranking,
+        #                                              references,
+        #                                              )
+        # autobuilding_enritchment = Enritchment.from_ranking(autobuilding_ranking,
+        #                                                 references,
+        #                                                 )
+        # logs.LOG[pandda_id]["naive"] = naive_enritchment.enritchment
+        # logs.LOG[pandda_id]["autobuilding"] = autobuilding_enritchment.enritchment
+        #
+        # printer.pprint(logs.LOG.dict)
         # except Exception as e:
         #     printer.pprint(e)
 
