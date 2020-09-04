@@ -77,40 +77,44 @@ def main():
 
     results = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():
-        printer.pprint("##### Analysing {} #####".format(pandda_id))
-        # try:
-        logs.LOG[pandda_id] = {}
-        pandda_dir = Path(pandda_info.out_dir)
+        try:
+            printer.pprint("##### Analysing {} #####".format(pandda_id))
+            # try:
+            logs.LOG[pandda_id] = {}
+            pandda_dir = Path(pandda_info.out_dir)
 
-        # Closest event: how good is PanDDA2
-        printer.pprint("# Analysing event distances")
-        dataset_events = PanDDAEventDistances.from_dir(pandda_dir)
-        printer.pprint(dataset_events.distances)
-        # logs.LOG[pandda_id]["event_distances"] = dataset_events
+            # Closest event: how good is PanDDA2
+            printer.pprint("# Analysing event distances")
+            dataset_events = PanDDAEventDistances.from_dir(pandda_dir)
+            printer.pprint(dataset_events.distances)
+            # logs.LOG[pandda_id]["event_distances"] = dataset_events
 
-        # Ligand RMSD: how good is autobuilding
-        printer.pprint("# Analysing ligand rmsds")
-        ligand_rmsds = AutobuildRMSDTable.from_directory(pandda_dir)
-        printer.pprint(ligand_rmsds.table)
-        # logs.LOG[pandda_id]["ligand_rmsds"] = ligand_rmsds
+            # Ligand RMSD: how good is autobuilding
+            printer.pprint("# Analysing ligand rmsds")
+            ligand_rmsds = AutobuildRMSDTable.from_directory(pandda_dir)
+            printer.pprint(ligand_rmsds.table)
+            # logs.LOG[pandda_id]["ligand_rmsds"] = ligand_rmsds
 
-        # Ranking
-        printer.pprint("# Analysing ranking")
-        # references = ReferenceStructures.from_dir(pandda_dir)
-        # naive_ranking = PanDDARanking.from_pandda_dir(pandda_dir)
-        # autobuilding_ranking = PanDDARanking.from_autobuild_rscc(autobuilding_table[pandda_id])
-        # naive_enritchment = Enritchment.from_ranking(naive_ranking,
-        #                                              references,
-        #                                              )
-        # autobuilding_enritchment = Enritchment.from_ranking(autobuilding_ranking,
-        #                                                 references,
-        #                                                 )
-        # logs.LOG[pandda_id]["naive"] = naive_enritchment.enritchment
-        # logs.LOG[pandda_id]["autobuilding"] = autobuilding_enritchment.enritchment
-        #
-        # printer.pprint(logs.LOG.dict)
-        # except Exception as e:
-        #     printer.pprint(e)
+            # Ranking
+            printer.pprint("# Analysing ranking")
+            # references = ReferenceStructures.from_dir(pandda_dir)
+            # naive_ranking = PanDDARanking.from_pandda_dir(pandda_dir)
+            # autobuilding_ranking = PanDDARanking.from_autobuild_rscc(autobuilding_table[pandda_id])
+            # naive_enritchment = Enritchment.from_ranking(naive_ranking,
+            #                                              references,
+            #                                              )
+            # autobuilding_enritchment = Enritchment.from_ranking(autobuilding_ranking,
+            #                                                 references,
+            #                                                 )
+            # logs.LOG[pandda_id]["naive"] = naive_enritchment.enritchment
+            # logs.LOG[pandda_id]["autobuilding"] = autobuilding_enritchment.enritchment
+            #
+            # printer.pprint(logs.LOG.dict)
+            # except Exception as e:
+            #     printer.pprint(e)
+
+        except Exception as e:
+            print("# EXCEPTION: {}".format(e))
 
     to_json(results,
             config.autobuild_file,
