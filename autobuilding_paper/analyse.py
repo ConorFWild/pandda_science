@@ -89,6 +89,10 @@ def main():
             printer.pprint(dataset_events.distances)
             # logs.LOG[pandda_id]["event_distances"] = dataset_events
 
+            # RSCCs
+            printer.pprint("# Analysing ligand rsccs")
+            printer.pprint(autobuilding_table[pandda_id])
+
             # Ligand RMSD: how good is autobuilding
             printer.pprint("# Analysing ligand rmsds")
             ligand_rmsds = AutobuildRMSDTable.from_directory(pandda_dir)
