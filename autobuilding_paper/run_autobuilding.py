@@ -134,13 +134,14 @@ def main():
 
     autobuilds = {}
     for pandda_id, pandda_info in pandda_table.to_dict().items():
+        print("\tRunning autobuild: {}".format(pandda_id))
         logs.LOG[pandda_id] = {}
         logs.LOG[pandda_id]["started"] = True
         logs.LOG[pandda_id]["pandda_info"] = pandda_info
 
         autobuilds[pandda_id] = {}
         autobuilds[pandda_id]["started"] = {}
-        printer.pprint(logs.LOG.dict)
+        # printer.pprint(logs.LOG.dict)
 
         pandda_dir = Path(pandda_info.out_dir)
 
@@ -151,7 +152,9 @@ def main():
 
         autobuilds[pandda_id]["result"] = result
 
-        printer.pprint(logs.LOG.dict)
+    printer.pprint(logs.LOG.dict)
+    printer.pprint(autobuilds)
+
 
     to_json(autobuilds,
             config.autobuild_file,
