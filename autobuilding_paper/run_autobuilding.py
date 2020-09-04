@@ -49,6 +49,7 @@ class Autobuild:
         self.process = process
 
     def poll(self):
+        self.process()
         if not self.is_finished():
             self.process()
         results = self.get_results()
