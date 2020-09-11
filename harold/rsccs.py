@@ -20,6 +20,7 @@ EVENT_MAP_FILE = "{dtag}-event_{event_idx}_1-BDC_{}_map.native.ccp4"
 FOFC_MAP_PATTERN = "fofc.map"
 TWOFOFC_MAP_PATTERN = "2fofc.map"
 EVENT_MAP_PATTERN = "[^\-]+\-[^\-]+\-event_[0-9]+_1\-BDC_[^_]+_map.native.ccp4"
+MTZ_PATTERN = "dimple.mtz"
 
 PHENIX_ENV = "module load phenix"
 PHENIX_MODEL_VS_MAP = "phenix.model_vs_map"
@@ -235,7 +236,7 @@ def main():
 
     print("Getting mtzs...")
     mtzs: MTZs = MTZs.from_dir(Path(MAPS_DIR),
-                               EVENT_MAP_PATTERN,
+                               MTZ_PATTERN,
                                )
     print("\tGot {} mtzs".format(len(mtzs.mtzs)))
 
