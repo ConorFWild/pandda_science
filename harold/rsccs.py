@@ -27,7 +27,7 @@ PHENIX_MODEL_VS_MAP = "phenix.model_vs_map"
 PHENIX_MAP_MODEL_CC = "phenix.map_model_cc"
 CC_PER_RESIDUE_LOG_FILE = "cc_per_residue.log"
 # CC_PER_RESIDUE_LOG_RSCC_PATTERN = "[a-zA-Z]+\s+LIG\s+[0-9]+\s([^\s]+)"
-CC_PER_RESIDUE_LOG_RSCC_PATTERN = "[a-zA-Z]+\s+[^\s]\s+1501\s([^\s]+)"
+CC_PER_RESIDUE_LOG_RSCC_PATTERN = "[a-zA-Z]+\s+[^\s]+\s+1501\s+([^\s]+)"
 
 @dataclass()
 class Dtag:
