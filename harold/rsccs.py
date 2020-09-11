@@ -42,7 +42,8 @@ class Dtag:
                         )
 
         first_match = matches[0]
-        dtag = first_match.group(1)
+        print(first_match)
+        dtag = first_match
         return Dtag(dtag)
 
 
