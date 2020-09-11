@@ -41,7 +41,7 @@ class Dtag:
                         string,
                         )
 
-        first_match = next(matches)
+        first_match = matches[0]
         dtag = first_match.group(1)
         return Dtag(dtag)
 
