@@ -118,7 +118,7 @@ class RSCC:
 
     @staticmethod
     def from_model_and_map(model: Path, xmap: Path, resolution: Resolution):
-        command = f"{PHENIX_ENV}; {PHENIX_MAP_MODEL_CC} {model} {xmap} resolution={resolution} cc_per_residue=True"
+        command = f"{PHENIX_ENV}; {PHENIX_MAP_MODEL_CC} {model} {xmap} resolution={resolution.resolution} cc_per_residue=True"
 
         process = Popen(command,
                         shell=True,
