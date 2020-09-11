@@ -56,7 +56,10 @@ class Models:
     @staticmethod
     def from_dir(directory: Path):
         models = {}
-        for model_path in directory.glob("*"):
+
+        model_paths = list(directory.glob("*"))
+        print("\tGot {} model paths".format(len(model_paths)))
+        for model_path in model_paths:
             dtag = Dtag.from_rscc_path(model_path)
             models[dtag] = model_path
 
@@ -78,7 +81,9 @@ class Maps:
     def from_dir(directory: Path, pattern: str):
 
         maps = {}
-        for dataset_path in directory.glob("*"):
+        dataset_dirs = list(directory.glob("*"))
+        print("\tGot {} model paths".format(len(dataset_dirs)))
+        for dataset_path in dataset_dirs:
             dtag = Dtag(dataset_path.name)
             for dataset_dir_file in dataset_path.glob("*"):
                 if re.match(pattern, str(dataset_dir_file)):
@@ -184,7 +189,10 @@ class MTZs:
     @staticmethod
     def from_dir(pandda_dir: Path, mtz_pattern: str):
         mtzs = {}
-        for dataset_dir in pandda_dir.glob("*"):
+        dataset_dirs = list(pandda_dir.glob("*"))
+        print("\tGot {} dataset dirs".format(len(dataset_dirs)))
+
+        for dataset_dir in dataset_dirs:
             dtag = Dtag(dataset_dir.name)
             dataset_dir_files = dataset_dir.glob("*")
             for dataset_dir_file in dataset_dir_files:
