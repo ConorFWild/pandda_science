@@ -36,15 +36,16 @@ class Dtag:
     def from_rscc_path(path: Path):
         pattern = "RSCC_([^\.]+)\.pdb"
         string = str(path)
-        print(string)
         matches = re.findall(pattern,
                         string,
                         )
 
         first_match = matches[0]
-        print(first_match)
         dtag = first_match
         return Dtag(dtag)
+
+    def __hash__(self):
+        return hash(self.dtag)
 
 
 @dataclass()
