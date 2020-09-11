@@ -226,15 +226,22 @@ class Resolution:
 
 
 def main():
+    print("Geting models...")
     models: Models = Models.from_dir(Path(MODELS_DIR))
+    print("\tGot {} models".format(len(models.models)))
+
+    print("Getting mtzs...")
     mtzs: MTZs = MTZs.from_dir(Path(MAPS_DIR),
                                EVENT_MAP_PATTERN,
                                )
+    print("\tGot {} mtzs".format(len(mtzs.mtzs)))
 
     # Event maps
+    print("Getting event maps...")
     maps: Maps = Maps.from_dir(Path(MAPS_DIR),
                                EVENT_MAP_PATTERN,
                                )
+    print("\tGot {} maps".format())
     rsccs_event_maps = RSCCs.from_models_and_maps(models,
                                                   maps,
                                                   mtzs,
