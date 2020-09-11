@@ -92,10 +92,11 @@ class Maps:
         for dataset_path in dataset_dirs:
             dtag = Dtag(dataset_path.name)
             for dataset_dir_file in dataset_path.glob("*"):
-                if re.match(pattern, str(dataset_dir_file)):
+                matches = re.findall(pattern,
+                                     str(dataset_dir_file))
+                if len(matches) != 0:
                     xmap_file = dataset_dir_file
                     maps[dtag] = xmap_file
-                    continue
 
         return Maps(maps)
 
@@ -203,7 +204,7 @@ class MTZs:
             dataset_dir_files = dataset_dir.glob("*")
             for dataset_dir_file in dataset_dir_files:
                 matches = re.findall(mtz_pattern, str(dataset_dir_file))
-                
+
                 if len(matches) != 0:
                     mtz_file = dataset_dir_file
                     mtzs[dtag] = mtz_file
