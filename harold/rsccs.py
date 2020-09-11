@@ -131,19 +131,19 @@ class RSCC:
 
         return RSCC(rscc)
 
-    @staticmethod
-    def parse_stdout(stdout: str):
-        with open(CC_PER_RESIDUE_LOG_FILE, "r") as f:
-            string = f.read()
-
-        matches = re.findall(CC_PER_RESIDUE_LOG_RSCC_PATTERN,
-                             string)
-
-        first_match = matches[0]
-        # first_match_capture_group = first_match.group(1)
-        rscc = float(first_match)
-
-        return rscc
+    # @staticmethod
+    # def parse_stdout(stdout: str):
+    #     with open(CC_PER_RESIDUE_LOG_FILE, "r") as f:
+    #         string = f.read()
+    #
+    #     matches = re.findall(CC_PER_RESIDUE_LOG_RSCC_PATTERN,
+    #                          string)
+    #
+    #     first_match = matches[0]
+    #     # first_match_capture_group = first_match.group(1)
+    #     rscc = float(first_match)
+    #
+    #     return rscc
 
     @staticmethod
     def parse_log():
@@ -154,8 +154,7 @@ class RSCC:
                              string)
 
         first_match = matches[0]
-        first_match_capture_group = first_match.group(1)
-        rscc = float(first_match_capture_group)
+        rscc = float(first_match)
 
         return rscc
 
