@@ -153,7 +153,7 @@ class RSCC:
         matches = re.findall(CC_PER_RESIDUE_LOG_RSCC_PATTERN,
                              string)
 
-        first_match = next(matches)
+        first_match = matches[0]
         first_match_capture_group = first_match.group(1)
         rscc = float(first_match_capture_group)
 
@@ -168,6 +168,7 @@ class RSCCs:
     def from_models_and_maps(models: Models, maps: Maps, mtzs: MTZs):
         rsccs: typing.Dict[Dtag, RSCC] = {}
         for dtag in models:
+            print("\tLooking at dtag: {}".format(dtag))
             model = models[dtag]
             xmap = maps[dtag]
             mtz = mtzs[dtag]
@@ -176,6 +177,7 @@ class RSCCs:
                                                   xmap,
                                                   resolution,
                                                   )
+            print("\t\tRSCC is {}".format(rsccs[dtag]))
 
         return RSCCs(rsccs)
 
