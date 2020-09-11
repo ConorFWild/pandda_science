@@ -139,9 +139,9 @@ class RSCC:
         matches = re.findall(CC_PER_RESIDUE_LOG_RSCC_PATTERN,
                              string)
 
-        first_match = next(matches)
-        first_match_capture_group = first_match.group(1)
-        rscc = float(first_match_capture_group)
+        first_match = matches[0]
+        # first_match_capture_group = first_match.group(1)
+        rscc = float(first_match)
 
         return rscc
 
