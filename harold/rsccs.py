@@ -202,7 +202,9 @@ class MTZs:
             dtag = Dtag(dataset_dir.name)
             dataset_dir_files = dataset_dir.glob("*")
             for dataset_dir_file in dataset_dir_files:
-                if re.match(mtz_pattern, str(dataset_dir_file)):
+                matches = re.findall(mtz_pattern, str(dataset_dir_file))
+                
+                if len(matches) != 0:
                     mtz_file = dataset_dir_file
                     mtzs[dtag] = mtz_file
                     continue
@@ -241,7 +243,7 @@ def main():
     maps: Maps = Maps.from_dir(Path(MAPS_DIR),
                                EVENT_MAP_PATTERN,
                                )
-    print("\tGot {} maps".format())
+    print("\tGot {} maps".format(len(maps.maps)))
     rsccs_event_maps = RSCCs.from_models_and_maps(models,
                                                   maps,
                                                   mtzs,
