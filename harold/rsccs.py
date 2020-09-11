@@ -34,11 +34,15 @@ class Dtag:
 
     @staticmethod
     def from_rscc_path(path: Path):
-        pattern = "RSCC_([^\.]+\.pdb)"
+        pattern = "RSCC_([^\.]+)\.pdb"
         string = str(path)
-        dtag = re.match(pattern,
+        print(string)
+        matches = re.findall(pattern,
                         string,
-                        ).group(0)
+                        )
+
+        first_match = next(matches)
+        dtag = first_match.group(1)
         return Dtag(dtag)
 
 
