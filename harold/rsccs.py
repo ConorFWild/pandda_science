@@ -28,6 +28,7 @@ PHENIX_MAP_MODEL_CC = "phenix.map_model_cc"
 CC_PER_RESIDUE_LOG_FILE = "cc_per_residue.log"
 # CC_PER_RESIDUE_LOG_RSCC_PATTERN = "[a-zA-Z]+\s+LIG\s+[0-9]+\s([^\s]+)"
 CC_PER_RESIDUE_LOG_RSCC_PATTERN = "[a-zA-Z]+\s+[^\s]+\s+1501\s+([^\s]+)"
+CC_PER_RESIDUE_LOG_1502_RSCC_PATTERN = "[a-zA-Z]+\s+[^\s]+\s+1502\s+([^\s]+)"
 
 @dataclass()
 class Dtag:
@@ -152,6 +153,10 @@ class RSCC:
 
         matches = re.findall(CC_PER_RESIDUE_LOG_RSCC_PATTERN,
                              string)
+
+        if len(matches) == 0:
+            matches = re.findall(CC_PER_RESIDUE_LOG_1502_RSCC_PATTERN,
+                                 string)
 
         first_match = matches[0]
         rscc = float(first_match)
