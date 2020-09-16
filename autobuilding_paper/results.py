@@ -90,6 +90,12 @@ class AutobuildResult:
 
         return AutobuildResult(builds)
 
+    def __iter__(self):
+        for event_id in self.builds:
+            yield event_id
+
+    def __getitem__(self, item):
+        return self.builds[item]
 
 @dataclasses.dataclass()
 class AutobuildResults:
