@@ -93,7 +93,6 @@ class AutobuildResult:
 
 @dataclasses.dataclass()
 class AutobuildResults:
-
     results: typing.Dict[str, AutobuildResult]
 
     @staticmethod

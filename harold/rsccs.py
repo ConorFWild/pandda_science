@@ -283,6 +283,7 @@ def main():
 
     # output
     table = pd.concat([rsccs_event_maps_table, rsccs_fofc_table, rsccs_2fofc_table])
+
     table.to_csv(str(RSCC_TABLE_FILE))
 
 
