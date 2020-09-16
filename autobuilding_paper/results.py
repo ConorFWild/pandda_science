@@ -98,7 +98,8 @@ class AutobuildResults:
     @staticmethod
     def from_json(file):
         with open(str(file), "r") as f:
-            dictionary = json.load(f)
+            string = str(f.read())
+            dictionary = json.loads(string)
 
         results = {}
         for system in dictionary:

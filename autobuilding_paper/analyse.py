@@ -72,6 +72,12 @@ def main():
     printer.pprint("Got pandda table")
 
     autobuilding_table = AutobuildResults.from_json(config.autobuild_file)
+    rsccs = {dtag: max([autobuilding_table.results[dtag][event_id]["rscc"]
+                        for event_id
+                        in autobuilding_table.results[dtag]])
+             for dtag
+             in autobuilding_table.results
+             }
     printer.pprint("Got autobuilding table")
     # printer.pprint(autobuilding_table)
 
@@ -91,18 +97,28 @@ def main():
 
         # RSCCs
         printer.pprint("# Analysing ligand rsccs")
+        rscc_large_mask = {dtag: rscc for dtag, rscc in rsccs.items() if rscc > 0.7}
+        printer.pprint(f"rscc_large_mask: {len(rscc_large_mask)}")
         printer.pprint(autobuilding_table.results[pandda_id])
 
         # Ligand RMSD: how good is autobuilding
         printer.pprint("# Analysing ligand rmsds")
         ligand_rmsds = AutobuildRMSDTable.from_directory(pandda_dir)
+        rsmd_non_zero_mask = {dtag: rmsd for dtag, rmsd in ligand_rmsds.rmsds.items() if rmsd > 0.0}
+        rmsd_small_mask = {dtag: rmsd for dtag, rmsd in ligand_rmsds.rmsds.items() if rmsd > 0.0}
+        printer.pprint(f"rsmd_non_zero_mask: {len(rsmd_non_zero_mask)}")
+        printer.pprint(
+            f"Number of built events / number of events: {len(rsmd_non_zero_mask) / len(ligand_rmsds.rmsds)}"
+        )
         printer.pprint(ligand_rmsds.table)
         # logs.LOG[pandda_id]["ligand_rmsds"] = ligand_rmsds
 
         # P(RMSD < 2.5 and RMSD > 0 | RSCC >0.7)
-        rscc_large_mask = ligand_rmsds.table["rscc"] > 0.7
-        rsmd_non_zero_mask = ligand_rmsds.table["rmsd"] > 0.0
-        rmsd_small_mask = ligand_rmsds.table["rmsd"] < 2.5
+        selected_keys = set(rscc_large_mask.keys()).intersection(set(rscc_large_mask.keys())).intersection(set(rsmd_non_zero_mask.keys()))
+        all_keys = set(rscc_large_mask.keys())
+        printer.pprint(
+            f"Number of built events with 0<rmsd<2.5 and rscc >0.7 / number of builds with rscc > 0.7: {len(selected_keys) / len(all_keys)}"
+        )
 
 
         # Ranking

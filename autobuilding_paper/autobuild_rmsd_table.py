@@ -7,8 +7,9 @@ from autobuilding_paper.lib import AutobuiltStructures, ReferenceStructures, RMS
 
 
 class AutobuildRMSDTable:
-    def __init__(self, table):
-        self.table = table
+    def __init__(self, rmsds):
+        self.table = rmsds
+        self.rmsds = rmsds
 
     @staticmethod
     def from_directory(pandda_dir):
@@ -21,6 +22,6 @@ class AutobuildRMSDTable:
         distances = RMSDs.from_structures(reference_structures, autobuilt_structures)
         print("\t\tGot {} distances".format(len(distances)))
 
-        table = pd.DataFrame([{"dtag": dtag.dtag, "rsmd": rmsd.rmsd} for dtag, rmsd in distances.distances.items()])
+        # table = pd.DataFrame([{"dtag": dtag.dtag, "rsmd": rmsd.rmsd} for dtag, rmsd in distances.distances.items()])
 
-        return AutobuildRMSDTable(table)
+        return AutobuildRMSDTable({dtag: rmsd for dtag, rmsd in distances.distances.items()})
