@@ -107,3 +107,10 @@ class AutobuildResults:
 
 
         return AutobuildResults(results)
+
+    def __iter__(self):
+        for dtag in self.results:
+            yield dtag
+
+    def __getitem__(self, item):
+        return self.results[item]
