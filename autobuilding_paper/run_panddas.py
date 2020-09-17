@@ -128,6 +128,92 @@ class PanDDA:
         return PanDDA(model_dir, out_dir, process)
 
 
+class PanDDA2:
+    def __init__(self, model_dir, out_dir, process):
+        self.model_dir = model_dir
+        self.out_dir = out_dir
+        self.process = process
+
+    def poll(self):
+        if not self.is_finished():
+            self.process()
+        results = self.get_results()
+        return results
+
+    def get_results(self):
+        finished = self.is_finished()
+
+        events = self.get_events()
+
+        # return {"model_dir": str(self.model_dir),
+        #         "out_dir": str(self.out_dir),
+        #         "finished": finished,
+        #         "events": events,
+        #         }
+
+        return PanDDAResult(model_dir=self.model_dir,
+                            out_dir=self.out_dir,
+                            finished=finished,
+                            events=events,
+                            )
+
+    def get_events(self):
+        event_table_file = self.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE
+        event_table = pd.read_csv(str(event_table_file))
+
+        dictionary = {}
+        for index, row in event_table.iterrows():
+            series = row.to_dict()
+            dtag = series["dtag"]
+            event_idx = series["event_idx"]
+            if dtag not in dictionary:
+                dictionary[dtag] = {}
+
+            dictionary[dtag][event_idx] = series
+
+        return dictionary
+
+    def is_finished(self):
+        if (self.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE).exists():
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def from_system(model_dir,
+                    out_dir,
+                    pdb_style="dimple.pdb",
+                    mtz_style="dimple.mtz",
+                    cpus=12,
+                    h_vmem=240,
+                    m_mem_free=12,
+                    script_path=Path("/tmp"),
+                    ):
+        env = "module load ccp4"
+        python = "/dls/science/groups/i04-1/conor_dev/ccp4/build/bin/cctbx.python"
+        script = "/dls/science/groups/i04-1/conor_dev/pandda_2/program/run_pandda_2.py"
+        pandda_args = "data_dirs='{dds}/*' pdb_style={pst} mtz_style={mst} cpus={cpus} out_dir={odr}".format(
+            dds=model_dir,
+            pst=pdb_style,
+            mst=mtz_style,
+            cpus=cpus,
+            odr=out_dir,
+        )
+
+        command = "{env}; pandda.analyse {pandda_args}".format(env=env,
+                                                               pandda_args=pandda_args,
+                                                               )
+
+        process = QSub(command,
+                       script_path,
+                       cores=cpus,
+                       m_mem_free=m_mem_free,
+                       h_vmem=h_vmem,
+                       )
+
+        return PanDDA(model_dir, out_dir, process)
+
+
 def to_json(dictionary, path):
     print(dictionary)
     with open(str(path), "w") as f:
