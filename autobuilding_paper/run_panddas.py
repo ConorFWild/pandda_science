@@ -244,7 +244,7 @@ def main():
 
         pandda = PanDDA.from_system(Path(system_info),
                                     config.panddas_dir / system_id,
-                                    script_path=Path("/tmp") / system_id,
+                                    script_path=Path("/tmp") / f"pandda_{system_id}",
                                     )
         result = pandda.poll()
 
