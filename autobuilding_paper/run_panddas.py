@@ -189,7 +189,7 @@ class PanDDA:
                     m_mem_free=12,
                     script_path=Path("/tmp"),
                     ):
-        env = "module load ccp4"
+        env = "source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh; module load pymol/1.8.2.0"
         python = "/dls/science/groups/i04-1/conor_dev/ccp4/build/bin/cctbx.python"
         script = "/dls/science/groups/i04-1/conor_dev/pandda_2/program/run_pandda_2.py"
         pandda_args = "data_dirs='{dds}/*' pdb_style={pst} mtz_style={mst} cpus={cpus} out_dir={odr}".format(
