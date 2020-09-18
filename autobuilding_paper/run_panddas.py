@@ -36,7 +36,7 @@ class Config:
         self.panddas_dir = Path(args.panddas_dir)
 
 
-class PanDDA:
+class PanDDA2:
     def __init__(self, model_dir, out_dir, process):
         self.model_dir = model_dir
         self.out_dir = out_dir
@@ -125,10 +125,10 @@ class PanDDA:
                        h_vmem=h_vmem,
                        )
 
-        return PanDDA(model_dir, out_dir, process)
+        return PanDDA2(model_dir, out_dir, process)
 
 
-class PanDDA2:
+class PanDDA:
     def __init__(self, model_dir, out_dir, process):
         self.model_dir = model_dir
         self.out_dir = out_dir
