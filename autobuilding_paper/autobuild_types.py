@@ -203,9 +203,12 @@ class SmilesFile:
                         )
             return SmilesFile(path)
 
-
         else:
-            raise Exception("No smiles found! Smiles list is: {}".format(smiles_paths_list))
+            exception = f"""
+            Looked in {compound_dir} for smiles
+            No smiles found! Smiles list is: {smiles_paths_list}
+            """
+            raise Exception(exception)
 
 
 @dataclass()
