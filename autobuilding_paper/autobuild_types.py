@@ -259,7 +259,7 @@ class Xmap:
 
         mask_grid = gemmi.Int8Grid(*xmap_array.shape)
         mask_grid.spacegroup = self.xmap.spacegroup
-        mask_grid.set_unit_cell(self.xmap.spacegroup)
+        mask_grid.set_unit_cell(self.xmap.unit_cell)
 
         mask_grid.set_points_around(event_centroid, radius=radius, value=1)
 
