@@ -503,6 +503,8 @@ class RhofitDir:
                                                               args=ligand_fit_args,
                                                               )
 
+        print(command)
+
         submit_proc = subprocess.Popen(str(command),
                                        shell=True,
                                        stdout=subprocess.PIPE,
