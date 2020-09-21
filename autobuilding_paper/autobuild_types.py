@@ -540,11 +540,12 @@ class RhofitDir:
     rhofit_dir: Path
 
     @classmethod
-    def from_rhofit(cls, event_mtz_file: MtzFile, ligand_cif_file: CifFile, event: Event):
+    def from_rhofit(cls, event_mtz_file: MtzFile, ligand_cif_file: CifFile, stripped_pdb_file: PdbFile, event: Event):
         env = AUTOBUILD_ENV
         ligand_fit_command = AUTOBUILD_COMMAND
         rhofit_dir = event.event_dir / RHOFIT_EVENT_DIR.format(event.event_id.event_idx.event_idx)
         ligand_fit_args = AUTOBUILD_ARGS.format(mtz=event_mtz_file.mtz_file,
+                                                pdb=stripped_pdb_file.pdb_file,
                                                 ligand=ligand_cif_file.cif_file,
                                                 out_dir_path=rhofit_dir,
                                                 )
