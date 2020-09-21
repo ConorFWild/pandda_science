@@ -232,7 +232,7 @@ class CifFile:
 
         stdout, stderr = p.communicate()
 
-        return CifFile(event_dir.event_dir / autobuilding_ligand)
+        return CifFile(event_dir.event_dir / f"{autobuilding_ligand}.cif")
 
 
 @dataclass()
