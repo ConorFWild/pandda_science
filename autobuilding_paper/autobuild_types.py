@@ -247,7 +247,7 @@ class Xmap:
         grid_array = np.array(m.grid, copy=True)
 
         new_grid = gemmi.FloatGrid(*grid_array.shape)
-        new_grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
+        new_grid.spacegroup = m.grid.spacegroup  #  gemmi.find_spacegroup_by_name("P 1")
         new_grid.set_unit_cell(m.grid.unit_cell)
 
         new_grid_array = np.array(new_grid, copy=False)
@@ -268,16 +268,18 @@ class Xmap:
                                     radius=radius,
                                     value=1,
                                     )
+        mask_grid.symmetrize_max()
 
         mask_array = np.array(mask_grid, copy=False, dtype=np.int8)
 
         new_grid = gemmi.FloatGrid(*xmap_array.shape)
-        new_grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
+        new_grid.spacegroup = self.xmap.spacegroup  #  gemmi.find_spacegroup_by_name("P 1")
         new_grid.set_unit_cell(self.xmap.unit_cell)
 
         new_grid_array = np.array(new_grid, copy=False)
 
         new_grid_array[np.nonzero(mask_array)] = xmap_array[np.nonzero(mask_array)]
+        new_grid.symmetrize_max()
 
         return Xmap(new_grid)
 
@@ -423,10 +425,10 @@ class Reflections:
         initial_reflections: ReflectionsDict = ReflectionsDict.from_array(initial_mtz_data)
         event_reflections: ReflectionsDict = ReflectionsDict.from_array(event_mtz_data)
 
-        printer.pprint("Initial")
-        printer.pprint(initial_reflections.reflections_dict)
-        printer.pprint("Event")
-        printer.pprint(event_reflections.reflections_dict)
+        # printer.pprint("Initial")
+        # printer.pprint(initial_reflections.reflections_dict)
+        # printer.pprint("Event")
+        # printer.pprint(event_reflections.reflections_dict)
 
         initial_asu = gemmi.ReciprocalAsu(initial_mtz.spacegroup)
         operations = initial_mtz.spacegroup.operations()
