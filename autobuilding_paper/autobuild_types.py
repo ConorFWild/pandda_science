@@ -262,13 +262,20 @@ class Structure:
         new_structure = gemmi.Structure()
 
         for model_i, model in enumerate(self.structure):
-            new_structure.add_model(model, pos=-1)
+            new_model = gemmi.Model(model.name)
+            new_structure.add_model(new_model, pos=-1)
 
             for chain_i, chain in enumerate(model):
-                new_structure[model_i].add_chain(chain, pos=-1)
+                new_chain = gemmi.Chain(chain.name)
+                new_structure[model_i].add_chain(new_chain, pos=-1)
 
                 for residue_i, residue in enumerate(chain):
-                    new_structure[model_i][chain_i].add_residue(residue, pos=-1)
+                    new_residue = gemmi.Residue()
+                    new_residue.name = residue.name
+                    new_residue.subchain = residue.subchain
+                    new_residue.label_seq = residue.label_seq
+                    new_residue.het_flag = residue.het_flag
+                    new_structure[model_i][chain_i].add_residue(new_residue, pos=-1)
 
                     for atom_i, atom in enumerate(residue):
                         pos = atom.pos
