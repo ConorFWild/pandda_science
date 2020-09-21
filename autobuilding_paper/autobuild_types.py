@@ -118,9 +118,9 @@ class Events:
 
             event_mtz_file = event_dir / PANDDA_MTZ_FILE.format(dtag.dtag)
 
-            event_ccp4_file = event_dir / PANDDA_EVENT_MAP_FILE.format(dtag.dtag,
-                                                                       event_idx.event_idx,
-                                                                       occupancy,
+            event_ccp4_file = event_dir / PANDDA_EVENT_MAP_FILE.format(dtag=dtag.dtag,
+                                                                       event_idx=event_idx.event_idx,
+                                                                       bdc=occupancy,
                                                                        )
 
             event: Event = Event(event_id=event_id,
