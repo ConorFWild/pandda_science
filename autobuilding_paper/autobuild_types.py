@@ -407,6 +407,7 @@ class Reflections:
         mtz.add_column('FWT', 'F')
         mtz.add_column('PHWT', 'P')
         mtz.set_data(data)
+        mtz.set_data(mtz.make_d_array() >= inital_mtz.resolution())
 
         return Reflections(mtz)
 
