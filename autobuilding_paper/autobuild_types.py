@@ -272,6 +272,7 @@ class Structure:
                 for residue_i, residue in enumerate(chain):
                     new_residue = gemmi.Residue()
                     new_residue.name = residue.name
+                    new_residue.seqid = residue.seqid
                     new_residue.subchain = residue.subchain
                     new_residue.label_seq = residue.label_seq
                     new_residue.het_flag = residue.het_flag
