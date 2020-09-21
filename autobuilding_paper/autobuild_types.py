@@ -84,6 +84,7 @@ class Event:
     event_dir: Path
     event_mtz_file: Path
     event_ccp4_file: Path
+    initial_pdb_file: Path
 
 
 @dataclass()
@@ -126,11 +127,14 @@ class Events:
                                                                        bdc=occupancy,
                                                                        )
 
+            initial_pdb_file = event_dir / PANDDA_PDB_FILE.format(dtag.dtag)
+
             event: Event = Event(event_id=event_id,
                                  centroid=centroid,
                                  event_dir=event_dir,
                                  event_mtz_file=event_mtz_file,
                                  event_ccp4_file=event_ccp4_file,
+                                 initial_pdb_file=initial_pdb_file,
                                  )
             events[event_id] = event
 
@@ -236,6 +240,37 @@ class CifFile:
 
 
 @dataclass()
+class Structure:
+    structure: gemmi.Structure
+
+    @classmethod
+    def from_pdb_file(cls, pdb_file: PdbFile):
+        structure = gemmi.read_structure(str(pdb_file.pdb_file))
+        return Structure(structure)
+
+    def strip(self, event: Event, radius: float = 7.0):
+        event_centoid = gemmi.Position(*event.centroid)
+
+        new_structure = gemmi.Structure()
+
+        for model_i, model in enumerate(self.structure):
+            new_structure.add_model(model)
+
+            for chain_i, chain in enumerate(model):
+                new_structure[model_i].add_chain(chain)
+
+                for residue_i, residue in enumerate(chain):
+                    new_structure[model_i][chain_i].add_residue(residue_i)
+
+                    for atom_i, atom in enumerate(residue):
+                        pos = atom.pos
+                        if pos.dist(event_centoid) > radius:
+                            new_structure[model_i][chain_i][residue_i].add_atom(atom)
+
+        return Structure(new_structure)
+
+
+@dataclass()
 class Xmap:
     xmap: gemmi.FloatGrid
 
@@ -247,7 +282,7 @@ class Xmap:
         grid_array = np.array(m.grid, copy=True)
 
         new_grid = gemmi.FloatGrid(*grid_array.shape)
-        new_grid.spacegroup = m.grid.spacegroup  #  gemmi.find_spacegroup_by_name("P 1")
+        new_grid.spacegroup = m.grid.spacegroup  # gemmi.find_spacegroup_by_name("P 1")
         new_grid.set_unit_cell(m.grid.unit_cell)
 
         new_grid_array = np.array(new_grid, copy=False)
@@ -273,7 +308,7 @@ class Xmap:
         mask_array = np.array(mask_grid, copy=False, dtype=np.int8)
 
         new_grid = gemmi.FloatGrid(*xmap_array.shape)
-        new_grid.spacegroup = self.xmap.spacegroup  #  gemmi.find_spacegroup_by_name("P 1")
+        new_grid.spacegroup = self.xmap.spacegroup  # gemmi.find_spacegroup_by_name("P 1")
         new_grid.set_unit_cell(self.xmap.unit_cell)
 
         new_grid_array = np.array(new_grid, copy=False)

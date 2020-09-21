@@ -29,12 +29,21 @@ def main():
         out_dir: EventDir = EventDir.from_event(event)   
         initial_mtz_file: MtzFile = MtzFile.from_event(event)
         event_map_file: Ccp4File = Ccp4File.from_event(event)
-        smiles_file: SmilesFile = SmilesFile.from_event(event)   
+        smiles_file: SmilesFile = SmilesFile.from_event(event)
+        pdb_file: PdbFile = PdbFile.from_event(event)
 
         # Get ligand cif
         ligand_cif_file: CifFile = CifFile.from_smiles_file(smiles_file,
                                                             out_dir,
                                                             )   
+
+        # Trim pdb
+        stripped_structure_file: PdbFile = PdbFile(event.event_dir / AUTOBUILD_STRIPPED_PDB.format(event.event_id.event_idx.event_idx,
+                                                                                          event.event_id.event_idx.event_idx,
+                                                                                          ))
+        structure: Structure = Structure.from_pdb_file(pdb_file)
+        trimmed_structure: Structure = structure.strip(event)
+        stripped_structure_file.save(trimmed_structure)
 
         # Get masked event map
         event_map: Xmap = Xmap.from_file(event_map_file)   

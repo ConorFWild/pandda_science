@@ -33,7 +33,8 @@ PANDDA_EVENT_MODEL = "{}-pandda-model.pdb"
 
 PANDDA_Z_MAP_FILE = "{dtag}-z_map.native.ccp4"
 
-AUTOBUILD_EVENT_MTZ = "{dtag}_{event_idx}.ccp4"
+AUTOBUILD_STRIPPED_PDB = "{dtag}_{event_idx}.pdb"
+AUTOBUILD_EVENT_MTZ = "{dtag}_{event_idx}.mtz"
 AUTOBUILD_ENV = "module load buster"
 AUTOBUILD_COMMAND = "rhofit"
 AUTOBUILD_ARGS = "-m {mtz} -l {ligand} -d {out_dir_path} -allclusters -use_2fofc"
