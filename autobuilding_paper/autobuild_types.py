@@ -238,7 +238,7 @@ class Xmap:
 
     @classmethod
     def from_file(cls, event_map_file: Ccp4File) -> Xmap:
-        m = gemmi.read_ccp4_map(event_map_file.ccp4_file)
+        m = gemmi.read_ccp4_map(str(event_map_file.ccp4_file))
         m.setup()
 
         grid_array = np.array(m.grid, copy=True)
