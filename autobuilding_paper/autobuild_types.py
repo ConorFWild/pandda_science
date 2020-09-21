@@ -173,6 +173,14 @@ class MtzFile:
 class PdbFile:
     pdb_file: Path
 
+    @classmethod
+    def from_event(cls, event: Event):
+        return PdbFile(event.initial_pdb_file)
+
+    def save(self, structure: Structure):
+        structure.structure.write_minimal_pdb(str(self.pdb_file))
+
+
 
 @dataclass()
 class Ccp4File:
