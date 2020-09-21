@@ -10,6 +10,7 @@ import re
 import subprocess
 import shutil
 from pathlib import Path
+from pprint import PrettyPrinter
 
 import numpy as np
 import pandas as pd
@@ -19,6 +20,8 @@ import joblib
 from autobuilding_paper.autobuild_constants import *
 
 import gemmi
+
+printer = PrettyPrinter(indent=1)
 
 
 class Option:
@@ -407,7 +410,6 @@ class Reflections:
         mtz.add_column('FWT', 'F')
         mtz.add_column('PHWT', 'P')
         mtz.set_data(data)
-        mtz.set_data(mtz.make_d_array() >= inital_mtz.resolution())
 
         return Reflections(mtz)
 
@@ -420,6 +422,11 @@ class Reflections:
 
         initial_reflections: ReflectionsDict = ReflectionsDict.from_array(initial_mtz_data)
         event_reflections: ReflectionsDict = ReflectionsDict.from_array(event_mtz_data)
+
+        printer.pprint("Initial")
+        printer.pprint(initial_reflections.reflections_dict)
+        printer.pprint("Event")
+        printer.pprint(event_reflections.reflections_dict)
 
         initial_asu = gemmi.ReciprocalAsu(initial_mtz.spacegroup)
         operations = initial_mtz.spacegroup.operations()
