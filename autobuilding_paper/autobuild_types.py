@@ -262,18 +262,18 @@ class Structure:
         new_structure = gemmi.Structure()
 
         for model_i, model in enumerate(self.structure):
-            new_structure.add_model(model)
+            new_structure.add_model(model, pos=-1)
 
             for chain_i, chain in enumerate(model):
-                new_structure[model_i].add_chain(chain)
+                new_structure[model_i].add_chain(chain, pos=-1)
 
                 for residue_i, residue in enumerate(chain):
-                    new_structure[model_i][chain_i].add_residue(residue_i)
+                    new_structure[model_i][chain_i].add_residue(residue_i, pos=-1)
 
                     for atom_i, atom in enumerate(residue):
                         pos = atom.pos
                         if pos.dist(event_centoid) > radius:
-                            new_structure[model_i][chain_i][residue_i].add_atom(atom)
+                            new_structure[model_i][chain_i][residue_i].add_atom(atom, pos=-1)
 
         return Structure(new_structure)
 
