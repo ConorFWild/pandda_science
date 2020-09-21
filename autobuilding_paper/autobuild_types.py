@@ -261,6 +261,7 @@ class Xmap:
         mask_grid.spacegroup = self.xmap.spacegroup
         mask_grid.set_unit_cell(self.xmap.unit_cell)
 
+
         mask_grid.set_points_around(event_centroid, radius=radius, value=1)
 
         mask_array = np.array(mask_grid, copy=False, dtype=np.int8)
