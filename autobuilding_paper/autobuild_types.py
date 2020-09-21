@@ -284,7 +284,10 @@ class Structure:
                             new_structure[model_i][chain_i][residue_i].add_atom(atom, pos=-1)
 
         for model_i, model in enumerate(self.structure):
-            self.structure[model_i] = new_structure[model_i]
+            self.structure.add_model(new_structure[model_i], pos=-1)
+            del self.structure[0]
+
+
 
         return Structure(self.structure)
 
