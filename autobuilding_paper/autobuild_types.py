@@ -283,7 +283,7 @@ class Structure:
                         if pos.dist(event_centoid) > radius:
                             new_structure[model_i][chain_i][residue_i].add_atom(atom, pos=-1)
 
-        for model_i, model in self.structure:
+        for model_i, model in enumerate(self.structure):
             self.structure[model_i] = new_structure[model_i]
 
         return Structure(self.structure)
