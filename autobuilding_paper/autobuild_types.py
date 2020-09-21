@@ -252,7 +252,7 @@ class Xmap:
 
         return Xmap(new_grid)
 
-    def mask_event(self, event: Event, radius=4.0):
+    def mask_event(self, event: Event, radius=3.0):
         event_centroid = gemmi.Position(*event.centroid)
 
         xmap_array = np.array(self.xmap, copy=True)
@@ -261,8 +261,10 @@ class Xmap:
         mask_grid.spacegroup = self.xmap.spacegroup
         mask_grid.set_unit_cell(self.xmap.unit_cell)
 
-
-        mask_grid.set_points_around(event_centroid, radius=radius, value=1)
+        mask_grid.set_points_around(event_centroid,
+                                    radius=radius,
+                                    value=1,
+                                    )
 
         mask_array = np.array(mask_grid, copy=False, dtype=np.int8)
 
@@ -395,7 +397,7 @@ class Reflections:
 
     @classmethod
     def from_xmap(cls, masked_event_map: Xmap, inital_mtz: Reflections):
-        sf = gemmi.transform_map_to_f_phi(masked_event_map.xmap, half_l=True)
+        sf = gemmi.transform_map_to_f_phi(masked_event_map.xmap, half_l=False)
         data = sf.prepare_asu_data(dmin=inital_mtz.resolution(), with_000=True)
 
         mtz = gemmi.Mtz(with_base=True)
