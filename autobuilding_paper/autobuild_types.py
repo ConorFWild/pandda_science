@@ -268,7 +268,7 @@ class Structure:
                 new_structure[model_i].add_chain(chain, pos=-1)
 
                 for residue_i, residue in enumerate(chain):
-                    new_structure[model_i][chain_i].add_residue(residue_i, pos=-1)
+                    new_structure[model_i][chain_i].add_residue(residue, pos=-1)
 
                     for atom_i, atom in enumerate(residue):
                         pos = atom.pos
