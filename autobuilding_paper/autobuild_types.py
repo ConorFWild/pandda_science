@@ -739,9 +739,16 @@ class AutobuildingResults:
 
                 new_cluster_builds: ClusterBuildResults = ClusterBuildResults(
                     {best_event_build[1]: event_builds_flat[best_event_build]})
-                new_event_buils: EventBuildResults({best_event_build[0]: new_cluster_builds})
+                new_event_builds: EventBuildResults = EventBuildResults({best_event_build[0]: new_cluster_builds})
 
-                best_event_builds[(dtag, event_id)] = best_event_build
+                best_event_builds[(dtag, event_id)] = new_event_builds
+
+        new_dtag_builds = {}
+        for event_id in best_event_builds:
+            new_event_build = best_event_builds[event_id]
+            new_dtag_builds[event_id[0]] = DtagBuildResults({event_id[1]: new_event_build})
+
+        return AutobuildingResults(new_dtag_builds)
 
     @classmethod
     def from_event_build_results(cls, event_autobuilding_results: Dict[EventID, EventBuildResults]):
