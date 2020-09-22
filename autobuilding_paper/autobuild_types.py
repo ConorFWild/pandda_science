@@ -9,6 +9,7 @@ import argparse
 import re
 import subprocess
 import shutil
+import json
 from pathlib import Path
 from pprint import PrettyPrinter
 
@@ -794,3 +795,11 @@ class AutobuildingResults:
                             }
 
         return builds
+
+    def to_json(self, out_file: Path):
+        flat_dict = self.to_flat_dict()
+
+        with open(str(out_file), "w") as f:
+            json.dump(flat_dict,
+                      f,
+                      )
