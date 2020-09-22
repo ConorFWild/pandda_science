@@ -459,6 +459,9 @@ class Reflections:
 
     @classmethod
     def from_xmap(cls, masked_event_map: Xmap, inital_mtz: Reflections):
+        masked_event_map.xmap.spacegroup = inital_mtz.reflections.spacegroup
+        masked_event_map.xmap.symmetrize_max()
+
         sf = gemmi.transform_map_to_f_phi(masked_event_map.xmap, half_l=False)
         data = sf.prepare_asu_data(dmin=inital_mtz.resolution(), with_000=True)
 
