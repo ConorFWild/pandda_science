@@ -181,7 +181,6 @@ class PdbFile:
         structure.structure.write_minimal_pdb(str(self.pdb_file))
 
 
-
 @dataclass()
 class Ccp4File:
     ccp4_file: Path
@@ -286,8 +285,6 @@ class Structure:
         for model_i, model in enumerate(self.structure):
             self.structure.add_model(new_structure[model_i], pos=-1)
             del self.structure[0]
-
-
 
         return Structure(self.structure)
 
@@ -787,6 +784,9 @@ class AutobuildingResults:
 
                     build_results = clusters[cluster_id]
                     for build_number in build_results:
-                        builds[(dtag, event_idx, cluster_id, build_number)] = build_results[build_number]
+                        builds[(dtag, event_idx, cluster_id, build_number)] = {
+                            "build_file": build_results[build_number].build_file,
+                            "build_rscc": build_results[build_number].build_rscc,
+                            }
 
         return builds
