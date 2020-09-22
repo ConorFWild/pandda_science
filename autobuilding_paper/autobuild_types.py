@@ -668,8 +668,8 @@ class EventBuildResults:
             cluster_build_matches = re.findall(RHOFIT_CLUSTER_BUILD_REGEX,
                                                build_file,
                                                )
-            cluster = BuildClusterID(cluster_build_matches[0][0])
-            build_number = BuildNumberID(cluster_build_matches[0][1])
+            cluster = BuildClusterID(int(cluster_build_matches[0][0]))
+            build_number = BuildNumberID(int(cluster_build_matches[0][1]))
 
             if cluster not in cluster_builds:
                 cluster_builds[cluster] = {}
