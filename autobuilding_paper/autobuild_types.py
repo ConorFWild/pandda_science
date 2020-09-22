@@ -744,8 +744,22 @@ class AutobuildingResults:
                 best_event_builds[(dtag, event_id)] = best_event_build
 
     @classmethod
-    def from_event_build_results(cls, event_autobuilding_results):
-        pass
+    def from_event_build_results(cls, event_autobuilding_results: Dict[EventID, EventBuildResults]):
+        # Organise builds
+        builds = {}
+        for event_id in event_autobuilding_results:
+            dtag = event_id.dtag
+            event_idx = event_id.event_idx
+            if dtag not in builds:
+                builds[dtag] = {}
+            builds[dtag][event_idx] = event_autobuilding_results[event_id]
+
+        # Put into objects
+        dtag_build_results = {}
+        for dtag in builds:
+            dtag_build_results[dtag] = DtagBuildResults(builds[dtag])
+
+        return AutobuildingResults(dtag_build_results)
 
     def to_flat_dict(self):
         builds = {}
