@@ -674,7 +674,7 @@ class EventBuildResults:
             if cluster not in cluster_builds:
                 cluster_builds[cluster] = {}
 
-            cluster_builds[cluster][build_number] = Build(build_file=build_file,
+            cluster_builds[cluster][build_number] = Build(build_file=rhofit_dir.rhofit_dir / build_file,
                                                           build_rscc=rscc,
                                                           )
 
