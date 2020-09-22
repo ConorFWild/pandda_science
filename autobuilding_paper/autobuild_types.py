@@ -732,7 +732,7 @@ class AutobuildingResults:
                         build: Build = cluster_builds[build_id]
                         event_builds_flat[(build_cluster_id, build_id)] = build
 
-                best_event_build: Tuple[BuildClusterID, BuildNumberID] = min(event_builds_flat,
+                best_event_build: Tuple[BuildClusterID, BuildNumberID] = max(event_builds_flat,
                                                                              key=lambda build_id: event_builds_flat[
                                                                                  build_id].build_rscc,
                                                                              )
