@@ -775,17 +775,18 @@ class AutobuildingResults:
             if dtag not in builds:
                 builds[dtag] = {}
 
-            event_builds = self[dtag]
-            for event_id in event_builds:
-                if event_id not in builds[dtag]:
-                    builds[dtag][event_id] = {}
+            events = self[dtag]
+            for event_idx in events:
+                if event_idx not in builds[dtag]:
+                    builds[dtag][event_idx] = {}
 
-                cluster_builds = event_builds[event_id]
-                for cluster_id in event_builds:
-                    if cluster_id not in cluster_builds[cluster_id]:
-                        builds[dtag][event_id][cluster_id] = {}
+                clusters = events[event_idx]
+                for cluster_id in clusters:
+                    if cluster_id not in clusters[cluster_id]:
+                        builds[dtag][event_idx][cluster_id] = {}
 
-                    for build_number in cluster_builds[cluster_id]:
-                        builds[(dtag, event_id, cluster_id, build_number)] = cluster_builds[build_number]
+                    build_results = clusters[cluster_id]
+                    for build_number in builds:
+                        builds[(dtag, event_idx, cluster_id, build_number)] = build_results[build_number]
 
         return builds
