@@ -523,9 +523,9 @@ class Reflections:
                 data = np.zeros(len(list(initial_reflections.reflections_dict.values())[0].data))
                 new_reflection = Reflection(hkl, data)
 
-            elif asu_hkl not in initial_reflections:
-                print(f"\tMissing reflection: {asu_hkl}")
-                continue
+            # elif asu_hkl not in initial_reflections:
+            #     print(f"\tMissing reflection: {asu_hkl}")
+            #     continue
 
             else:
                 initial_reflection: Reflection = initial_reflections[asu_hkl]
