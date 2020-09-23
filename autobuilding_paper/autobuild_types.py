@@ -845,8 +845,7 @@ class Mapper:
 
     @staticmethod
     def from_joblib(n_jobs=7, verbose=11):
-        parallel_env = joblib.Parallel(n_jobs=n_jobs,
-                                       verbose=verbose)
+        parallel_env = joblib.Parallel(n_jobs=n_jobs, verbose=verbose).__enter__()
         return Mapper(parallel_env)
 
     @staticmethod
