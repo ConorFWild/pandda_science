@@ -816,8 +816,8 @@ class AutobuildingResults:
                     build_results = clusters[cluster_id]
                     for build_number in build_results:
                         builds[dtag.dtag][event_idx.event_idx][cluster_id.build_cluster_id][build_number.build_number_id] = {
-                            "build_file": build_results[build_number].build_file,
-                            "build_rscc": build_results[build_number].build_rscc,
+                            "build_file": str(build_results[build_number].build_file),
+                            "build_rscc": float(build_results[build_number].build_rscc),
                             }
 
         return builds
