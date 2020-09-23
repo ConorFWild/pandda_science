@@ -810,7 +810,7 @@ class AutobuildingResults:
 
                 clusters = events[event_idx]
                 for cluster_id in clusters:
-                    if cluster_id.build_cluster_id not in clusters[cluster_id.build_cluster_id]:
+                    if cluster_id.build_cluster_id not in builds[dtag.dtag][event_idx.event_idx]:
                         builds[dtag.dtag][event_idx.event_idx][cluster_id.build_cluster_id] = {}
 
                     build_results = clusters[cluster_id]
