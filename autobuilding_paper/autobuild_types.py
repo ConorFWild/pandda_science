@@ -840,23 +840,37 @@ class AutobuildingResults:
 
 
 @dataclass()
-class Mapper:
+class MapperJoblib:
     parallel: Any
 
     @staticmethod
     def from_joblib(n_jobs=7, verbose=11):
         parallel_env = joblib.Parallel(n_jobs=n_jobs, verbose=verbose).__enter__()
-        return Mapper(parallel_env)
+        return MapperJoblib(parallel_env)
 
-    @staticmethod
-    def from_map():
-        parallel_env = map
-        return Mapper(parallel_env)
+
 
     def map_to_list(self, func, *args):
         results = self.parallel(joblib.delayed(func)(*[arg[i] for arg in args])
                                 for i, arg
                                 in enumerate(args[0])
+                                )
+
+        return results
+
+
+@dataclass()
+class MapperPython:
+    parallel: Any
+
+    @staticmethod
+    def from_python():
+        parallel_env = map
+        return MapperPython(parallel_env)
+
+    def map_to_list(self, func, *args):
+        results = self.parallel(func,
+                                *args
                                 )
 
         return results
