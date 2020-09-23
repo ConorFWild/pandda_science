@@ -848,8 +848,6 @@ class MapperJoblib:
         parallel_env = joblib.Parallel(n_jobs=n_jobs, verbose=verbose).__enter__()
         return MapperJoblib(parallel_env)
 
-
-
     def map_to_list(self, func, *args):
         results = self.parallel(joblib.delayed(func)(*[arg[i] for arg in args])
                                 for i, arg
