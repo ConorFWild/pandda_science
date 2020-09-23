@@ -199,15 +199,6 @@ class SmilesFile:
     def from_event(cls, event: Event):
         compound_dir = event.event_dir / PANDDA_LIGAND_FILES_DIR
 
-        # ligand_pdbs = list(compound_dir.glob("*.pdb"))
-        # ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
-        # if len(ligand_pdb_strings) > 0:
-        #     shortest_ligand_path = min(ligand_pdb_strings,
-        #                                key=len,
-        #                                )
-        #     path = Path(shortest_ligand_path)
-        #     return SmilesFile(path)
-
         # Check for smiles files
         smiles_paths = compound_dir.glob("*.smiles")
         smiles_paths_list = list(smiles_paths)
@@ -218,12 +209,22 @@ class SmilesFile:
                         )
             return SmilesFile(path)
 
-        else:
-            exception = f"""
-            Looked in {compound_dir} for smiles
-            No smiles found! Smiles list is: {smiles_paths_list}
-            """
-            raise Exception(exception)
+        # Check for pdb files
+        ligand_pdbs = list(compound_dir.glob("*.pdb"))
+        ligand_pdb_strings = [str(ligand_path) for ligand_path in ligand_pdbs if ligand_path.name != "tmp.pdb"]
+        if len(ligand_pdb_strings) > 0:
+            shortest_ligand_path = min(ligand_pdb_strings,
+                                       key=len,
+                                       )
+            path = Path(shortest_ligand_path)
+            return SmilesFile(path)
+
+        # Raise exceptions
+        exception = f"""
+        Looked in {compound_dir} for smiles
+        No smiles found! Smiles list is: {smiles_paths_list}
+        """
+        raise Exception(exception)
 
 
 @dataclass()
