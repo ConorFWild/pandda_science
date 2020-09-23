@@ -527,9 +527,14 @@ class Reflections:
             #     continue
 
             else:
-                initial_reflection: Reflection = initial_reflections[asu_hkl]
+                try:
+                    initial_reflection: Reflection = initial_reflections[asu_hkl]
 
-                new_reflection = Reflection(hkl, np.copy(initial_reflection.data))
+                    new_reflection = Reflection(hkl, np.copy(initial_reflection.data))
+                except Exception as e:
+                    print(f"\tWARNING: Missing Reflection: {asu_hkl}")
+                    data = np.zeros(len(list(initial_reflections.reflections_dict.values())[0].data))
+                    new_reflection = Reflection(hkl, data)
 
             new_reflection.data[initial_mtz_fwt_index - 3] = event_reflection.data[event_mtz_fwt_index - 3]
             new_reflection.data[initial_mtz_phwt_index - 3] = event_reflection.data[event_mtz_phwt_index - 3]
