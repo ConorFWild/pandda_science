@@ -11,7 +11,7 @@ def main():
 
     # Model Pandda file system
     print("Building I/O model...")
-    fs = PanDDAFilesystemModel(config.input_pandda_dir)   
+    fs = PanDDAFilesystemModel(config.input_pandda_dir)
     print("\tFound {} dataset dirs".format(len(fs.pandda_processed_datasets_dirs)))
 
     # Get events
@@ -43,7 +43,7 @@ def main():
             event.event_dir / AUTOBUILD_STRIPPED_PDB.format(dtag=event.event_id.dtag.dtag,
                                                             event_idx=event.event_id.event_idx.event_idx,
                                                             )
-            )
+        )
 
         structure: Structure = Structure.from_pdb_file(pdb_file)
         trimmed_structure: Structure = structure.strip(event, radius=5.0)
@@ -84,7 +84,6 @@ def main():
 
     # TO Json
     best_event_builds.to_json(fs.autobuilding_results_table)
-
 
 
 if __name__ == "__main__":

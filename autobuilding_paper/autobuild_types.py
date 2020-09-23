@@ -798,7 +798,7 @@ class AutobuildingResults:
                                 )] = {
                             "build_file": build_results[build_number].build_file,
                             "build_rscc": build_results[build_number].build_rscc,
-                            }
+                        }
 
         return builds
 
@@ -821,10 +821,11 @@ class AutobuildingResults:
 
                     build_results = clusters[cluster_id]
                     for build_number in build_results:
-                        builds[dtag.dtag][event_idx.event_idx][cluster_id.build_cluster_id][build_number.build_number_id] = {
+                        builds[dtag.dtag][event_idx.event_idx][cluster_id.build_cluster_id][
+                            build_number.build_number_id] = {
                             "build_file": str(build_results[build_number].build_file),
                             "build_rscc": float(build_results[build_number].build_rscc),
-                            }
+                        }
 
         return builds
 
@@ -836,3 +837,27 @@ class AutobuildingResults:
             json.dump(nested_dict,
                       f,
                       )
+
+
+@dataclass()
+class Mapper:
+    parallel: Any
+
+    @staticmethod
+    def from_joblib(n_jobs=7, verbose=11):
+        parallel_env = joblib.Parallel(n_jobs=n_jobs,
+                                       verbose=verbose)
+        return Mapper(parallel_env)
+
+    @staticmethod
+    def from_map():
+        parallel_env = map
+        return Mapper(parallel_env)
+
+    def map_to_list(self, func, *args):
+        results = self.parallel(joblib.delayed(func)(*[arg[i] for arg in args])
+                                for i, arg
+                                in enumerate(args[0])
+                                )
+
+        return results
