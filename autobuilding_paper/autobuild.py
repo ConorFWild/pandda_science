@@ -25,6 +25,7 @@ def main():
     print("Autobuilding...")
     event_autobuilding_results: Dict[EventID, EventBuildResults] = {}
     for event_id in events:
+        print(f"Processing event: {event_id}")
         event: Event = events[event_id]
         out_dir: EventDir = EventDir.from_event(event)
         initial_mtz_file: MtzFile = MtzFile.from_event(event)
