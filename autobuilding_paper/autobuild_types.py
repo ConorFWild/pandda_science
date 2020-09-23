@@ -796,10 +796,37 @@ class AutobuildingResults:
 
         return builds
 
+    def to_python(self):
+        builds = {}
+
+        for dtag in self:
+            if dtag not in builds:
+                builds[dtag.dtag] = {}
+
+            events = self[dtag]
+            for event_idx in events:
+                if event_idx not in builds[dtag]:
+                    builds[dtag.dtag][event_idx.event_idx] = {}
+
+                clusters = events[event_idx]
+                for cluster_id in clusters:
+                    if cluster_id not in clusters[cluster_id]:
+                        builds[dtag.dtag][event_idx.event_idx][cluster_id.build_cluster_id] = {}
+
+                    build_results = clusters[cluster_id]
+                    for build_number in build_results:
+                        builds[dtag.dtag][event_idx.event_idx][cluster_id.build_cluster_id][build_number.build_number_id] = {
+                            "build_file": build_results[build_number].build_file,
+                            "build_rscc": build_results[build_number].build_rscc,
+                            }
+
+        return builds
+
     def to_json(self, out_file: Path):
-        flat_dict = self.to_flat_dict()
+        # flat_dict = self.to_flat_dict()
+        nested_dict = self.to_python()
 
         with open(str(out_file), "w") as f:
-            json.dump(flat_dict,
+            json.dump(nested_dict,
                       f,
                       )
