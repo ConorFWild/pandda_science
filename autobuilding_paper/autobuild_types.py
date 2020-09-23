@@ -867,8 +867,8 @@ class MapperPython:
         return MapperPython(parallel_env)
 
     def map_to_list(self, func, *args):
-        results = self.parallel(func,
+        results = list(self.parallel(func,
                                 *args
-                                )
+                                ))
 
         return results
