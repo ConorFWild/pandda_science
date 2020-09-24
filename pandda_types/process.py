@@ -308,7 +308,6 @@ class Graft:
         intial_mtz.write_to_file(str(out_mtz_path))
 
 
-
 class QSub:
     def __init__(self,
                  command,
