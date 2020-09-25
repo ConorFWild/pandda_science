@@ -57,33 +57,68 @@ class Config:
 
 
 @dataclass()
+class Dtag:
+    dtag: str
+
+    def __hash__(self):
+        return hash(self.dtag)
+
+
+@dataclass()
+class EventIDX:
+    event_idx: int
+
+    def __hash__(self):
+        return hash(self.event_idx)
+
+
+@dataclass()
+class EventID:
+    dtag: Dtag
+    event_idx: EventIDX
+
+    def __hash__(self):
+        return hash((self.dtag, self.event_idx))
+
+
+@dataclass()
+class Event:
+    dtag: Dtag
+    event_idx: EventIDX
+
+
+@dataclass()
 class PanDDA:
     model_dir: Path
     out_dir: Path
     process: QSub
 
     def poll(self):
-        if not self.is_finished():
+        is_finished = self.is_finished()
+
+        if not is_finished:
             self.process()
-        results = self.get_results()
-        return results
+        # results = self.get_results()
+        is_finished = self.is_finished()
 
-    def get_results(self):
-        finished = self.is_finished()
+        return is_finished
 
-        events = self.get_events()
-
-        # return {"model_dir": str(self.model_dir),
-        #         "out_dir": str(self.out_dir),
-        #         "finished": finished,
-        #         "events": events,
-        #         }
-
-        return PanDDAResult(model_dir=self.model_dir,
-                            out_dir=self.out_dir,
-                            finished=finished,
-                            events=events,
-                            )
+    # def get_results(self):
+    #     finished = self.is_finished()
+    #
+    #     events = self.get_events()
+    #
+    #     # return {"model_dir": str(self.model_dir),
+    #     #         "out_dir": str(self.out_dir),
+    #     #         "finished": finished,
+    #     #         "events": events,
+    #     #         }
+    #
+    #     return PanDDAResult(model_dir=self.model_dir,
+    #                         out_dir=self.out_dir,
+    #                         finished=finished,
+    #                         events=events,
+    #                         )
 
     def get_events(self):
         event_table_file = self.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE
@@ -146,11 +181,43 @@ class PanDDA:
 
 
 @dataclass()
+class Events:
+    events: Dict[EventID, Event]
+
+    def __iter__(self):
+        for event_id in self.events:
+            yield event_id
+
+    def __getitem__(self, item):
+        return self.events[item]
+
+    @staticmethod
+    def from_pandda_process(pandda_process: PanDDA):
+        event_table_file = pandda_process.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE
+        event_table = pd.read_csv(str(event_table_file))
+
+        events: Dict[EventID, Event] = {}
+        for index, row in event_table.iterrows():
+            series = row.to_dict()
+            dtag: Dtag = Dtag(series["dtag"])
+            event_idx: EventIDX = EventIDX(int(series["event_idx"]))
+            event_id: EventID = EventID(dtag, event_idx)
+
+            event: Event = Event(dtag=dtag,
+                                 event_idx=event_idx,
+                                 )
+
+            events[event_id] = event
+
+        return Events(events)
+
+
+@dataclass()
 class PanDDAResult:
     model_dir: Path
     out_dir: Path
     finished: bool
-    events: Dict
+    events: Events
 
     def to_dict(self):
         return {"model_dir": str(self.model_dir),
@@ -178,3 +245,15 @@ class PanDDAResult:
         with open(str(file), "r") as f:
             dictionary = json.load(f)
         return PanDDAResult.from_dict(dictionary)
+
+    @staticmethod
+    def from_pandda(pandda: PanDDA):
+        finished: bool = pandda.is_finished()
+
+        events: Events = Events.from_pandda_process(pandda)
+
+        return PanDDAResult(model_dir=pandda.model_dir,
+                            out_dir=pandda.out_dir,
+                            finished=finished,
+                            events=events,
+                            )
