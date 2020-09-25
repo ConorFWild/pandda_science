@@ -24,6 +24,7 @@ from autobuilding_paper.autobuild_constants import *
 class Config:
     system_file: Path
     pandda_dir: Path
+    result_json_file: Path
 
     @staticmethod
     def from_args_str(args_str):
@@ -41,10 +42,18 @@ class Config:
                             required=True
                             )
 
+        parser.add_argument("-j", "--result_json_file",
+                            type=str,
+                            help="The directory for output and intermediate files to be saved to",
+                            required=True
+                            )
+
         args = parser.parse_args(args_str)
 
         return Config(system_file=Path(args.system_file),
-                      pandda_dir=Path(args.panddas_dir))
+                      pandda_dir=Path(args.panddas_dir),
+                      result_json_file=Path(args.result_json_file),
+                      )
 
 
 @dataclass()
