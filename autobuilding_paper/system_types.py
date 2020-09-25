@@ -41,6 +41,9 @@ class Systems:
 
         systems = {}
         for system_id_str, path_str in systems_dict.items():
+            if not path_str:
+                continue
+                
             system_id = SystemID(system_id_str)
             path = Path(path_str)
             system = System(system_id=system_id,
