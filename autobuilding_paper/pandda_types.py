@@ -110,12 +110,12 @@ class PanDDA:
     @staticmethod
     def from_system(model_dir,
                     out_dir,
+                    script_path,
                     pdb_style="dimple.pdb",
                     mtz_style="dimple.mtz",
                     cpus=12,
                     h_vmem=240,
                     m_mem_free=12,
-                    script_path=Path("/tmp"),
                     ):
         env = "source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh; module load pymol/1.8.2.0"
         python = "/dls/science/groups/i04-1/conor_dev/ccp4/build/bin/cctbx.python"
