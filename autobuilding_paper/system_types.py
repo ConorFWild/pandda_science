@@ -43,7 +43,7 @@ class Systems:
         for system_id_str, path_str in systems_dict.items():
             if not path_str:
                 continue
-                
+
             system_id = SystemID(system_id_str)
             path = Path(path_str)
             system = System(system_id=system_id,
@@ -59,3 +59,6 @@ class Systems:
     def __iter__(self):
         for system_id in self.systems:
             yield system_id
+
+    def to_dict(self):
+        return self.systems
