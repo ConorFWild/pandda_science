@@ -36,7 +36,7 @@ class Config:
                             required=True
                             )
 
-        parser.add_argument("-p", "--panddas_dir",
+        parser.add_argument("-p", "--pandda_dir",
                             type=str,
                             help="The directory for output and intermediate files to be saved to",
                             required=True
@@ -51,7 +51,7 @@ class Config:
         args = parser.parse_args(args_str)
 
         return Config(system_file=Path(args.system_file),
-                      pandda_dir=Path(args.panddas_dir),
+                      pandda_dir=Path(args.pandda_dir),
                       result_json_file=Path(args.result_json_file),
                       )
 
