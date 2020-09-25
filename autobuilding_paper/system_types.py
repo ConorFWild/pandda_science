@@ -18,6 +18,9 @@ from pprint import PrettyPrinter
 class SystemID:
     system_id: str
 
+    def __hash__(self):
+        return hash(self.system_id)
+
 
 @dataclass()
 class System:
@@ -44,3 +47,10 @@ class Systems:
             systems[system_id] = system
 
         return Systems(systems)
+
+    def __getitem__(self, item):
+        return self.systems[item]
+
+    def __iter__(self):
+        for system_id in self.systems:
+            yield system_id
