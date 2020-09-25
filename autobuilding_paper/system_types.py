@@ -37,6 +37,8 @@ class Systems:
         with open(str(path), "r") as f:
             systems_dict = json.load(f)
 
+        print(systems_dict)
+
         systems = {}
         for system_id_str, path_str in systems_dict.items():
             system_id = SystemID(system_id_str)
