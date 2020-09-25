@@ -34,6 +34,21 @@ class MapperJoblib:
 
         return results
 
+    def map_dict(self, func, *args):
+        keys = list(args[0].values())
+
+        results = self.parallel(joblib.delayed(func)(*[arg[key] for arg in args])
+                                for key
+                                in keys
+                                )
+
+        results_dict = {keys[i]: results[i]
+                        for i, key
+                        in enumerate(keys)
+                        }
+
+        return results_dict
+
 
 @dataclass()
 class MapperPython:
