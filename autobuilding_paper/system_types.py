@@ -15,6 +15,11 @@ from pprint import PrettyPrinter
 
 
 @dataclass()
+class SystemID:
+    system_id: str
+
+
+@dataclass()
 class System:
     system_id: SystemID
     system_path: Path
@@ -26,7 +31,7 @@ class Systems:
 
     @staticmethod
     def from_json(path: Path):
-        with open(str(path), "w") as f:
+        with open(str(path), "r") as f:
             systems_dict = json.load(f)
 
         systems = {}
@@ -39,8 +44,3 @@ class Systems:
             systems[system_id] = system
 
         return Systems(systems)
-
-
-@dataclass()
-class SystemID:
-    system_id: str
