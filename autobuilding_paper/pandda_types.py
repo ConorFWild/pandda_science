@@ -63,6 +63,9 @@ class Dtag:
     def __hash__(self):
         return hash(self.dtag)
 
+    def to_python(self):
+        return self.dtag
+
 
 @dataclass()
 class EventIDX:
@@ -70,6 +73,9 @@ class EventIDX:
 
     def __hash__(self):
         return hash(self.event_idx)
+
+    def to_python(self):
+        return self.event_idx
 
 
 @dataclass()
@@ -80,11 +86,19 @@ class EventID:
     def __hash__(self):
         return hash((self.dtag, self.event_idx))
 
+    def to_python(self):
+        return (self.dtag.to_python(), self.event_idx.to_python())
+
 
 @dataclass()
 class Event:
     dtag: Dtag
     event_idx: EventIDX
+
+    def to_python(self):
+        return {"dtag": self.dtag.to_python(),
+                "event_idx": self.event_idx.to_python(),
+                }
 
 
 @dataclass()
@@ -211,6 +225,12 @@ class Events:
 
         return Events(events)
 
+    def to_python(self):
+        return {event_id.to_python(): self.events[event_id].to_python
+                for event_id
+                in self.events
+                }
+
 
 @dataclass()
 class PanDDAResult:
@@ -231,6 +251,15 @@ class PanDDAResult:
             json.dump(self.to_dict(),
                       f,
                       )
+
+    def to_python(self):
+        dictionary = {
+            "model_dir": str(self.model_dir),
+            "out_dir": str(self.out_dir),
+            "finished": self.finished,
+            "events": self.events.to_python(),
+        }
+        return dictionary
 
     @staticmethod
     def from_dict(dictionary):
