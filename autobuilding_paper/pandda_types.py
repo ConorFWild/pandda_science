@@ -96,9 +96,24 @@ class Event:
     event_idx: EventIDX
 
     def to_python(self):
-        return {"dtag": self.dtag.to_python(),
-                "event_idx": self.event_idx.to_python(),
+        return {Event.keys().dtag: self.dtag.to_python(),
+                Event.keys().event_idx: self.event_idx.to_python(),
                 }
+
+    @staticmethod
+    def from_python(py_event):
+        dtag: Dtag = Dtag(py_event[Event.keys().dtag])
+        event_idx: EventIDX = EventIDX(py_event[Event.keys().event_idx])
+        return Event(dtag, event_idx)
+
+    @classmethod
+    def keys(cls):
+        @dataclass
+        class Keys:
+            dtag: str = "dtag"
+            event_idx: str = "dtag"
+
+        return Keys()
 
 
 @dataclass()
@@ -196,7 +211,7 @@ class PanDDA:
 
 @dataclass()
 class Events:
-    events: Dict[EventID, Event]
+    events: Dict[Dtag, Dict[EventIDX, Event]]
 
     def __iter__(self):
         for event_id in self.events:
@@ -210,7 +225,7 @@ class Events:
         event_table_file = pandda_process.out_dir / PANDDA_ANALYSES_DIR / PANDDA_ANALYSE_EVENTS_FILE
         event_table = pd.read_csv(str(event_table_file))
 
-        events: Dict[EventID, Event] = {}
+        events: Dict[Dtag, Dict[EventIDX, Event]] = {}
         for index, row in event_table.iterrows():
             series = row.to_dict()
             dtag: Dtag = Dtag(series["dtag"])
@@ -221,22 +236,44 @@ class Events:
                                  event_idx=event_idx,
                                  )
 
-            events[event_id] = event
+            if dtag not in events:
+                events[dtag] = {}
+
+            events[dtag][event_idx] = event
 
         return Events(events)
 
     def to_python(self):
-        dtag_dict = {}
-        for event_id in self.events:
-            dtag = event_id.dtag.to_python()
-            event_idx = event_id.event_idx.to_python()
+        py_dict = {}
+        for dtag in self.events:
+            for event_idx in self.events[dtag]:
+                py_dtag = dtag.to_python()
+                py_event_idx = event_idx.to_python()
 
-            if dtag not in dtag_dict:
-                dtag_dict[dtag] = {}
+                if dtag not in py_dict:
+                    py_dict[dtag] = {}
 
-            dtag_dict[dtag][event_idx] = self.events[event_id].to_python()
+                py_dict[py_dtag][py_event_idx] = self.events[dtag][event_idx].to_python()
 
-        return dtag_dict
+        return py_dict
+
+    @classmethod
+    def from_python(cls, py_dict):
+        events = {}
+        for py_dtag in py_dict:
+            dtag = Dtag(py_dtag)
+            for py_event_idx in py_dict[py_dtag]:
+                event_idx = EventIDX(py_event_idx)
+
+                if dtag not in events:
+                    events[dtag] = {}
+                #
+                py_event = py_dict[py_dtag][py_event_idx]
+                event = Event.from_python(py_event)
+
+                events[dtag][event_idx] = event
+
+        return Events(events)
 
 
 @dataclass()
@@ -293,3 +330,28 @@ class PanDDAResult:
                             finished=finished,
                             events=events,
                             )
+
+    @classmethod
+    def from_python(cls, py_dict):
+        keys = PanDDAResult.keys()
+        model_dir = Path(py_dict[keys.model_dir])
+        out_dir= Path(py_dict[keys.out_dir])
+        finished = bool(py_dict[keys.finished])
+        events = Events.from_python(py_dict[keys.events])
+
+        return PanDDAResult(model_dir,
+                            out_dir,
+                            finished,
+                            events,
+                            )
+
+    @classmethod
+    def keys(cls):
+        @dataclass
+        class Keys:
+            model_dir: str = "model_dir"
+            out_dir: str = "out_dir"
+            finished: str = "finished"
+            events: str = "events"
+
+        return Keys()
