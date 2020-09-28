@@ -21,6 +21,9 @@ class SystemID:
     def __hash__(self):
         return hash(self.system_id)
 
+    def to_python(self):
+        return self.system_id
+
 
 @dataclass()
 class System:
