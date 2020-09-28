@@ -250,8 +250,8 @@ class Events:
                 py_dtag = dtag.to_python()
                 py_event_idx = event_idx.to_python()
 
-                if dtag not in py_dict:
-                    py_dict[dtag] = {}
+                if py_dtag not in py_dict:
+                    py_dict[py_dtag] = {}
 
                 py_dict[py_dtag][py_event_idx] = self.events[dtag][event_idx].to_python()
 
