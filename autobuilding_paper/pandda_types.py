@@ -226,10 +226,17 @@ class Events:
         return Events(events)
 
     def to_python(self):
-        return {event_id.to_python(): self.events[event_id].to_python
-                for event_id
-                in self.events
-                }
+        dtag_dict = {}
+        for event_id in self.events:
+            dtag = event_id.dtag.to_python()
+            event_idx = event_id.event_idx.to_python()
+
+            if dtag not in dtag_dict:
+                dtag_dict[dtag] = {}
+
+            dtag_dict[dtag][event_idx] = self.events[event_id].to_python()
+
+        return dtag_dict
 
 
 @dataclass()
